@@ -92,15 +92,15 @@ export function Sidebar({
 
   return (
     <aside className="hidden w-60 shrink-0 flex-col overflow-hidden rounded-2xl bg-sidebar md:flex">
-      <div className="group/brand flex items-center justify-center gap-3 px-5 pb-8 pt-7">
+      <div className="flex items-center justify-center gap-2.5 px-5 pb-8 pt-6">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/sitelogo.png`}
           alt=""
           aria-hidden
-          className="h-11 w-11 shrink-0 transition-transform duration-[220ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover/brand:rotate-[8deg] group-hover/brand:scale-[1.04]"
+          className="h-9 w-9 shrink-0"
         />
-        <span className="text-[22px] font-semibold leading-none tracking-tight text-foreground">
+        <span className="text-[20px] font-semibold tracking-tight text-foreground">
           oddicons
         </span>
       </div>

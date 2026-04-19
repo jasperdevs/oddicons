@@ -6,6 +6,8 @@ import { Check, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/lib/cart-context";
 
+const MAX_TILT = 16;
+
 interface IconCardProps {
   name: string;
   file: string;
@@ -25,9 +27,21 @@ export function IconCard({
 }: IconCardProps) {
   const url = `${basePath}/icons/${file}`;
   const [favBurstId, setFavBurstId] = useState<number | null>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const imgRef = useRef<HTMLImageElement>(null);
   const { add, has, remove } = useCart();
   const inCart = has(name);
+
+  const handleIconMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const nx = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+    const ny = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+    setTilt({ x: -ny * MAX_TILT, y: nx * MAX_TILT });
+  }, []);
+
+  const handleIconLeave = useCallback(() => {
+    setTilt({ x: 0, y: 0 });
+  }, []);
 
   const handleToggleCart = useCallback(() => {
     if (inCart) {
@@ -149,14 +163,25 @@ export function IconCard({
         </span>
       )}
 
-      <div className="grid aspect-square place-items-center p-3">
+      <div
+        onMouseMove={handleIconMove}
+        onMouseLeave={handleIconLeave}
+        className="grid aspect-square place-items-center p-3"
+        style={{ perspective: "600px" }}
+      >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           ref={imgRef}
           src={url}
           alt={name}
           data-icon-card={name}
-          className="h-full w-full object-contain transition-transform duration-[180ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:scale-[1.06]"
+          draggable={false}
+          className="h-full w-full object-contain will-change-transform"
+          style={{
+            transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+            transition: "transform 120ms cubic-bezier(0.2, 0.8, 0.2, 1)",
+            transformStyle: "preserve-3d",
+          }}
           loading="lazy"
         />
       </div>
