@@ -171,13 +171,11 @@ export function CartPinboard() {
                       </span>
                     )}
                   </div>
-                  <p className="text-[12px] text-muted-foreground">
-                    {items.length === 0
-                      ? "tap any icon to add it"
-                      : items.length === 1
-                        ? "download the png or tap to copy"
-                        : "download as a zip or tap to copy each"}
-                  </p>
+                  {items.length === 0 && (
+                    <p className="text-[12px] text-muted-foreground">
+                      tap any icon to add it
+                    </p>
+                  )}
                 </div>
                 <Button
                   variant="ghost"
@@ -198,9 +196,6 @@ export function CartPinboard() {
                   </div>
                 ) : (
                   <>
-                    <p className="pb-3 text-center text-[11.5px] text-muted-foreground">
-                      tap any icon to copy it
-                    </p>
                     <ul className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
                       <AnimatePresence mode="popLayout">
                         {items.map((item, i) => {
@@ -306,7 +301,7 @@ export function CartPinboard() {
                 )}
               </div>
 
-              <div className="flex items-center gap-2 border-t border-border bg-sidebar/40 px-5 py-3">
+              <div className="flex items-center gap-2 bg-sidebar/40 px-5 py-3">
                 <Button
                   variant="ghost"
                   size="lg"

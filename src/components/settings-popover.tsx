@@ -75,9 +75,8 @@ export function SettingsPopover() {
 
             <Switch
               label="monochrome icons"
-              hint="render every icon in grayscale"
               checked={settings.monochrome}
-              onCheckedChange={setMonochrome}
+              onToggle={() => setMonochrome(!settings.monochrome)}
             />
 
             <SizeRow

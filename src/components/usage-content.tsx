@@ -1,6 +1,7 @@
 "use client";
 
 import { Check } from "lucide-react";
+import { RequestForm } from "@/components/request-form";
 
 const LICENSE_POINTS = [
   "free for personal projects. portfolios, hobby apps, side hustles.",
@@ -46,15 +47,14 @@ export function UsageContent() {
         </ul>
       </section>
 
-      <section className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-6">
+      <section className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-6">
         <h2 className="text-[15px] font-semibold tracking-tight text-foreground">
           missing an icon?
         </h2>
-        <p className="text-[13.5px] leading-[1.6] text-muted-foreground">
-          hit the <span className="font-medium text-foreground">request</span>{" "}
-          button in the bottom bar and send a quick email. most requests turn into
-          new icons within a week.
-        </p>
+        <RequestForm
+          heading="request an icon"
+          subheading="most requests turn into new icons within a week"
+        />
       </section>
     </div>
   );
