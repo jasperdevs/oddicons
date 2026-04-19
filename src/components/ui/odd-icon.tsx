@@ -1,5 +1,6 @@
 "use client";
 
+import { iconThumbUrl } from "@/lib/icon-url";
 import { cn } from "@/lib/utils";
 
 interface OddIconProps {
@@ -10,11 +11,10 @@ interface OddIconProps {
 }
 
 export function OddIcon({ name, size = 20, className, alt = "" }: OddIconProps) {
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={`${basePath}/icons/${name}.png`}
+      src={iconThumbUrl(`${name}.png`)}
       alt={alt}
       aria-hidden={alt === ""}
       draggable={false}

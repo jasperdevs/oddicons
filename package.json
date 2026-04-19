@@ -5,6 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "prebuild": "node scripts/gen-thumbs.mjs",
+    "predev": "node scripts/gen-thumbs.mjs",
+    "thumbs": "node scripts/gen-thumbs.mjs",
     "start": "next start",
     "lint": "eslint"
   },

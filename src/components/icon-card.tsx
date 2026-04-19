@@ -6,6 +6,7 @@ import { Check, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/lib/cart-context";
 import { getIconColors } from "@/lib/icon-colors";
+import { iconThumbUrl } from "@/lib/icon-url";
 import { useSettings } from "@/lib/settings-context";
 import { springs } from "@/lib/springs";
 
@@ -29,6 +30,7 @@ export function IconCard({
   onToggleFavorite,
 }: IconCardProps) {
   const url = `${basePath}/icons/${file}`;
+  const thumbUrl = iconThumbUrl(file);
   const [favBurstId, setFavBurstId] = useState<number | null>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [colors, setColors] = useState<string[] | null>(null);
@@ -40,13 +42,13 @@ export function IconCard({
 
   useEffect(() => {
     let alive = true;
-    getIconColors(url).then((c) => {
+    getIconColors(thumbUrl).then((c) => {
       if (alive && c.length > 0) setColors(c);
     });
     return () => {
       alive = false;
     };
-  }, [url]);
+  }, [thumbUrl]);
 
   const borderBackground = useMemo(() => {
     if (!colors || colors.length === 0) return null;
@@ -226,10 +228,12 @@ export function IconCard({
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           ref={imgRef}
-          src={url}
+          src={thumbUrl}
           alt={name}
           data-icon-card={name}
           draggable={false}
+          width={192}
+          height={192}
           className="h-full w-full object-contain will-change-transform"
           style={{
             transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
@@ -238,6 +242,7 @@ export function IconCard({
             filter: settings.monochrome ? "grayscale(100%)" : undefined,
           }}
           loading="lazy"
+          decoding="async"
         />
       </div>
 

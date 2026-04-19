@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, Copy, Download, Trash2, X } from "lucide-react";
 import { OddIcon } from "@/components/ui/odd-icon";
+import { iconThumbUrl } from "@/lib/icon-url";
 import { Button } from "@/components/ui/button";
 import { PopoverTail } from "@/components/ui/popover-tail";
 import { useCart } from "@/lib/cart-context";
@@ -250,8 +251,12 @@ export function CartPinboard() {
                               >
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
-                                  src={item.url}
+                                  src={iconThumbUrl(item.file)}
                                   alt={item.name}
+                                  width={96}
+                                  height={96}
+                                  loading="lazy"
+                                  decoding="async"
                                   className={cn(
                                     "h-full w-full transition-all duration-200 group-hover:scale-105",
                                     copied && "opacity-20"
