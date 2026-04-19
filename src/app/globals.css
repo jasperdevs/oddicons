@@ -143,10 +143,30 @@
   background-size: 24px 24px;
 }
 
-/* Bottom fade overlay for content */
-.fade-bottom {
-  -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
-  mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+/* Custom scrollbar */
+.scrollbar-custom {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--muted-foreground) 30%, transparent) transparent;
+}
+.scrollbar-custom::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--muted-foreground) 25%, transparent);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--muted-foreground) 55%, transparent);
+  background-clip: padding-box;
+}
+.scrollbar-custom::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 /* View Transitions — circular reveal for theme toggle */
@@ -155,7 +175,6 @@
   animation: none;
   mix-blend-mode: normal;
 }
-
 ::view-transition-old(root) {
   z-index: 0;
 }
@@ -163,25 +182,15 @@
   z-index: 1;
 }
 
-.dark::view-transition-old(root) {
-  z-index: 1;
-}
-.dark::view-transition-new(root) {
-  z-index: 0;
-}
-
 @keyframes theme-reveal {
   from {
-    clip-path: circle(0% at var(--theme-x, 50%) var(--theme-y, 50%));
+    clip-path: circle(0 at var(--theme-x, 50%) var(--theme-y, 50%));
   }
   to {
-    clip-path: circle(150% at var(--theme-x, 50%) var(--theme-y, 50%));
+    clip-path: circle(150vmax at var(--theme-x, 50%) var(--theme-y, 50%));
   }
 }
 
 ::view-transition-new(root) {
   animation: theme-reveal 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.dark::view-transition-old(root) {
-  animation: theme-reveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) reverse;
 }

@@ -25,7 +25,7 @@ export function Topbar({ theme, onToggleTheme }: TopbarProps) {
   };
 
   return (
-    <header className="sticky top-0 z-40 flex h-14 w-full items-center justify-end bg-background px-4 sm:px-6">
+    <header className="flex h-12 w-full shrink-0 items-center justify-end px-4 sm:px-6">
       <div className="flex items-center gap-1">
         <Tooltip content={theme === "dark" ? "Light mode" : "Dark mode"}>
           <button

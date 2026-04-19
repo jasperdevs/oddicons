@@ -28,8 +28,8 @@ export function Sidebar({
   const homeActive = !onlyFavorites && selected === "All";
 
   return (
-    <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col self-start border-r border-border/30 bg-sidebar px-3 py-5 md:flex">
-      <div className="mb-5 flex items-center gap-2 px-3">
+    <aside className="hidden w-60 shrink-0 flex-col overflow-hidden rounded-2xl bg-sidebar md:flex">
+      <div className="flex items-center gap-2 px-5 pb-4 pt-5">
         <span
           aria-hidden
           className="relative grid h-8 w-8 place-items-center rounded-lg bg-foreground text-background"
@@ -37,10 +37,10 @@ export function Sidebar({
           <span className="h-2.5 w-2.5 rounded-full bg-background" />
           <span className="absolute right-1 top-1 h-1 w-1 rounded-full bg-background/70" />
         </span>
-        <span className="text-[16px] font-semibold tracking-tight text-foreground">oddicons</span>
+        <span className="text-[15px] font-semibold tracking-tight text-foreground">oddicons</span>
       </div>
 
-      <nav className="flex flex-col gap-0.5">
+      <nav className="flex flex-col gap-0.5 px-3">
         <SidebarItem
           icon={<Home size={14} strokeWidth={homeActive ? 2 : 1.5} />}
           label="Home"
@@ -52,7 +52,13 @@ export function Sidebar({
           }}
         />
         <SidebarItem
-          icon={<Heart size={14} strokeWidth={onlyFavorites ? 2 : 1.5} className={onlyFavorites ? "fill-current" : ""} />}
+          icon={
+            <Heart
+              size={14}
+              strokeWidth={onlyFavorites ? 2 : 1.5}
+              className={onlyFavorites ? "fill-current" : ""}
+            />
+          }
           label="Favorites"
           count={favoriteCount}
           active={onlyFavorites}
@@ -60,13 +66,13 @@ export function Sidebar({
         />
       </nav>
 
-      <div className="mx-3 my-4 h-px bg-border/40" />
+      <div className="mx-5 my-4 h-px bg-border/40" />
 
-      <div className="px-3 pb-2 text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground/70">
+      <div className="px-5 pb-2 text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground/70">
         Tags
       </div>
 
-      <nav className="flex flex-col gap-0.5">
+      <nav className="scrollbar-custom flex flex-1 flex-col gap-0.5 overflow-y-auto px-3 pb-4">
         {tagCategories.map((cat) => {
           const active = !onlyFavorites && selected === cat;
           return (

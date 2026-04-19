@@ -2,19 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Download, Trash2, X } from "lucide-react";
+import { Download, ShoppingBag, Trash2, X } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { downloadPng, svgToPngBlob, downloadBlob } from "@/lib/png";
 import { cn } from "@/lib/utils";
 
 export function CartDrawer() {
-  const { open, setOpen, items, remove, clear, getCartPoint } = useCart();
-  const [origin, setOrigin] = useState<{ x: number; y: number } | null>(null);
+  const { open, setOpen, items, remove, clear } = useCart();
   const [downloading, setDownloading] = useState(false);
-
-  useEffect(() => {
-    if (open) setOrigin(getCartPoint());
-  }, [open, getCartPoint]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -58,17 +53,17 @@ export function CartDrawer() {
           />
           <motion.aside
             key="drawer"
-            className="fixed right-0 top-0 z-50 flex h-full w-full max-w-md flex-col bg-background shadow-[0_0_0_1px_var(--border)]"
-            initial={{ x: "100%" }}
+            className="fixed right-3 top-3 z-50 flex h-[calc(100vh-1.5rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl bg-sidebar"
+            initial={{ x: "calc(100% + 0.75rem)" }}
             animate={{ x: 0 }}
-            exit={{ x: "100%" }}
+            exit={{ x: "calc(100% + 0.75rem)" }}
             transition={{ type: "spring", stiffness: 380, damping: 40, mass: 0.9 }}
             role="dialog"
             aria-label="Your icon cart"
           >
             <div className="flex items-center justify-between px-6 pb-4 pt-5">
               <div>
-                <h2 className="text-[18px] font-semibold tracking-tight text-foreground">Your cart</h2>
+                <h2 className="text-[17px] font-semibold tracking-tight text-foreground">Your cart</h2>
                 <p className="text-[12px] text-muted-foreground">
                   {items.length === 0
                     ? "nothing here yet"
@@ -85,21 +80,29 @@ export function CartDrawer() {
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-6 pb-4">
+            <div className="scrollbar-custom flex-1 overflow-y-auto px-4 pb-4">
               {items.length === 0 ? (
-                <div className="flex h-full items-center justify-center">
-                  <p className="text-center text-[13px] text-muted-foreground">
-                    tap the cart on any icon to send it here.
-                  </p>
+                <div className="flex h-full items-center justify-center px-6">
+                  <div className="flex flex-col items-center gap-3 text-center">
+                    <span className="grid h-12 w-12 place-items-center rounded-full bg-muted text-muted-foreground">
+                      <ShoppingBag size={20} strokeWidth={1.75} />
+                    </span>
+                    <div className="flex flex-col gap-1">
+                      <p className="text-[14px] font-medium text-foreground">Cart is empty</p>
+                      <p className="text-[12px] text-muted-foreground">
+                        Tap the cart on any icon to send it here.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <motion.ul
-                  className="grid grid-cols-3 gap-3"
+                  className="grid grid-cols-3 gap-2"
                   initial="hidden"
                   animate="visible"
                   variants={{
                     hidden: {},
-                    visible: { transition: { staggerChildren: 0.06, delayChildren: 0.05 } },
+                    visible: { transition: { staggerChildren: 0.05, delayChildren: 0.05 } },
                   }}
                 >
                   {items.map((item, i) => {
@@ -127,14 +130,14 @@ export function CartDrawer() {
                           },
                         }}
                         className={cn(
-                          "group relative aspect-square overflow-hidden rounded-lg bg-card p-4"
+                          "group relative aspect-square overflow-hidden rounded-xl bg-card p-4 transition-transform hover:-translate-y-0.5"
                         )}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={item.url}
                           alt={item.name}
-                          className="h-full w-full invert dark:invert-0"
+                          className="h-full w-full invert transition-transform duration-200 group-hover:scale-105 dark:invert-0"
                         />
                         <button
                           type="button"

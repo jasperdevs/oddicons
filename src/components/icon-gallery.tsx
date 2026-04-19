@@ -11,6 +11,7 @@ import { Sidebar } from "@/components/sidebar";
 import { IconCard } from "@/components/icon-card";
 import { CartDrawer } from "@/components/cart-drawer";
 import { FlyToCart } from "@/components/fly-to-cart";
+import { Heart, SearchX } from "lucide-react";
 
 interface IconEntry {
   name: string;
@@ -65,8 +66,28 @@ function GalleryInner() {
     });
   }, [all, query, category, onlyFavorites, favorites]);
 
+  const emptyState = (() => {
+    if (filtered.length > 0) return null;
+    if (onlyFavorites && favorites.length === 0) {
+      return (
+        <EmptyState
+          icon={<Heart size={22} strokeWidth={1.75} />}
+          title="No favorites yet"
+          hint="Tap the heart on any icon to save it here."
+        />
+      );
+    }
+    return (
+      <EmptyState
+        icon={<SearchX size={22} strokeWidth={1.75} />}
+        title="Nothing matches"
+        hint="Try a different word or clear the filter."
+      />
+    );
+  })();
+
   return (
-    <div className="flex min-h-screen">
+    <div className="flex h-screen gap-3 bg-background p-3">
       <Sidebar
         categories={categories}
         selected={category}
@@ -78,12 +99,12 @@ function GalleryInner() {
         totalCount={all.length}
       />
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl bg-sidebar">
         <Topbar theme={theme} onToggleTheme={toggleTheme} />
 
-        <main className="relative min-w-0 flex-1 px-6 pb-28 sm:px-10">
-          <div className="mx-auto w-full max-w-6xl">
-            <div className="pt-2">
+        <main className="scrollbar-custom relative min-w-0 flex-1 overflow-y-auto px-6 pb-24 sm:px-8">
+          <div className="mx-auto w-full max-w-[1400px]">
+            <div className="pt-1">
               <SearchBar
                 value={query}
                 onChange={setQuery}
@@ -92,17 +113,9 @@ function GalleryInner() {
               />
             </div>
 
-            <section className="mt-6">
-              {filtered.length === 0 ? (
-                <div className="grid place-items-center rounded-xl bg-muted/40 py-20 text-center">
-                  <p className="text-[14px] text-muted-foreground">
-                    {onlyFavorites && favorites.length === 0
-                      ? "No favorites yet — tap the heart on any icon."
-                      : "No icons match that search."}
-                  </p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            <section className="mt-4">
+              {emptyState ?? (
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
                   {filtered.map((icon) => (
                     <IconCard
                       key={icon.name}
@@ -121,13 +134,37 @@ function GalleryInner() {
 
           <div
             aria-hidden
-            className="pointer-events-none fixed inset-x-0 bottom-0 z-30 h-28 bg-gradient-to-t from-background via-background/80 to-transparent"
+            className="pointer-events-none sticky bottom-0 -mx-6 -mb-24 h-20 bg-gradient-to-t from-sidebar via-sidebar/80 to-transparent sm:-mx-8"
           />
         </main>
       </div>
 
       <CartDrawer />
       <FlyToCart />
+    </div>
+  );
+}
+
+function EmptyState({
+  icon,
+  title,
+  hint,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  hint: string;
+}) {
+  return (
+    <div className="grid place-items-center rounded-xl bg-card/60 py-24 text-center">
+      <div className="flex flex-col items-center gap-3">
+        <span className="grid h-11 w-11 place-items-center rounded-full bg-muted text-muted-foreground">
+          {icon}
+        </span>
+        <div className="flex flex-col gap-1">
+          <p className="text-[14px] font-medium text-foreground">{title}</p>
+          <p className="text-[12px] text-muted-foreground">{hint}</p>
+        </div>
+      </div>
     </div>
   );
 }
