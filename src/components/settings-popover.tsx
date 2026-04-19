@@ -64,9 +64,11 @@ export function SettingsPopover() {
               "data-[ending-style]:opacity-0 data-[ending-style]:scale-[0.97] data-[ending-style]:-translate-y-1"
             )}
           >
-            <Popover.Arrow className="h-3 w-3">
-              <div className="absolute inset-0 rotate-45 border-l border-t border-border bg-card" />
-            </Popover.Arrow>
+            <div
+              aria-hidden
+              className="absolute h-3 w-3 rotate-45 border-l border-t border-border bg-card"
+              style={{ top: -6, right: 16 }}
+            />
             <Popover.Title className="px-2 pb-1.5 pt-1 text-[13px] font-semibold tracking-tight">
               settings
             </Popover.Title>
