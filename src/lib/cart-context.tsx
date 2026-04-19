@@ -22,12 +22,17 @@ export interface FlyEvent {
   item: CartItem;
   from: { x: number; y: number; size: number };
   to: { x: number; y: number };
+  compact?: boolean;
 }
 
 interface CartContextValue {
   items: CartItem[];
   has: (name: string) => boolean;
-  add: (item: CartItem, from: { x: number; y: number; size: number }) => void;
+  add: (
+    item: CartItem,
+    from: { x: number; y: number; size: number },
+    opts?: { compact?: boolean }
+  ) => void;
   remove: (name: string) => void;
   clear: () => void;
   setCartAnchor: (el: HTMLElement | null) => void;
@@ -75,7 +80,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const has = useCallback((name: string) => items.some((i) => i.name === name), [items]);
 
   const add = useCallback(
-    (item: CartItem, from: { x: number; y: number; size: number }) => {
+    (
+      item: CartItem,
+      from: { x: number; y: number; size: number },
+      opts?: { compact?: boolean }
+    ) => {
       const el = anchorRef.current;
       const to = el
         ? (() => {
@@ -86,7 +95,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setItems((prev) => (prev.some((i) => i.name === item.name) ? prev : [...prev, item]));
       idRef.current += 1;
       const id = idRef.current;
-      setFlies((prev) => [...prev, { id, item, from, to }]);
+      setFlies((prev) => [...prev, { id, item, from, to, compact: opts?.compact }]);
     },
     []
   );

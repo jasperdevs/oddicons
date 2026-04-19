@@ -34,13 +34,13 @@ const shapeMap: Record<ShapeVariant, ShapeClasses> = {
     input: "rounded-[20px]",
   },
   rounded: {
-    item: "rounded-lg",
-    bg: "rounded-lg",
-    focusRing: "rounded-[10px]",
-    mergedBg: "rounded-lg",
-    container: "rounded-xl",
-    button: "rounded-lg",
-    input: "rounded-lg",
+    item: "rounded-xl",
+    bg: "rounded-xl",
+    focusRing: "rounded-[14px]",
+    mergedBg: "rounded-xl",
+    container: "rounded-2xl",
+    button: "rounded-xl",
+    input: "rounded-xl",
   },
 };
 

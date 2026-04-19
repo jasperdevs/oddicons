@@ -120,7 +120,7 @@ function GalleryInner() {
       />
 
       <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl bg-sidebar">
-        <div className="scrollbar-custom fade-bottom min-w-0 flex-1 overflow-y-auto">
+        <div className="scrollbar-custom min-w-0 flex-1 overflow-y-auto">
           <Topbar
             theme={theme}
             onToggleTheme={toggleTheme}
@@ -129,22 +129,11 @@ function GalleryInner() {
             total={all.length}
           />
 
-          <main className="px-6 pb-12 sm:px-8">
-            <div className="mx-auto w-full max-w-[1400px]">
-              <section className="mt-3">
-                {!emptyState && (
-                  <div className="mb-3 flex items-center justify-between gap-2">
-                    <div className="text-[11.5px] tabular-nums text-muted-foreground">
-                      {filtered.length} icon{filtered.length === 1 ? "" : "s"}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <SortButton mode={sort} onCycle={cycleSort} />
-                      <AddAllButton items={filtered} basePath={basePath} />
-                    </div>
-                  </div>
-                )}
+          <main className="px-6 pb-24 sm:px-8">
+            <div className="mx-auto w-full max-w-[1200px]">
+              <section className="mt-4">
                 {emptyState ?? (
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
                     {filtered.map((icon) => (
                       <IconCard
                         key={icon.name}
@@ -162,6 +151,10 @@ function GalleryInner() {
             </div>
           </main>
         </div>
+
+        {!emptyState && (
+          <BottomBar items={filtered} basePath={basePath} sort={sort} onCycleSort={cycleSort} />
+        )}
       </div>
 
       <CartPinboard />
@@ -170,9 +163,38 @@ function GalleryInner() {
   );
 }
 
+function BottomBar({
+  items,
+  basePath,
+  sort,
+  onCycleSort,
+}: {
+  items: IconEntry[];
+  basePath: string;
+  sort: SortMode;
+  onCycleSort: () => void;
+}) {
+  return (
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10">
+      <div
+        aria-hidden
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(to top, var(--sidebar) 0%, var(--sidebar) 55%, transparent 100%)",
+        }}
+      />
+      <div className="pointer-events-auto relative mx-auto flex w-full max-w-[1200px] items-center justify-end gap-3 px-6 pb-4 pt-10 sm:px-8">
+        <SortButton mode={sort} onCycle={onCycleSort} />
+        <AddAllButton items={items} basePath={basePath} />
+      </div>
+    </div>
+  );
+}
+
 function SortButton({ mode, onCycle }: { mode: SortMode; onCycle: () => void }) {
   const label =
-    mode === "asc" ? "Sort A-Z" : mode === "desc" ? "Sort Z-A" : "Sort default";
+    mode === "asc" ? "sort a-z" : mode === "desc" ? "sort z-a" : "sort default";
   const Icon = mode === "asc" ? ArrowDownAZ : mode === "desc" ? ArrowUpAZ : ArrowUpDown;
   return (
     <Button
@@ -180,7 +202,7 @@ function SortButton({ mode, onCycle }: { mode: SortMode; onCycle: () => void }) 
       size="md"
       leadingIcon={Icon}
       onClick={onCycle}
-      className="bg-[var(--button)] text-foreground hover:bg-[var(--button)]/80 hover:text-foreground"
+      className="h-10 text-muted-foreground hover:bg-accent hover:text-foreground"
     >
       {label}
     </Button>
@@ -206,15 +228,16 @@ function AddAllButton({
     const from = {
       x: rect.left + rect.width / 2,
       y: rect.top + rect.height / 2,
-      size: 36,
+      size: 20,
     };
     pending.forEach((icon, i) => {
-      setTimeout(() => {
+      window.setTimeout(() => {
         add(
           { name: icon.name, file: icon.file, url: `${basePath}/icons/${icon.file}` },
-          from
+          from,
+          { compact: true }
         );
-      }, i * 45);
+      }, i * 35);
     });
   };
 
@@ -226,9 +249,9 @@ function AddAllButton({
       leadingIcon={Plus}
       onClick={handleClick}
       disabled={disabled}
-      className="bg-[var(--button)] text-foreground hover:bg-[var(--button)]/80 hover:text-foreground"
+      className="h-10 text-muted-foreground hover:bg-accent hover:text-foreground"
     >
-      {disabled ? "All pinned" : `Pin ${pending.length}`}
+      {disabled ? "all added" : `add all (${pending.length})`}
     </Button>
   );
 }
@@ -243,14 +266,14 @@ function EmptyState({
   hint: string;
 }) {
   return (
-    <div className="grid place-items-center rounded-xl bg-card/60 py-24 text-center">
+    <div className="grid place-items-center rounded-2xl bg-card py-24 text-center">
       <div className="flex flex-col items-center gap-3">
         <span className="grid h-11 w-11 place-items-center rounded-full bg-muted text-muted-foreground">
           {icon}
         </span>
         <div className="flex flex-col gap-1">
-          <p className="text-[14px] font-medium text-foreground">{title}</p>
-          <p className="text-[12px] text-muted-foreground">{hint}</p>
+          <p className="text-[16px] font-medium text-foreground">{title}</p>
+          <p className="text-[14px] text-muted-foreground">{hint}</p>
         </div>
       </div>
     </div>

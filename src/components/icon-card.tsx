@@ -90,16 +90,16 @@ export function IconCard({
     <motion.div
       whileHover={{ y: -3 }}
       transition={{ type: "spring", stiffness: 520, damping: 28, mass: 0.6 }}
-      className="group relative flex flex-col overflow-hidden rounded-xl border border-border/60 bg-card transition-colors duration-150 hover:border-foreground/30"
+      className="group relative flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-colors duration-150 hover:border-foreground/30"
     >
       <button
         type="button"
         onClick={handleFavorite}
-        aria-label={isFavorite ? "Unfavorite" : "Favorite"}
+        aria-label={isFavorite ? "unfavorite" : "favorite"}
         aria-pressed={isFavorite}
         className={cn(
-          "absolute right-2 top-2 z-30 grid h-8 w-8 place-items-center rounded-md transition-all",
-          "text-muted-foreground opacity-0 group-hover:opacity-100 hover:bg-muted hover:text-foreground",
+          "absolute right-2 top-2 z-30 grid h-8 w-8 place-items-center rounded-full transition-all",
+          "text-muted-foreground opacity-0 group-hover:opacity-100 hover:bg-accent hover:text-foreground",
           isFavorite && "opacity-100 text-foreground"
         )}
       >
@@ -137,10 +137,10 @@ export function IconCard({
                 ? { scale: [0.6, 1.45, 0.92, 1.08, 1], rotate: [0, -8, 6, -2, 0] }
                 : { scale: 1, rotate: 0 }
             }
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
           >
             <Heart
-              size={15}
+              size={16}
               strokeWidth={1.75}
               className={cn("transition-colors", isFavorite && "fill-foreground text-foreground")}
             />
@@ -148,7 +148,7 @@ export function IconCard({
         </div>
       </button>
 
-      <div className="flex aspect-[5/4] items-center justify-center px-6 py-6">
+      <div className="flex aspect-[5/4] items-center justify-center p-6">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           ref={imgRef}
@@ -161,43 +161,41 @@ export function IconCard({
         />
       </div>
 
-      <div className="flex flex-col items-center gap-1 pb-3.5">
-        <span className="text-[13.5px] font-semibold tracking-tight text-foreground">{name}</span>
-        <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
-          {category}
-        </span>
+      <div className="flex flex-col items-center gap-1 px-4 pb-4">
+        <span className="text-[14px] font-semibold tracking-tight text-foreground">{name}</span>
+        <span className="text-[14px] font-normal text-muted-foreground">{category}</span>
       </div>
 
-      <div className="mt-auto grid grid-cols-2 border-t border-border/50">
+      <div className="mt-auto grid grid-cols-2 border-t border-border">
         <button
           type="button"
           onClick={handleCopy}
-          className="relative inline-flex h-10 items-center justify-center gap-1.5 text-[12px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          className="relative inline-flex h-10 items-center justify-center gap-2 text-[14px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
         >
           <AnimatePresence mode="wait" initial={false}>
             {copied ? (
               <motion.span
                 key="copied"
-                className="flex items-center gap-1.5"
+                className="flex items-center gap-2"
                 initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
                 transition={{ duration: 0.15 }}
               >
-                <Check size={13} strokeWidth={2} />
-                <span>Copied</span>
+                <Check size={14} strokeWidth={2} />
+                <span>copied</span>
               </motion.span>
             ) : (
               <motion.span
                 key="copy"
-                className="flex items-center gap-1.5"
+                className="flex items-center gap-2"
                 initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
                 transition={{ duration: 0.15 }}
               >
-                <Copy size={13} strokeWidth={1.75} />
-                <span>Copy</span>
+                <Copy size={14} strokeWidth={1.75} />
+                <span>copy</span>
               </motion.span>
             )}
           </AnimatePresence>
@@ -206,42 +204,42 @@ export function IconCard({
           type="button"
           onClick={handleAddToCart}
           className={cn(
-            "group/cart relative inline-flex h-10 items-center justify-center gap-1.5 border-l border-border/50 text-[12px] transition-colors",
+            "group/cart relative inline-flex h-10 items-center justify-center gap-2 border-l border-border text-[14px] transition-colors",
             inCart
-              ? "bg-muted text-foreground hover:bg-muted"
-              : "text-muted-foreground hover:bg-foreground hover:text-background"
+              ? "bg-accent text-foreground hover:bg-accent"
+              : "text-muted-foreground hover:bg-accent hover:text-foreground"
           )}
         >
           <AnimatePresence mode="wait" initial={false}>
             {inCart ? (
               <motion.span
                 key="added"
-                className="flex items-center gap-1.5"
+                className="flex items-center gap-2"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.18 }}
               >
-                <span className="flex items-center gap-1.5 group-hover/cart:hidden">
-                  <Check size={13} strokeWidth={2} />
-                  <span>Added</span>
+                <span className="flex items-center gap-2 group-hover/cart:hidden">
+                  <Check size={14} strokeWidth={2} />
+                  <span>added</span>
                 </span>
-                <span className="hidden items-center gap-1.5 group-hover/cart:flex">
-                  <X size={13} strokeWidth={2} />
-                  <span>Remove</span>
+                <span className="hidden items-center gap-2 group-hover/cart:flex">
+                  <X size={14} strokeWidth={2} />
+                  <span>remove</span>
                 </span>
               </motion.span>
             ) : (
               <motion.span
                 key="add"
-                className="flex items-center gap-1.5"
+                className="flex items-center gap-2"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.18 }}
               >
-                <ShoppingBag size={13} strokeWidth={1.75} />
-                <span>Add</span>
+                <ShoppingBag size={14} strokeWidth={1.75} />
+                <span>add</span>
               </motion.span>
             )}
           </AnimatePresence>

@@ -46,9 +46,8 @@ export function Topbar({
   useEffect(() => {
     if (bumpCount === 0) return;
     bumpControls.start({
-      scale: [1, 1.18, 0.96, 1],
-      rotate: [0, -6, 4, 0],
-      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+      scale: [1, 1.14, 0.98, 1],
+      transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] },
     });
   }, [bumpCount, bumpControls]);
 
@@ -61,62 +60,58 @@ export function Topbar({
       <motion.div
         aria-hidden
         animate={{ opacity: scrolled ? 1 : 0 }}
-        transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
         className="pointer-events-none absolute inset-x-0 top-0"
         style={{
-          height: "calc(100% + 2.5rem)",
+          height: "calc(100% + 2rem)",
           background:
             "linear-gradient(to bottom, var(--sidebar) 0%, var(--sidebar) 62%, transparent 100%)",
         }}
       />
 
-      <div className="relative mx-auto flex w-full max-w-[1400px] items-center gap-2 py-3">
+      <div className="relative mx-auto flex w-full max-w-[1200px] items-center gap-2 py-4">
         <div className="min-w-0 flex-1">
           <SearchBar value={query} onChange={onQueryChange} total={total} />
         </div>
 
-        <div className="flex items-center gap-1 rounded-lg bg-[var(--button)] p-1">
-          <Tooltip content={theme === "dark" ? "Light mode" : "Dark mode"}>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleTheme}
-              aria-label="Toggle theme"
-              className="relative h-9 w-9 overflow-hidden text-foreground hover:bg-foreground/10"
-            >
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.span
-                  key={theme}
-                  initial={{ rotate: -140, scale: 0.3, opacity: 0 }}
-                  animate={{ rotate: 0, scale: 1, opacity: 1 }}
-                  exit={{ rotate: 140, scale: 0.3, opacity: 0 }}
-                  transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-                  className="inline-flex"
-                >
-                  {theme === "dark" ? <Sun /> : <Moon />}
-                </motion.span>
-              </AnimatePresence>
-            </Button>
-          </Tooltip>
-
-          <div className="h-5 w-px bg-border/70" aria-hidden />
-
-          <Tooltip content={items.length > 0 ? "Open cart" : "Cart is empty"}>
-            <motion.div animate={bumpControls} style={{ transformOrigin: "center" }}>
-              <Button
-                ref={cartRef}
-                variant="ghost"
-                size="md"
-                leadingIcon={ShoppingBag}
-                onClick={() => items.length > 0 && setOpen(true)}
-                aria-label="Open cart"
-                className="h-9 text-foreground hover:bg-foreground/10 hover:text-foreground"
+        <Tooltip content={theme === "dark" ? "light mode" : "dark mode"}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleTheme}
+            aria-label="toggle theme"
+            className="relative h-10 w-10 overflow-hidden bg-muted/60 text-foreground hover:bg-muted hover:text-foreground"
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.span
+                key={theme}
+                initial={{ rotate: -140, scale: 0.3, opacity: 0 }}
+                animate={{ rotate: 0, scale: 1, opacity: 1 }}
+                exit={{ rotate: 140, scale: 0.3, opacity: 0 }}
+                transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
+                className="inline-flex"
               >
-                <span className="tabular-nums">{items.length}</span>
-              </Button>
-            </motion.div>
-          </Tooltip>
-        </div>
+                {theme === "dark" ? <Sun /> : <Moon />}
+              </motion.span>
+            </AnimatePresence>
+          </Button>
+        </Tooltip>
+
+        <Tooltip content={items.length > 0 ? "open cart" : "cart is empty"}>
+          <motion.div animate={bumpControls} style={{ transformOrigin: "center" }}>
+            <Button
+              ref={cartRef}
+              variant="ghost"
+              size="md"
+              leadingIcon={ShoppingBag}
+              onClick={() => items.length > 0 && setOpen(true)}
+              aria-label="open cart"
+              className="h-10 bg-muted/60 text-foreground hover:bg-muted hover:text-foreground"
+            >
+              <span className="tabular-nums">{items.length}</span>
+            </Button>
+          </motion.div>
+        </Tooltip>
       </div>
     </div>
   );

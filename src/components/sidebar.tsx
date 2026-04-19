@@ -43,8 +43,8 @@ export function Sidebar({
   const topRows: Row[] = [
     {
       id: "home",
-      label: "Home",
-      icon: <Home size={14} strokeWidth={homeActive ? 2 : 1.5} />,
+      label: "home",
+      icon: <Home size={16} strokeWidth={homeActive ? 2 : 1.5} />,
       count: totalCount,
       active: homeActive,
       onSelect: () => {
@@ -54,10 +54,10 @@ export function Sidebar({
     },
     {
       id: "favorites",
-      label: "Favorites",
+      label: "favorites",
       icon: (
         <Heart
-          size={14}
+          size={16}
           strokeWidth={onlyFavorites ? 2 : 1.5}
           className={onlyFavorites ? "fill-current" : ""}
         />
@@ -72,7 +72,7 @@ export function Sidebar({
     const active = !onlyFavorites && selected === cat;
     return {
       id: `tag-${cat}`,
-      label: cat,
+      label: cat.toLowerCase(),
       icon: (
         <span
           className={cn(
@@ -92,23 +92,21 @@ export function Sidebar({
 
   return (
     <aside className="hidden w-60 shrink-0 flex-col overflow-hidden rounded-2xl bg-sidebar md:flex">
-      <div className="flex items-center gap-2 px-5 pb-4 pt-5">
+      <div className="flex items-center gap-3 px-4 pb-6 pt-6">
         <span
           aria-hidden
-          className="relative grid h-8 w-8 place-items-center rounded-lg bg-foreground text-background"
+          className="relative grid h-8 w-8 place-items-center rounded-xl bg-foreground text-background"
         >
           <span className="h-2.5 w-2.5 rounded-full bg-background" />
           <span className="absolute right-1 top-1 h-1 w-1 rounded-full bg-background/70" />
         </span>
-        <span className="text-[15px] font-semibold tracking-tight text-foreground">oddicons</span>
+        <span className="text-[16px] font-semibold tracking-tight text-foreground">oddicons</span>
       </div>
 
       <ProximityNav rows={topRows} />
 
-      <div className="mx-5 my-4 h-px bg-border/40" />
-
-      <div className="px-5 pb-2 text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground/80">
-        Tags
+      <div className="px-4 pb-2 pt-6 text-[12px] font-medium tracking-[0.02em] text-muted-foreground">
+        tags
       </div>
 
       <div className="scrollbar-custom flex-1 overflow-y-auto pb-4">
@@ -139,14 +137,14 @@ function ProximityNav({ rows }: { rows: Row[] }) {
     <div
       ref={containerRef}
       {...handlers}
-      className="relative flex flex-col gap-0.5 px-3"
+      className="relative flex flex-col gap-1 px-2"
     >
       <AnimatePresence>
         {activeRect && (
           <motion.span
             key="hover"
             aria-hidden
-            className="pointer-events-none absolute rounded-md bg-muted"
+            className="pointer-events-none absolute rounded-xl bg-accent"
             initial={{ opacity: 0 }}
             animate={{
               opacity: 1,
@@ -177,7 +175,7 @@ function ProximityNav({ rows }: { rows: Row[] }) {
             ref={(el) => registerItem(i, el)}
             onClick={row.onSelect}
             className={cn(
-              "relative z-10 flex h-9 items-center justify-between rounded-md px-3 text-[13px] transition-colors",
+              "relative z-10 flex h-10 items-center justify-between rounded-xl px-3 text-[14px] transition-colors",
               isActive
                 ? "bg-foreground text-background"
                 : isHovered
@@ -185,7 +183,7 @@ function ProximityNav({ rows }: { rows: Row[] }) {
                   : "text-muted-foreground"
             )}
           >
-            <span className="flex items-center gap-2.5">
+            <span className="flex items-center gap-3">
               <span className="grid h-4 w-4 place-items-center">{row.icon}</span>
               <span>{row.label}</span>
             </span>

@@ -83,7 +83,7 @@ export function CartPinboard() {
           <motion.div
             key="panel"
             role="dialog"
-            aria-label="Pinboard"
+            aria-label="cart"
             className="fixed z-50 w-[min(28rem,calc(100vw-1.5rem))]"
             style={{
               top: anchor.top,
@@ -112,22 +112,22 @@ export function CartPinboard() {
             />
 
             <div className="relative flex flex-col overflow-hidden rounded-2xl bg-sidebar shadow-[0_24px_60px_-12px_rgba(0,0,0,0.5)]">
-              <div className="flex items-center justify-between px-5 pb-3 pt-4">
+              <div className="flex items-center justify-between px-4 pb-3 pt-4">
                 <div>
-                  <h2 className="text-[15px] font-semibold tracking-tight text-foreground">
-                    Pinboard
+                  <h2 className="text-[16px] font-semibold tracking-tight text-foreground">
+                    cart
                   </h2>
-                  <p className="text-[11.5px] text-muted-foreground">
+                  <p className="text-[12px] text-muted-foreground">
                     {items.length === 0
-                      ? "nothing pinned yet"
-                      : `${items.length} icon${items.length === 1 ? "" : "s"} · exports as PNG`}
+                      ? "nothing added yet"
+                      : `${items.length} icon${items.length === 1 ? "" : "s"} · exports as png`}
                   </p>
                 </div>
                 <Button
                   variant="ghost"
                   size="icon-sm"
                   onClick={() => setOpen(false)}
-                  aria-label="Close"
+                  aria-label="close"
                 >
                   <X />
                 </Button>
@@ -140,16 +140,16 @@ export function CartPinboard() {
                       <ShoppingBag size={18} strokeWidth={1.75} />
                     </span>
                     <div className="flex flex-col gap-1">
-                      <p className="text-[13px] font-medium text-foreground">
-                        Pinboard is empty
+                      <p className="text-[14px] font-medium text-foreground">
+                        cart is empty
                       </p>
-                      <p className="text-[11.5px] text-muted-foreground">
-                        Tap the cart on any icon.
+                      <p className="text-[12px] text-muted-foreground">
+                        tap the cart on any icon
                       </p>
                     </div>
                   </div>
                 ) : (
-                  <ul className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
+                  <ul className="grid grid-cols-3 gap-3 sm:grid-cols-4">
                     <AnimatePresence mode="popLayout">
                       {items.map((item, i) => {
                         const rot = rotations[item.name] ?? 0;
@@ -184,7 +184,7 @@ export function CartPinboard() {
                               transition: { duration: 0.25, ease: [0.4, 0, 1, 1] },
                             }}
                             whileHover={{ rotate: 0, scale: 1.05, y: -2 }}
-                            className="group relative aspect-square overflow-hidden rounded-xl border border-border/60 bg-card p-3"
+                            className="group relative aspect-square overflow-hidden rounded-xl border border-border bg-card p-3"
                           >
                             <span
                               aria-hidden
@@ -199,8 +199,8 @@ export function CartPinboard() {
                             <button
                               type="button"
                               onClick={() => remove(item.name)}
-                              aria-label={`Remove ${item.name}`}
-                              className="absolute right-1 top-1 grid h-5 w-5 place-items-center rounded text-muted-foreground opacity-0 transition-opacity hover:bg-muted hover:text-foreground group-hover:opacity-100"
+                              aria-label={`remove ${item.name}`}
+                              className="absolute right-1 top-1 grid h-5 w-5 place-items-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-muted hover:text-foreground group-hover:opacity-100"
                             >
                               <X size={11} strokeWidth={2} />
                             </button>
@@ -212,7 +212,7 @@ export function CartPinboard() {
                 )}
               </div>
 
-              <div className="flex items-center gap-2 border-t border-border/40 px-4 py-3">
+              <div className="flex items-center gap-2 border-t border-border px-4 py-3">
                 <Button
                   variant="ghost"
                   size="md"
@@ -220,7 +220,7 @@ export function CartPinboard() {
                   onClick={clear}
                   disabled={items.length === 0}
                 >
-                  Clear
+                  clear
                 </Button>
                 <Button
                   variant="primary"
@@ -232,8 +232,8 @@ export function CartPinboard() {
                   className="ml-auto flex-1"
                 >
                   {items.length === 0
-                    ? "Download PNG"
-                    : `Download ${items.length} PNG${items.length === 1 ? "" : "s"}`}
+                    ? "download png"
+                    : `download ${items.length} png${items.length === 1 ? "" : "s"}`}
                 </Button>
               </div>
             </div>
