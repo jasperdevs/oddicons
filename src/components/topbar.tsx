@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
-import { Moon, Settings, ShoppingBag, Sun } from "lucide-react";
+import { Menu, Moon, ShoppingBag, Sun } from "lucide-react";
 import { Tooltip } from "@/components/ui/tooltip";
 import { SearchBar } from "@/components/search-bar";
 import { ProgressiveBlur } from "@/components/progressive-blur";
@@ -16,6 +16,7 @@ interface TopbarProps {
   query: string;
   onQueryChange: (q: string) => void;
   total: number;
+  onOpenMenu?: () => void;
 }
 
 export function Topbar({
@@ -24,11 +25,10 @@ export function Topbar({
   query,
   onQueryChange,
   total,
+  onOpenMenu,
 }: TopbarProps) {
   const { items, setCartAnchor, setOpen, bumpCount } = useCart();
   const cartRef = useRef<HTMLButtonElement>(null);
-  const settingsRef = useRef<HTMLButtonElement>(null);
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const bumpControls = useAnimation();
 
   useEffect(() => {
@@ -61,12 +61,25 @@ export function Topbar({
         }}
       />
 
-      <div className="pointer-events-auto relative mx-auto flex w-full items-center gap-2 py-4 sm:gap-4 sm:py-5">
+      <div className="pointer-events-auto relative mx-auto flex w-full items-center gap-2 py-4 sm:gap-3 sm:py-5">
+        {onOpenMenu && (
+          <Tooltip content="menu">
+            <button
+              type="button"
+              onClick={onOpenMenu}
+              aria-label="open menu"
+              className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-muted text-foreground transition-colors duration-[180ms] hover:bg-foreground/5 md:hidden"
+            >
+              <Menu size={18} strokeWidth={1.75} />
+            </button>
+          </Tooltip>
+        )}
+
         <div className="min-w-0 flex-1">
           <SearchBar value={query} onChange={onQueryChange} total={total} />
         </div>
 
-        <div className="relative flex h-11 items-center rounded-xl bg-muted">
+        <div className="relative flex h-11 shrink-0 items-center rounded-xl bg-muted">
           <Tooltip content={theme === "dark" ? "light mode" : "dark mode"}>
             <button
               type="button"
@@ -89,27 +102,7 @@ export function Topbar({
             </button>
           </Tooltip>
 
-          <Tooltip content="settings">
-            <button
-              ref={settingsRef}
-              type="button"
-              onClick={() => setSettingsOpen((v) => !v)}
-              aria-label="open settings"
-              aria-expanded={settingsOpen}
-              className={cn(
-                "grid h-11 w-11 place-items-center text-foreground transition-colors duration-[180ms] hover:bg-foreground/5",
-                settingsOpen && "bg-foreground/5"
-              )}
-            >
-              <motion.span
-                animate={{ rotate: settingsOpen ? 60 : 0 }}
-                transition={{ duration: 0.24, ease: [0.4, 0, 0.2, 1] }}
-                className="inline-flex"
-              >
-                <Settings size={16} strokeWidth={1.75} />
-              </motion.span>
-            </button>
-          </Tooltip>
+          <SettingsPopover />
 
           <Tooltip content="open cart">
             <motion.button
@@ -132,12 +125,6 @@ export function Topbar({
               </span>
             </motion.button>
           </Tooltip>
-
-          <SettingsPopover
-            open={settingsOpen}
-            onClose={() => setSettingsOpen(false)}
-            anchorRef={settingsRef}
-          />
         </div>
       </div>
     </div>

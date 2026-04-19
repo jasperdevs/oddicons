@@ -27,29 +27,28 @@ interface Row {
   onSelect: () => void;
 }
 
-export function Sidebar({
-  categories,
-  selected,
-  onSelect,
-  counts,
-  favoriteCount,
-  onlyFavorites,
-  onToggleFavorites,
-  totalCount,
-}: SidebarProps) {
-  const tagCategories = categories.filter((c) => c !== "All");
-  const homeActive = !onlyFavorites && selected === "All";
+export function Sidebar(props: SidebarProps) {
+  return (
+    <aside className="hidden w-60 shrink-0 flex-col overflow-hidden rounded-2xl bg-sidebar md:flex">
+      <SidebarBody {...props} />
+    </aside>
+  );
+}
+
+export function SidebarBody(props: SidebarProps) {
+  const tagCategories = props.categories.filter((c) => c !== "All");
+  const homeActive = !props.onlyFavorites && props.selected === "All";
 
   const topRows: Row[] = [
     {
       id: "home",
       label: "home",
       icon: <Home size={16} strokeWidth={homeActive ? 2 : 1.5} />,
-      count: totalCount,
+      count: props.totalCount,
       active: homeActive,
       onSelect: () => {
-        if (onlyFavorites) onToggleFavorites();
-        onSelect("All");
+        if (props.onlyFavorites) props.onToggleFavorites();
+        props.onSelect("All");
       },
     },
     {
@@ -58,18 +57,18 @@ export function Sidebar({
       icon: (
         <Heart
           size={16}
-          strokeWidth={onlyFavorites ? 2 : 1.5}
-          className={onlyFavorites ? "fill-current" : ""}
+          strokeWidth={props.onlyFavorites ? 2 : 1.5}
+          className={props.onlyFavorites ? "fill-current" : ""}
         />
       ),
-      count: favoriteCount,
-      active: onlyFavorites,
-      onSelect: onToggleFavorites,
+      count: props.favoriteCount,
+      active: props.onlyFavorites,
+      onSelect: props.onToggleFavorites,
     },
   ];
 
   const tagRows: Row[] = tagCategories.map((cat) => {
-    const active = !onlyFavorites && selected === cat;
+    const active = !props.onlyFavorites && props.selected === cat;
     return {
       id: `tag-${cat}`,
       label: cat.toLowerCase(),
@@ -81,17 +80,21 @@ export function Sidebar({
           )}
         />
       ),
-      count: counts[cat] ?? 0,
+      count: props.counts[cat] ?? 0,
       active,
       onSelect: () => {
-        if (onlyFavorites) onToggleFavorites();
-        onSelect(cat);
+        if (props.onlyFavorites) props.onToggleFavorites();
+        props.onSelect(cat);
       },
     };
   });
 
+  return <SidebarBodyInner topRows={topRows} tagRows={tagRows} />;
+}
+
+function SidebarBodyInner({ topRows, tagRows }: { topRows: Row[]; tagRows: Row[] }) {
   return (
-    <aside className="hidden w-60 shrink-0 flex-col overflow-hidden rounded-2xl bg-sidebar md:flex">
+    <>
       <div className="flex items-center justify-center gap-2.5 px-5 pb-8 pt-6">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -117,7 +120,7 @@ export function Sidebar({
       <div className="scrollbar-custom flex-1 overflow-y-auto pb-5">
         <ProximityNav rows={tagRows} />
       </div>
-    </aside>
+    </>
   );
 }
 

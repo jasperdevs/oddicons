@@ -1,125 +1,112 @@
 "use client";
 
-import { useEffect, useRef, type RefObject } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { Contrast, Ruler } from "lucide-react";
+import { Popover, Select, Switch } from "@base-ui/react";
+import { motion } from "framer-motion";
+import { Check, ChevronDown, Settings } from "lucide-react";
+import { Tooltip } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import {
   DOWNLOAD_SIZE_STEPS,
   useSettings,
 } from "@/lib/settings-context";
 
-interface Props {
-  open: boolean;
-  onClose: () => void;
-  anchorRef: RefObject<HTMLButtonElement | null>;
-}
-
-export function SettingsPopover({ open, onClose, anchorRef }: Props) {
+export function SettingsPopover() {
   const { settings, setMonochrome, setDownloadSize } = useSettings();
-  const panelRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    const onDown = (e: MouseEvent) => {
-      const t = e.target as Node;
-      if (panelRef.current?.contains(t)) return;
-      if (anchorRef.current?.contains(t)) return;
-      onClose();
-    };
-    document.addEventListener("keydown", onKey);
-    document.addEventListener("mousedown", onDown);
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.removeEventListener("mousedown", onDown);
-    };
-  }, [open, onClose, anchorRef]);
 
   return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          ref={panelRef}
-          role="dialog"
-          aria-label="settings"
-          initial={{ opacity: 0, y: -4, scale: 0.97 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -4, scale: 0.97 }}
-          transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
-          style={{ transformOrigin: "top right" }}
-          className="absolute right-0 top-full z-50 mt-2 w-[280px] rounded-xl border border-border bg-card p-3 shadow-[0_24px_48px_-16px_rgba(0,0,0,0.6),_0_8px_16px_-6px_rgba(0,0,0,0.35)]"
-        >
-          <div className="flex flex-col gap-0.5 px-1 pb-3 pt-1">
-            <h2 className="text-[13px] font-semibold tracking-tight text-foreground">
+    <Popover.Root>
+      <Tooltip content="settings">
+        <Popover.Trigger
+          render={(props, state) => (
+            <button
+              {...props}
+              aria-label="open settings"
+              className={cn(
+                "grid h-11 w-11 place-items-center text-foreground transition-colors duration-[180ms] hover:bg-foreground/5 outline-none",
+                state.open && "bg-foreground/5"
+              )}
+            >
+              <motion.span
+                animate={{ rotate: state.open ? 60 : 0 }}
+                transition={{ duration: 0.24, ease: [0.4, 0, 0.2, 1] }}
+                className="inline-flex"
+              >
+                <Settings size={16} strokeWidth={1.75} />
+              </motion.span>
+            </button>
+          )}
+        />
+      </Tooltip>
+      <Popover.Portal>
+        <Popover.Positioner side="bottom" align="end" sideOffset={8}>
+          <Popover.Popup
+            className={cn(
+              "z-50 w-[288px] rounded-xl border border-border bg-card p-2 text-foreground",
+              "shadow-[0_24px_48px_-16px_rgba(0,0,0,0.6),_0_8px_16px_-6px_rgba(0,0,0,0.35)]",
+              "origin-[var(--transform-origin)] outline-none",
+              "transition-all duration-[180ms] ease-out",
+              "data-[starting-style]:opacity-0 data-[starting-style]:scale-[0.97] data-[starting-style]:-translate-y-1",
+              "data-[ending-style]:opacity-0 data-[ending-style]:scale-[0.97] data-[ending-style]:-translate-y-1"
+            )}
+          >
+            <Popover.Title className="px-2 pb-1.5 pt-1 text-[13px] font-semibold tracking-tight">
               settings
-            </h2>
-            <p className="text-[11.5px] text-muted-foreground">
-              tweak icons and downloads
-            </p>
-          </div>
+            </Popover.Title>
 
-          <ToggleRow
-            icon={<Contrast size={14} strokeWidth={1.75} />}
-            label="monochrome icons"
-            hint="render every icon in grayscale"
-            checked={settings.monochrome}
-            onChange={setMonochrome}
-          />
+            <SwitchRow
+              label="monochrome icons"
+              hint="render every icon in grayscale"
+              checked={settings.monochrome}
+              onChange={setMonochrome}
+            />
 
-          <SizeRow
-            size={settings.downloadSize}
-            onChange={setDownloadSize}
-          />
-        </motion.div>
-      )}
-    </AnimatePresence>
+            <SizeRow
+              size={settings.downloadSize}
+              onChange={setDownloadSize}
+            />
+          </Popover.Popup>
+        </Popover.Positioner>
+      </Popover.Portal>
+    </Popover.Root>
   );
 }
 
-function ToggleRow({
-  icon,
+function SwitchRow({
   label,
   hint,
   checked,
   onChange,
 }: {
-  icon: React.ReactNode;
   label: string;
   hint: string;
   checked: boolean;
   onChange: (v: boolean) => void;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-lg px-2 py-2.5">
-      <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-sidebar text-foreground">
-        {icon}
-      </span>
+    <label className="flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-accent/60">
       <div className="flex min-w-0 flex-1 flex-col">
         <span className="text-[12.5px] font-medium text-foreground">{label}</span>
         <span className="text-[11px] text-muted-foreground">{hint}</span>
       </div>
-      <button
-        type="button"
-        role="switch"
-        aria-checked={checked}
-        onClick={() => onChange(!checked)}
+      <Switch.Root
+        checked={checked}
+        onCheckedChange={onChange}
         className={cn(
-          "relative h-5 w-9 shrink-0 rounded-full border transition-colors duration-[180ms] outline-none",
-          "focus-visible:ring-1 focus-visible:ring-foreground/30",
-          checked ? "border-foreground bg-foreground" : "border-border bg-sidebar"
+          "relative inline-flex h-[22px] w-[38px] shrink-0 items-center rounded-full border outline-none transition-colors duration-[180ms]",
+          "focus-visible:ring-2 focus-visible:ring-foreground/20",
+          "data-[checked]:border-foreground data-[checked]:bg-foreground",
+          "data-[unchecked]:border-border data-[unchecked]:bg-sidebar"
         )}
       >
-        <span
+        <Switch.Thumb
           className={cn(
-            "absolute top-1/2 h-3 w-3 -translate-y-1/2 rounded-full transition-all duration-[180ms]",
-            checked ? "left-[18px] bg-background" : "left-[3px] bg-muted-foreground"
+            "block h-[14px] w-[14px] rounded-full shadow-sm transition-all duration-[180ms]",
+            "data-[checked]:translate-x-[19px] data-[checked]:bg-background",
+            "data-[unchecked]:translate-x-[3px] data-[unchecked]:bg-muted-foreground"
           )}
         />
-      </button>
-    </div>
+      </Switch.Root>
+    </label>
   );
 }
 
@@ -131,44 +118,60 @@ function SizeRow({
   onChange: (v: number) => void;
 }) {
   return (
-    <div className="flex flex-col gap-2 rounded-lg px-2 py-2.5">
-      <div className="flex items-center gap-3">
-        <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-sidebar text-foreground">
-          <Ruler size={14} strokeWidth={1.75} />
+    <div className="flex items-center gap-3 rounded-lg px-2 py-2.5">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <span className="text-[12.5px] font-medium text-foreground">
+          download size
         </span>
-        <div className="flex min-w-0 flex-1 flex-col">
-          <span className="text-[12.5px] font-medium text-foreground">
-            download size
-          </span>
-          <span className="text-[11px] text-muted-foreground">
-            resize down on export
-          </span>
-        </div>
-        <span className="shrink-0 tabular-nums text-[12px] font-medium text-foreground">
-          {size}px
+        <span className="text-[11px] text-muted-foreground">
+          resize on export
         </span>
       </div>
-      <div className="flex flex-wrap gap-1 pt-0.5">
-        {DOWNLOAD_SIZE_STEPS.map((step) => {
-          const active = size === step;
-          return (
-            <button
-              key={step}
-              type="button"
-              onClick={() => onChange(step)}
+      <Select.Root value={size} onValueChange={(v) => onChange(v as number)}>
+        <Select.Trigger
+          className={cn(
+            "inline-flex h-8 min-w-[88px] items-center justify-between gap-1.5 rounded-md border border-border bg-sidebar px-2.5 text-[12px] font-medium tabular-nums text-foreground transition-colors outline-none",
+            "hover:border-foreground/30 focus-visible:ring-2 focus-visible:ring-foreground/20",
+            "data-[popup-open]:border-foreground/40"
+          )}
+        >
+          <Select.Value>{(val) => `${val}px`}</Select.Value>
+          <Select.Icon>
+            <ChevronDown size={13} strokeWidth={1.75} className="text-muted-foreground" />
+          </Select.Icon>
+        </Select.Trigger>
+        <Select.Portal>
+          <Select.Positioner sideOffset={6} align="end" className="z-[60]">
+            <Select.Popup
               className={cn(
-                "inline-flex h-7 min-w-11 items-center justify-center rounded-md border px-2 text-[11.5px] font-medium tabular-nums transition-colors duration-[180ms] outline-none",
-                "focus-visible:ring-1 focus-visible:ring-foreground/30",
-                active
-                  ? "border-foreground bg-foreground text-background"
-                  : "border-border bg-sidebar text-muted-foreground hover:border-foreground/30 hover:text-foreground"
+                "max-h-[240px] min-w-[var(--anchor-width)] overflow-y-auto rounded-lg border border-border bg-card p-1 text-foreground",
+                "shadow-[0_24px_48px_-16px_rgba(0,0,0,0.6),_0_8px_16px_-6px_rgba(0,0,0,0.35)]",
+                "origin-[var(--transform-origin)] outline-none",
+                "transition-all duration-[150ms] ease-out",
+                "data-[starting-style]:opacity-0 data-[starting-style]:scale-[0.97]",
+                "data-[ending-style]:opacity-0 data-[ending-style]:scale-[0.97]"
               )}
             >
-              {step}
-            </button>
-          );
-        })}
-      </div>
+              {DOWNLOAD_SIZE_STEPS.map((step) => (
+                <Select.Item
+                  key={step}
+                  value={step}
+                  className={cn(
+                    "relative flex cursor-pointer select-none items-center gap-2 rounded-md py-1.5 pl-7 pr-3 text-[12.5px] tabular-nums text-muted-foreground outline-none",
+                    "data-[highlighted]:bg-accent data-[highlighted]:text-foreground",
+                    "data-[selected]:text-foreground"
+                  )}
+                >
+                  <Select.ItemIndicator className="absolute left-2 inline-flex">
+                    <Check size={13} strokeWidth={2} />
+                  </Select.ItemIndicator>
+                  <Select.ItemText>{step}px</Select.ItemText>
+                </Select.Item>
+              ))}
+            </Select.Popup>
+          </Select.Positioner>
+        </Select.Portal>
+      </Select.Root>
     </div>
   );
 }
