@@ -329,7 +329,7 @@ function SortDropdown({
           <Select.Popup
             className={cn(
               "min-w-[var(--anchor-width)] rounded-xl border border-border bg-card p-1 text-foreground",
-              "shadow-[0_24px_48px_-16px_rgba(0,0,0,0.6),_0_8px_16px_-6px_rgba(0,0,0,0.35)]",
+              "shadow-[0_8px_20px_-8px_rgba(0,0,0,0.4),_0_2px_4px_-2px_rgba(0,0,0,0.2)]",
               "origin-[var(--transform-origin)] outline-none",
               "transition-all duration-[180ms] ease-out",
               "data-[starting-style]:opacity-0 data-[starting-style]:scale-[0.97] data-[starting-style]:translate-y-1",

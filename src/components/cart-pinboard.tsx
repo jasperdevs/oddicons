@@ -160,21 +160,14 @@ export function CartPinboard() {
             />
             <div className="relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[0_10px_24px_-10px_rgba(0,0,0,0.45),_0_2px_6px_-2px_rgba(0,0,0,0.22)]">
               <div className="flex items-start justify-between gap-3 px-5 pb-3 pt-4">
-                <div className="flex flex-col gap-0.5">
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-[16px] font-semibold tracking-tight text-foreground">
-                      cart
-                    </h2>
-                    {items.length > 0 && (
-                      <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-foreground px-1.5 text-[11px] font-semibold tabular-nums text-background">
-                        {items.length}
-                      </span>
-                    )}
-                  </div>
-                  {items.length === 0 && (
-                    <p className="text-[12px] text-muted-foreground">
-                      tap any icon to add it
-                    </p>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-[16px] font-semibold tracking-tight text-foreground">
+                    cart
+                  </h2>
+                  {items.length > 0 && (
+                    <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-foreground px-1.5 text-[11px] font-semibold tabular-nums text-background">
+                      {items.length}
+                    </span>
                   )}
                 </div>
                 <Button
