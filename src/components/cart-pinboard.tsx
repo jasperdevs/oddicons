@@ -6,7 +6,7 @@ import { Check, Copy, Download, ShoppingBag, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart-context";
 import { cn } from "@/lib/utils";
-import { downloadAsZip, downloadPng } from "@/lib/png";
+import { downloadAsZip, downloadPng, fetchIconBlob } from "@/lib/png";
 
 function deterministicRotation(seed: string): number {
   let h = 0;
@@ -17,13 +17,21 @@ function deterministicRotation(seed: string): number {
   return Number(n.toFixed(2));
 }
 
-async function fetchSvg(url: string): Promise<string | null> {
+async function copyIconToClipboard(url: string): Promise<boolean> {
   try {
-    const res = await fetch(url);
-    if (!res.ok) return null;
-    return await res.text();
+    const blob = await fetchIconBlob(url);
+    if (blob.type === "image/svg+xml" || url.endsWith(".svg")) {
+      const text = await blob.text();
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+    if (typeof ClipboardItem !== "undefined" && navigator.clipboard.write) {
+      await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
+      return true;
+    }
+    return false;
   } catch {
-    return null;
+    return false;
   }
 }
 
@@ -34,17 +42,12 @@ export function CartPinboard() {
   const [anchor, setAnchor] = useState<{ top: number; right: number } | null>(null);
 
   const handleCopy = async (name: string, url: string) => {
-    const svg = await fetchSvg(url);
-    if (!svg) return;
-    try {
-      await navigator.clipboard.writeText(svg);
-      setCopiedName(name);
-      window.setTimeout(() => {
-        setCopiedName((c) => (c === name ? null : c));
-      }, 1400);
-    } catch {
-      // ignore
-    }
+    const ok = await copyIconToClipboard(url);
+    if (!ok) return;
+    setCopiedName(name);
+    window.setTimeout(() => {
+      setCopiedName((c) => (c === name ? null : c));
+    }, 1400);
   };
 
   useEffect(() => {
@@ -143,8 +146,8 @@ export function CartPinboard() {
                     {items.length === 0
                       ? "tap any icon to add it"
                       : items.length === 1
-                        ? "exports as a 512px png"
-                        : "exports as a zipped set of 512px pngs"}
+                        ? "download the png or tap to copy"
+                        : "download as a zip or tap to copy each"}
                   </p>
                 </div>
                 <Button
@@ -167,7 +170,7 @@ export function CartPinboard() {
                 ) : (
                   <>
                     <p className="pb-3 text-center text-[11.5px] text-muted-foreground">
-                      tap any icon to copy its svg
+                      tap any icon to copy it
                     </p>
                     <ul className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
                       <AnimatePresence mode="popLayout">
@@ -224,7 +227,7 @@ export function CartPinboard() {
                                   src={item.url}
                                   alt={item.name}
                                   className={cn(
-                                    "h-full w-full invert transition-all duration-200 group-hover:scale-105 dark:invert-0",
+                                    "h-full w-full transition-all duration-200 group-hover:scale-105",
                                     copied && "opacity-20"
                                   )}
                                 />
@@ -274,21 +277,22 @@ export function CartPinboard() {
               <div className="flex items-center gap-2 border-t border-border bg-sidebar/40 px-5 py-3">
                 <Button
                   variant="ghost"
-                  size="md"
+                  size="lg"
                   leadingIcon={Trash2}
                   onClick={clear}
                   disabled={items.length === 0}
+                  className="h-11 px-5 text-[14px]"
                 >
                   clear
                 </Button>
                 <Button
                   variant="primary"
-                  size="md"
+                  size="lg"
                   leadingIcon={Download}
                   loading={downloading}
                   disabled={items.length === 0}
                   onClick={handleDownloadAll}
-                  className="ml-auto flex-1"
+                  className="ml-auto h-11 flex-1 px-5 text-[14px]"
                 >
                   {items.length === 0
                     ? "download"

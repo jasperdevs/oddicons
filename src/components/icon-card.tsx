@@ -158,7 +158,7 @@ export function IconCard({
           width={96}
           height={96}
           data-icon-card={name}
-          className="h-[88px] w-[88px] invert transition-transform duration-[180ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:scale-[1.06] dark:invert-0"
+          className="h-[88px] w-[88px] transition-transform duration-[180ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:scale-[1.06]"
           loading="lazy"
         />
       </div>

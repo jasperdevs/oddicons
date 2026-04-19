@@ -216,9 +216,10 @@ function BottomBar({
         <Button
           ref={requestBtnRef}
           variant="secondary"
-          size="md"
+          size="lg"
           leadingIcon={Send}
           onClick={onOpenRequest}
+          className="h-11 px-5 text-[14px]"
         >
           request
         </Button>
@@ -354,11 +355,12 @@ function SortDropdown({
       <Button
         ref={triggerRef}
         variant="secondary"
-        size="md"
+        size="lg"
         leadingIcon={active.Icon}
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
+        className="h-11 px-5 text-[14px]"
       >
         {active.label}
       </Button>
@@ -500,10 +502,11 @@ function AddAllButton({
     <Button
       ref={ref}
       variant="secondary"
-      size="md"
+      size="lg"
       leadingIcon={allAdded ? Trash2 : Plus}
       onClick={handleClick}
       disabled={items.length === 0}
+      className="h-11 px-5 text-[14px]"
     >
       {allAdded ? `remove all (${items.length})` : `add all (${pending.length})`}
     </Button>

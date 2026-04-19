@@ -199,7 +199,7 @@ export function RequestModal({ open, onClose, anchorRef }: RequestModalProps) {
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
                   placeholder="subject (optional)"
-                  className="h-10 w-full rounded-lg border border-border bg-sidebar px-3 text-[13px] text-foreground placeholder:text-muted-foreground/70 outline-none transition-colors duration-[180ms] focus:border-foreground/30"
+                  className="h-11 w-full rounded-lg border border-border bg-sidebar px-3 text-[13px] text-foreground placeholder:text-muted-foreground/70 outline-none transition-colors duration-[180ms] focus:border-foreground/30"
                 />
 
                 <textarea
@@ -213,10 +213,10 @@ export function RequestModal({ open, onClose, anchorRef }: RequestModalProps) {
                 <Button
                   type="submit"
                   variant="primary"
-                  size="md"
+                  size="lg"
                   leadingIcon={Send}
                   disabled={!canSubmit}
-                  className="h-10 w-full"
+                  className="h-11 w-full px-5 text-[14px]"
                 >
                   send an email
                 </Button>

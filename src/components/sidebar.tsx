@@ -92,15 +92,17 @@ export function Sidebar({
 
   return (
     <aside className="hidden w-60 shrink-0 flex-col overflow-hidden rounded-2xl bg-sidebar md:flex">
-      <div className="group/brand flex items-center gap-3 px-5 pb-8 pt-6">
-        <span
+      <div className="group/brand flex items-center gap-2.5 px-5 pb-8 pt-6">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/sitelogo.png`}
+          alt=""
           aria-hidden
-          className="relative grid h-8 w-8 place-items-center rounded-xl bg-foreground text-background transition-transform duration-[220ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover/brand:rotate-[8deg] group-hover/brand:scale-[1.04]"
-        >
-          <span className="h-2.5 w-2.5 rounded-full bg-background" />
-          <span className="absolute right-1 top-1 h-1 w-1 rounded-full bg-background/70" />
+          className="h-8 w-8 shrink-0 transition-transform duration-[220ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover/brand:rotate-[8deg] group-hover/brand:scale-[1.04]"
+        />
+        <span className="text-[18px] font-semibold tracking-tight text-foreground">
+          oddicons
         </span>
-        <span className="font-display text-[22px] leading-none text-foreground">oddicons</span>
       </div>
 
       <ProximityNav rows={topRows} />
