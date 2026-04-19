@@ -55,7 +55,7 @@ export function Topbar({
   };
 
   return (
-    <div ref={wrapperRef} className="sticky top-0 z-30 px-8 sm:px-10">
+    <div ref={wrapperRef} className="sticky top-0 z-30 px-6 sm:px-8">
       <motion.div
         aria-hidden
         animate={{ opacity: scrolled ? 1 : 0 }}
@@ -68,18 +68,18 @@ export function Topbar({
         }}
       />
 
-      <div className="relative mx-auto flex w-full items-center gap-3 py-5">
+      <div className="relative mx-auto flex w-full items-center gap-3 py-4">
         <div className="min-w-0 flex-1">
           <SearchBar value={query} onChange={onQueryChange} total={total} />
         </div>
 
-        <div className="flex h-10 items-center gap-0 rounded-xl bg-muted/60 p-0.5">
+        <div className="flex h-10 items-center rounded-xl bg-muted">
           <Tooltip content={theme === "dark" ? "light mode" : "dark mode"}>
             <button
               type="button"
               onClick={handleTheme}
               aria-label="toggle theme"
-              className="grid h-9 w-9 place-items-center overflow-hidden rounded-[10px] text-foreground transition-colors hover:bg-muted"
+              className="grid h-10 w-10 place-items-center overflow-hidden rounded-l-xl text-foreground transition-colors duration-[180ms] hover:bg-foreground/5"
             >
               <AnimatePresence mode="wait" initial={false}>
                 <motion.span
@@ -87,7 +87,7 @@ export function Topbar({
                   initial={{ rotate: -140, scale: 0.3, opacity: 0 }}
                   animate={{ rotate: 0, scale: 1, opacity: 1 }}
                   exit={{ rotate: 140, scale: 0.3, opacity: 0 }}
-                  transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
+                  transition={{ duration: 0.24, ease: [0.4, 0, 0.2, 1] }}
                   className="inline-flex"
                 >
                   {theme === "dark" ? <Sun size={16} strokeWidth={1.75} /> : <Moon size={16} strokeWidth={1.75} />}
@@ -104,7 +104,7 @@ export function Topbar({
               style={{ transformOrigin: "center" }}
               onClick={() => items.length > 0 && setOpen(true)}
               aria-label="open cart"
-              className="flex h-9 items-center gap-2 rounded-[10px] px-3 text-[14px] text-foreground transition-colors hover:bg-muted"
+              className="flex h-10 items-center gap-2 rounded-r-xl px-3 text-[14px] font-medium text-foreground transition-colors duration-[180ms] hover:bg-foreground/5"
             >
               <ShoppingBag size={16} strokeWidth={1.75} />
               <span className="tabular-nums">{items.length}</span>

@@ -39,8 +39,8 @@ export function SearchBar({ value, onChange, total }: SearchBarProps) {
   return (
     <div
       className={cn(
-        "flex h-10 w-full items-center gap-2 rounded-xl bg-muted/60 px-3 transition-colors",
-        "focus-within:bg-muted"
+        "flex h-10 w-full items-center gap-2 rounded-xl bg-muted px-3 transition-colors duration-[180ms]",
+        "focus-within:ring-1 focus-within:ring-border"
       )}
     >
       <Search size={16} strokeWidth={1.75} className="shrink-0 text-muted-foreground" />

@@ -130,7 +130,7 @@ function GalleryInner() {
             total={all.length}
           />
 
-          <main className="px-8 pb-32 sm:px-10">
+          <main className="px-6 pb-24 sm:px-8">
             <div className="w-full">
               <section className="mt-6">
                 {emptyState ?? (
@@ -190,7 +190,7 @@ function BottomBar({
             "linear-gradient(to top, var(--sidebar) 0%, var(--sidebar) 55%, transparent 100%)",
         }}
       />
-      <div className="pointer-events-auto relative flex w-full items-center justify-end gap-3 px-8 pb-5 pt-12 sm:px-10">
+      <div className="pointer-events-auto relative flex w-full items-center justify-end gap-3 px-6 pb-4 pt-8 sm:px-8">
         <SortButton mode={sort} onCycle={onCycleSort} />
         <AddAllButton items={items} basePath={basePath} />
       </div>

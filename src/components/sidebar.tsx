@@ -175,7 +175,7 @@ function ProximityNav({ rows }: { rows: Row[] }) {
             ref={(el) => registerItem(i, el)}
             onClick={row.onSelect}
             className={cn(
-              "relative z-10 flex h-10 items-center justify-between rounded-xl px-3 text-[14px] transition-colors",
+              "relative z-10 flex h-10 items-center justify-between rounded-xl px-3 text-[14px] font-medium transition-colors duration-[180ms]",
               isActive
                 ? "bg-foreground text-background"
                 : isHovered

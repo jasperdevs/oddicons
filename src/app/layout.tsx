@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
-import { Inter, Bytesized } from "next/font/google";
+import { Inter, JetBrains_Mono, Bytesized } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 
 const inter = Inter({
   variable: "--font-inter",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
   display: "swap",
 });
@@ -29,7 +35,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${bytesized.variable} dark h-full antialiased`}
+      className={`${inter.variable} ${jetbrainsMono.variable} ${bytesized.variable} dark h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full bg-background text-foreground">

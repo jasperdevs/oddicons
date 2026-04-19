@@ -90,12 +90,12 @@ export function CartPinboard() {
               right: anchor.right,
               transformOrigin: "top right",
             }}
-            initial={{ opacity: 0, scale: 0.94, y: -8 }}
+            initial={{ opacity: 0, scale: 0.96, y: -6 }}
             animate={{
               opacity: 1,
               scale: 1,
               y: 0,
-              transition: { type: "spring", stiffness: 420, damping: 32, mass: 0.6 },
+              transition: { duration: 0.24, ease: [0.4, 0, 0.2, 1] },
             }}
             exit={{
               opacity: 0,
@@ -189,7 +189,7 @@ export function CartPinboard() {
                               type="button"
                               onClick={() => remove(item.name)}
                               aria-label={`remove ${item.name}`}
-                              className="absolute right-1 top-1 grid h-5 w-5 place-items-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-muted hover:text-foreground group-hover:opacity-100"
+                              className="absolute right-1 top-1 grid h-5 w-5 place-items-center rounded-full text-muted-foreground opacity-0 transition-opacity duration-[180ms] hover:bg-muted hover:text-foreground group-hover:opacity-100"
                             >
                               <X size={11} strokeWidth={2} />
                             </button>
