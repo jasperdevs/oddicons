@@ -132,7 +132,8 @@ export function RequestModal({ open, onClose, anchorRef }: RequestModalProps) {
     e.preventDefault();
     if (!canSubmit) return;
     const subj = subject.trim() || "icon request";
-    window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(message.trim())}`;
+    const href = `mailto:${EMAIL}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(message.trim())}`;
+    window.open(href, "_blank", "noopener,noreferrer");
   };
 
   const handleCopy = async (id: string, value: string) => {

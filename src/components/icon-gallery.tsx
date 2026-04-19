@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import icons from "@/data/icons.json";
 import { useFavorites } from "@/hooks/use-favorites";
 import { useTheme } from "@/hooks/use-theme";
 import { CartProvider, useCart } from "@/lib/cart-context";
 import { cn } from "@/lib/utils";
+import { slugify } from "@/lib/slug";
 import { Topbar } from "@/components/topbar";
 import { Sidebar } from "@/components/sidebar";
 import { IconCard } from "@/components/icon-card";
@@ -37,22 +39,26 @@ interface IconEntry {
 
 type SortMode = "default" | "asc" | "desc";
 
+export type View =
+  | { type: "all" }
+  | { type: "favorites" }
+  | { type: "category"; slug: string };
+
 const ALL = "All";
 
-export function IconGallery() {
+export function IconGallery({ view = { type: "all" } }: { view?: View }) {
   return (
     <CartProvider>
-      <GalleryInner />
+      <GalleryInner view={view} />
     </CartProvider>
   );
 }
 
-function GalleryInner() {
+function GalleryInner({ view }: { view: View }) {
+  const router = useRouter();
   const { theme, toggle: toggleTheme } = useTheme();
   const { favorites, isFavorite, toggle: toggleFavorite } = useFavorites();
   const [query, setQuery] = useState("");
-  const [category, setCategory] = useState(ALL);
-  const [onlyFavorites, setOnlyFavorites] = useState(false);
   const [sort, setSort] = useState<SortMode>("default");
   const [requestOpen, setRequestOpen] = useState(false);
   const requestBtnRef = useRef<HTMLButtonElement>(null);
@@ -65,6 +71,21 @@ function GalleryInner() {
     all.forEach((i) => set.add(i.category));
     return [ALL, ...Array.from(set).sort()];
   }, [all]);
+
+  const onlyFavorites = view.type === "favorites";
+  const category = useMemo(() => {
+    if (view.type !== "category") return ALL;
+    const match = categories.find((c) => slugify(c) === view.slug);
+    return match ?? ALL;
+  }, [view, categories]);
+
+  const selectCategory = (cat: string) => {
+    if (cat === ALL) router.push("/");
+    else router.push(`/category/${slugify(cat)}/`);
+  };
+
+  const goFavorites = () => router.push("/favorites/");
+  const goHome = () => router.push("/");
 
   const counts = useMemo(() => {
     const c: Record<string, number> = { [ALL]: all.length };
@@ -115,11 +136,11 @@ function GalleryInner() {
       <Sidebar
         categories={categories}
         selected={category}
-        onSelect={setCategory}
+        onSelect={selectCategory}
         counts={counts}
         favoriteCount={favorites.length}
         onlyFavorites={onlyFavorites}
-        onToggleFavorites={() => setOnlyFavorites((v) => !v)}
+        onToggleFavorites={onlyFavorites ? goHome : goFavorites}
         totalCount={all.length}
       />
 
@@ -129,11 +150,11 @@ function GalleryInner() {
             <MobileCategoryRail
               categories={categories}
               selected={category}
-              onSelect={setCategory}
+              onSelect={selectCategory}
               counts={counts}
               favoriteCount={favorites.length}
               onlyFavorites={onlyFavorites}
-              onToggleFavorites={() => setOnlyFavorites((v) => !v)}
+              onToggleFavorites={onlyFavorites ? goHome : goFavorites}
               totalCount={all.length}
             />
             {emptyState ?? (
