@@ -18,6 +18,7 @@ import {
   Heart,
   Plus,
   SearchX,
+  Trash2,
 } from "lucide-react";
 
 interface IconEntry {
@@ -107,7 +108,7 @@ function GalleryInner() {
   const cycleSort = () => setSort((s) => SORT_CYCLE[s]);
 
   return (
-    <div className="flex h-screen gap-3 bg-background p-3">
+    <div className="flex h-screen gap-4 bg-background p-4">
       <Sidebar
         categories={categories}
         selected={category}
@@ -129,11 +130,11 @@ function GalleryInner() {
             total={all.length}
           />
 
-          <main className="px-6 pb-24 sm:px-8">
-            <div className="mx-auto w-full max-w-[1200px]">
-              <section className="mt-4">
+          <main className="px-8 pb-32 sm:px-10">
+            <div className="w-full">
+              <section className="mt-6">
                 {emptyState ?? (
-                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+                  <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8">
                     {filtered.map((icon) => (
                       <IconCard
                         key={icon.name}
@@ -153,7 +154,12 @@ function GalleryInner() {
         </div>
 
         {!emptyState && (
-          <BottomBar items={filtered} basePath={basePath} sort={sort} onCycleSort={cycleSort} />
+          <BottomBar
+            items={filtered}
+            basePath={basePath}
+            sort={sort}
+            onCycleSort={cycleSort}
+          />
         )}
       </div>
 
@@ -184,7 +190,7 @@ function BottomBar({
             "linear-gradient(to top, var(--sidebar) 0%, var(--sidebar) 55%, transparent 100%)",
         }}
       />
-      <div className="pointer-events-auto relative mx-auto flex w-full max-w-[1200px] items-center justify-end gap-3 px-6 pb-4 pt-10 sm:px-8">
+      <div className="pointer-events-auto relative flex w-full items-center justify-end gap-3 px-8 pb-5 pt-12 sm:px-10">
         <SortButton mode={sort} onCycle={onCycleSort} />
         <AddAllButton items={items} basePath={basePath} />
       </div>
@@ -216,12 +222,16 @@ function AddAllButton({
   items: IconEntry[];
   basePath: string;
 }) {
-  const { add, has } = useCart();
+  const { add, has, remove } = useCart();
   const ref = useRef<HTMLButtonElement>(null);
   const pending = useMemo(() => items.filter((i) => !has(i.name)), [items, has]);
-  const disabled = pending.length === 0;
+  const allAdded = items.length > 0 && pending.length === 0;
 
   const handleClick = () => {
+    if (allAdded) {
+      items.forEach((icon) => remove(icon.name));
+      return;
+    }
     const el = ref.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
@@ -246,12 +256,12 @@ function AddAllButton({
       ref={ref}
       variant="ghost"
       size="md"
-      leadingIcon={Plus}
+      leadingIcon={allAdded ? Trash2 : Plus}
       onClick={handleClick}
-      disabled={disabled}
+      disabled={items.length === 0}
       className="h-10 text-muted-foreground hover:bg-accent hover:text-foreground"
     >
-      {disabled ? "all added" : `add all (${pending.length})`}
+      {allAdded ? `remove all (${items.length})` : `add all (${pending.length})`}
     </Button>
   );
 }

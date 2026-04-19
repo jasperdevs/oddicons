@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { Moon, ShoppingBag, Sun } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Tooltip } from "@/components/ui/tooltip";
 import { SearchBar } from "@/components/search-bar";
 import { useCart } from "@/lib/cart-context";
@@ -56,7 +55,7 @@ export function Topbar({
   };
 
   return (
-    <div ref={wrapperRef} className="sticky top-0 z-30 px-6 sm:px-8">
+    <div ref={wrapperRef} className="sticky top-0 z-30 px-8 sm:px-10">
       <motion.div
         aria-hidden
         animate={{ opacity: scrolled ? 1 : 0 }}
@@ -69,49 +68,49 @@ export function Topbar({
         }}
       />
 
-      <div className="relative mx-auto flex w-full max-w-[1200px] items-center gap-2 py-4">
+      <div className="relative mx-auto flex w-full items-center gap-3 py-5">
         <div className="min-w-0 flex-1">
           <SearchBar value={query} onChange={onQueryChange} total={total} />
         </div>
 
-        <Tooltip content={theme === "dark" ? "light mode" : "dark mode"}>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleTheme}
-            aria-label="toggle theme"
-            className="relative h-10 w-10 overflow-hidden bg-muted/60 text-foreground hover:bg-muted hover:text-foreground"
-          >
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.span
-                key={theme}
-                initial={{ rotate: -140, scale: 0.3, opacity: 0 }}
-                animate={{ rotate: 0, scale: 1, opacity: 1 }}
-                exit={{ rotate: 140, scale: 0.3, opacity: 0 }}
-                transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
-                className="inline-flex"
-              >
-                {theme === "dark" ? <Sun /> : <Moon />}
-              </motion.span>
-            </AnimatePresence>
-          </Button>
-        </Tooltip>
+        <div className="flex h-10 items-center gap-0 rounded-xl bg-muted/60 p-0.5">
+          <Tooltip content={theme === "dark" ? "light mode" : "dark mode"}>
+            <button
+              type="button"
+              onClick={handleTheme}
+              aria-label="toggle theme"
+              className="grid h-9 w-9 place-items-center overflow-hidden rounded-[10px] text-foreground transition-colors hover:bg-muted"
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span
+                  key={theme}
+                  initial={{ rotate: -140, scale: 0.3, opacity: 0 }}
+                  animate={{ rotate: 0, scale: 1, opacity: 1 }}
+                  exit={{ rotate: 140, scale: 0.3, opacity: 0 }}
+                  transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
+                  className="inline-flex"
+                >
+                  {theme === "dark" ? <Sun size={16} strokeWidth={1.75} /> : <Moon size={16} strokeWidth={1.75} />}
+                </motion.span>
+              </AnimatePresence>
+            </button>
+          </Tooltip>
 
-        <Tooltip content={items.length > 0 ? "open cart" : "cart is empty"}>
-          <motion.div animate={bumpControls} style={{ transformOrigin: "center" }}>
-            <Button
+          <Tooltip content={items.length > 0 ? "open cart" : "cart is empty"}>
+            <motion.button
               ref={cartRef}
-              variant="ghost"
-              size="md"
-              leadingIcon={ShoppingBag}
+              type="button"
+              animate={bumpControls}
+              style={{ transformOrigin: "center" }}
               onClick={() => items.length > 0 && setOpen(true)}
               aria-label="open cart"
-              className="h-10 bg-muted/60 text-foreground hover:bg-muted hover:text-foreground"
+              className="flex h-9 items-center gap-2 rounded-[10px] px-3 text-[14px] text-foreground transition-colors hover:bg-muted"
             >
+              <ShoppingBag size={16} strokeWidth={1.75} />
               <span className="tabular-nums">{items.length}</span>
-            </Button>
-          </motion.div>
-        </Tooltip>
+            </motion.button>
+          </Tooltip>
+        </div>
       </div>
     </div>
   );

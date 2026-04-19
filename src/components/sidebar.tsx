@@ -100,7 +100,7 @@ export function Sidebar({
           <span className="h-2.5 w-2.5 rounded-full bg-background" />
           <span className="absolute right-1 top-1 h-1 w-1 rounded-full bg-background/70" />
         </span>
-        <span className="text-[16px] font-semibold tracking-tight text-foreground">oddicons</span>
+        <span className="font-display text-[22px] leading-none text-foreground">oddicons</span>
       </div>
 
       <ProximityNav rows={topRows} />

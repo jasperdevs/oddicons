@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Bytesized } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const bytesized = Bytesized({
+  variable: "--font-bytesized",
+  subsets: ["latin"],
+  weight: "400",
   display: "swap",
 });
 
@@ -22,7 +29,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} dark h-full antialiased`}
+      className={`${inter.variable} ${bytesized.variable} dark h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full bg-background text-foreground">

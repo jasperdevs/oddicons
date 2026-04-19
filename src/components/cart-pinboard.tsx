@@ -72,7 +72,7 @@ export function CartPinboard() {
         <>
           <motion.div
             key="scrim"
-            className="fixed inset-0 z-50 bg-foreground/25 backdrop-blur-[2px]"
+            className="fixed inset-0 z-50 bg-background/40 backdrop-blur-md"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -90,28 +90,21 @@ export function CartPinboard() {
               right: anchor.right,
               transformOrigin: "top right",
             }}
-            initial={{ opacity: 0, scale: 0.12, rotate: -10, y: -14 }}
+            initial={{ opacity: 0, scale: 0.94, y: -8 }}
             animate={{
               opacity: 1,
               scale: 1,
-              rotate: 0,
               y: 0,
-              transition: { type: "spring", stiffness: 360, damping: 28, mass: 0.7 },
+              transition: { type: "spring", stiffness: 420, damping: 32, mass: 0.6 },
             }}
             exit={{
               opacity: 0,
-              scale: 0.2,
-              rotate: -4,
-              y: -8,
-              transition: { duration: 0.2, ease: [0.4, 0, 1, 1] },
+              scale: 0.96,
+              y: -6,
+              transition: { duration: 0.18, ease: [0.4, 0, 1, 1] },
             }}
           >
-            <div
-              aria-hidden
-              className="absolute -top-[6px] right-5 h-3 w-3 rotate-45 rounded-[3px] bg-sidebar"
-            />
-
-            <div className="relative flex flex-col overflow-hidden rounded-2xl bg-sidebar shadow-[0_24px_60px_-12px_rgba(0,0,0,0.5)]">
+            <div className="relative flex flex-col overflow-hidden rounded-2xl border border-border bg-background/60 backdrop-blur-2xl">
               <div className="flex items-center justify-between px-4 pb-3 pt-4">
                 <div>
                   <h2 className="text-[16px] font-semibold tracking-tight text-foreground">
@@ -186,10 +179,6 @@ export function CartPinboard() {
                             whileHover={{ rotate: 0, scale: 1.05, y: -2 }}
                             className="group relative aspect-square overflow-hidden rounded-xl border border-border bg-card p-3"
                           >
-                            <span
-                              aria-hidden
-                              className="absolute left-1/2 top-1.5 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-foreground/40"
-                            />
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                               src={item.url}
@@ -212,9 +201,9 @@ export function CartPinboard() {
                 )}
               </div>
 
-              <div className="flex items-center gap-2 border-t border-border px-4 py-3">
+              <div className="flex items-center gap-3 border-t border-border px-4 py-3">
                 <Button
-                  variant="ghost"
+                  variant="tertiary"
                   size="md"
                   leadingIcon={Trash2}
                   onClick={clear}

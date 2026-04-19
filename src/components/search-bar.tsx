@@ -64,9 +64,9 @@ export function SearchBar({ value, onChange, total }: SearchBarProps) {
       ) : (
         <span
           aria-hidden
-          className="hidden shrink-0 font-mono text-[12px] tracking-[0.02em] text-muted-foreground sm:inline"
+          className="hidden shrink-0 font-mono text-[12px] text-muted-foreground sm:inline"
         >
-          {isMac ? "⌘K" : "ctrl K"}
+          {isMac ? "⌘K" : "Ctrl+K"}
         </span>
       )}
     </div>
