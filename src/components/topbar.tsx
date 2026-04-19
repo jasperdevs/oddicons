@@ -7,6 +7,7 @@ import { Tooltip } from "@/components/ui/tooltip";
 import { SearchBar } from "@/components/search-bar";
 import { ProgressiveBlur } from "@/components/progressive-blur";
 import { useCart } from "@/lib/cart-context";
+import { cn } from "@/lib/utils";
 
 interface TopbarProps {
   theme: "dark" | "light";
@@ -96,7 +97,14 @@ export function Topbar({
               className="flex h-11 items-center gap-2 rounded-r-xl px-4 text-[14px] font-medium text-foreground transition-colors duration-[180ms] hover:bg-foreground/5"
             >
               <ShoppingBag size={16} strokeWidth={1.75} />
-              <span className="tabular-nums">{items.length}</span>
+              <span
+                className={cn(
+                  "tabular-nums transition-colors duration-[180ms]",
+                  items.length === 0 && "text-muted-foreground"
+                )}
+              >
+                {items.length}
+              </span>
             </motion.button>
           </Tooltip>
         </div>

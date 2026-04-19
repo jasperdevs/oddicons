@@ -208,7 +208,6 @@ function BottomBar({
           size="lg"
           leadingIcon={Send}
           onClick={onOpenRequest}
-          className="h-10"
         >
           request
         </Button>
@@ -267,7 +266,6 @@ function SortDropdown({
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className="h-10"
       >
         {active.label}
       </Button>
@@ -281,7 +279,7 @@ function SortDropdown({
             exit={{ opacity: 0, y: 4, scale: 0.98 }}
             transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
             style={{ transformOrigin: "bottom left" }}
-            className="absolute bottom-full left-0 mb-2 w-48 rounded-xl border border-border bg-card p-1 shadow-lg"
+            className="absolute bottom-full left-0 mb-2 w-48 rounded-xl border border-border bg-card p-1 shadow-[0_24px_48px_-16px_rgba(0,0,0,0.6),_0_8px_16px_-6px_rgba(0,0,0,0.35)]"
           >
             {SORT_OPTIONS.map((opt) => {
               const selected = mode === opt.mode;
@@ -413,7 +411,6 @@ function AddAllButton({
       leadingIcon={allAdded ? Trash2 : Plus}
       onClick={handleClick}
       disabled={items.length === 0}
-      className="h-10"
     >
       {allAdded ? `remove all (${items.length})` : `add all (${pending.length})`}
     </Button>
@@ -430,19 +427,11 @@ function EmptyState({
   hint: string;
 }) {
   return (
-    <div className="grid place-items-center rounded-2xl border border-dashed border-border bg-card/40 py-28 text-center">
-      <div className="flex max-w-[280px] flex-col items-center gap-4">
-        <div className="relative grid place-items-center">
-          <span className="absolute inset-0 -m-3 rounded-full bg-foreground/[0.02]" />
-          <span className="absolute inset-0 -m-1.5 rounded-full bg-foreground/[0.03]" />
-          <span className="relative grid h-14 w-14 place-items-center rounded-full border border-border bg-sidebar text-foreground">
-            {icon}
-          </span>
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <p className="text-[15px] font-semibold tracking-tight text-foreground">{title}</p>
-          <p className="text-[13px] leading-[1.5] text-muted-foreground">{hint}</p>
-        </div>
+    <div className="grid place-items-center py-28 text-center">
+      <div className="flex flex-col items-center gap-3">
+        <span className="text-muted-foreground">{icon}</span>
+        <p className="text-[14px] font-medium text-foreground">{title}</p>
+        <p className="text-[13px] text-muted-foreground">{hint}</p>
       </div>
     </div>
   );

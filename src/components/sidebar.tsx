@@ -92,10 +92,10 @@ export function Sidebar({
 
   return (
     <aside className="hidden w-60 shrink-0 flex-col overflow-hidden rounded-2xl bg-sidebar md:flex">
-      <div className="flex items-center gap-3 px-5 pb-8 pt-6">
+      <div className="group/brand flex items-center gap-3 px-5 pb-8 pt-6">
         <span
           aria-hidden
-          className="relative grid h-8 w-8 place-items-center rounded-xl bg-foreground text-background"
+          className="relative grid h-8 w-8 place-items-center rounded-xl bg-foreground text-background transition-transform duration-[220ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover/brand:rotate-[8deg] group-hover/brand:scale-[1.04]"
         >
           <span className="h-2.5 w-2.5 rounded-full bg-background" />
           <span className="absolute right-1 top-1 h-1 w-1 rounded-full bg-background/70" />
@@ -105,8 +105,11 @@ export function Sidebar({
 
       <ProximityNav rows={topRows} />
 
-      <div className="px-5 pb-3 pt-8 text-[12px] font-medium tracking-[0.02em] text-muted-foreground">
-        tags
+      <div className="flex items-center gap-2 px-5 pb-3 pt-8">
+        <span className="text-[12px] font-medium text-muted-foreground">
+          categories
+        </span>
+        <span className="h-px flex-1 bg-border" />
       </div>
 
       <div className="scrollbar-custom flex-1 overflow-y-auto pb-5">

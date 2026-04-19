@@ -141,6 +141,15 @@ export function RequestModal({ open, onClose, anchorRef }: RequestModalProps) {
   return (
     <AnimatePresence>
       {open && pos && (
+        <>
+          <motion.div
+            key="scrim"
+            className="fixed inset-0 z-[60] bg-background/60 backdrop-blur-[2px]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22 }}
+          />
         <motion.div
           key="panel"
           ref={panelRef}
@@ -264,6 +273,7 @@ export function RequestModal({ open, onClose, anchorRef }: RequestModalProps) {
             </div>
           </div>
         </motion.div>
+        </>
       )}
     </AnimatePresence>
   );

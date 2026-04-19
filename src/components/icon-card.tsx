@@ -90,7 +90,7 @@ export function IconCard({
     <motion.div
       whileHover={{ y: -2 }}
       transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-colors duration-[180ms] hover:border-foreground/30"
+      className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-[box-shadow,border-color] duration-[180ms] hover:border-foreground/30 hover:shadow-[0_12px_24px_-12px_rgba(0,0,0,0.45),_0_4px_8px_-4px_rgba(0,0,0,0.25)]"
     >
       <button
         type="button"
