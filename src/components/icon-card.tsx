@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { Check, Copy, Download, Heart } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Check, Copy, Heart, ShoppingBag } from "lucide-react";
 import { Tooltip } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { useCart } from "@/lib/cart-context";
 
 interface IconCardProps {
   name: string;
@@ -34,6 +35,9 @@ export function IconCard({
 }: IconCardProps) {
   const url = `${basePath}/icons/${file}`;
   const [copied, setCopied] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+  const { add, has } = useCart();
+  const inCart = has(name);
 
   useEffect(() => {
     if (!copied) return;
@@ -52,25 +56,22 @@ export function IconCard({
     }
   }, [url]);
 
-  const handleDownload = useCallback(async () => {
-    const svg = await fetchSvg(url);
-    if (!svg) return;
-    const blob = new Blob([svg], { type: "image/svg+xml" });
-    const href = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = href;
-    a.download = file;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(href);
-  }, [url, file]);
+  const handleAddToCart = useCallback(() => {
+    if (inCart) return;
+    const el = imgRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    add(
+      { name, file, url },
+      { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2, size: rect.width }
+    );
+  }, [add, name, file, url, inCart]);
 
   return (
     <div
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-xl bg-card transition-colors",
-        "ring-1 ring-border/50 hover:ring-foreground/20"
+        "group relative flex flex-col overflow-hidden rounded-xl bg-card transition-all",
+        "hover:-translate-y-0.5 hover:shadow-[0_8px_24px_-12px_rgba(0,0,0,0.25)] dark:hover:shadow-[0_8px_24px_-12px_rgba(0,0,0,0.8)]"
       )}
     >
       <button
@@ -94,11 +95,12 @@ export function IconCard({
       <div className="flex aspect-[5/4] items-center justify-center px-6 py-8">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
+          ref={imgRef}
           src={url}
           alt={name}
           width={64}
           height={64}
-          className="h-14 w-14 transition-transform duration-200 group-hover:scale-[1.04]"
+          className="h-14 w-14 invert transition-transform duration-200 group-hover:scale-[1.06] dark:invert-0"
           loading="lazy"
         />
       </div>
@@ -108,23 +110,33 @@ export function IconCard({
         <span className="text-[11px] leading-none text-muted-foreground">{category}</span>
       </div>
 
-      <div className="mt-auto grid grid-cols-2 border-t border-border/60">
-        <button
-          type="button"
-          onClick={handleCopy}
-          className="inline-flex h-9 items-center justify-center gap-1.5 text-[12px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-        >
-          {copied ? <Check size={13} strokeWidth={2} /> : <Copy size={13} strokeWidth={1.75} />}
-          <span>{copied ? "Copied" : "Copy"}</span>
-        </button>
-        <button
-          type="button"
-          onClick={handleDownload}
-          className="inline-flex h-9 items-center justify-center gap-1.5 border-l border-border/60 text-[12px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-        >
-          <Download size={13} strokeWidth={1.75} />
-          <span>SVG</span>
-        </button>
+      <div className="mt-auto grid grid-cols-2 gap-1 p-1.5">
+        <Tooltip content={copied ? "Copied SVG" : "Copy SVG"}>
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="inline-flex h-8 items-center justify-center gap-1.5 rounded-md text-[12px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            {copied ? <Check size={13} strokeWidth={2} /> : <Copy size={13} strokeWidth={1.75} />}
+            <span>{copied ? "Copied" : "Copy"}</span>
+          </button>
+        </Tooltip>
+        <Tooltip content={inCart ? "In cart" : "Add to cart"}>
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            disabled={inCart}
+            className={cn(
+              "inline-flex h-8 items-center justify-center gap-1.5 rounded-md text-[12px] transition-colors",
+              inCart
+                ? "bg-muted text-foreground cursor-default"
+                : "text-muted-foreground hover:bg-foreground hover:text-background"
+            )}
+          >
+            {inCart ? <Check size={13} strokeWidth={2} /> : <ShoppingBag size={13} strokeWidth={1.75} />}
+            <span>{inCart ? "Added" : "Add"}</span>
+          </button>
+        </Tooltip>
       </div>
     </div>
   );

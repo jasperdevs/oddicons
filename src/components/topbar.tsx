@@ -1,73 +1,81 @@
 "use client";
 
-import { Heart, Moon, Sun } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import { Moon, ShoppingBag, Sun } from "lucide-react";
 import { Tooltip } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
+import { useCart } from "@/lib/cart-context";
 
 interface TopbarProps {
   theme: "dark" | "light";
   onToggleTheme: () => void;
-  showingFavorites: boolean;
-  onToggleFavorites: () => void;
-  favoriteCount: number;
 }
 
-export function Topbar({
-  theme,
-  onToggleTheme,
-  showingFavorites,
-  onToggleFavorites,
-  favoriteCount,
-}: TopbarProps) {
+export function Topbar({ theme, onToggleTheme }: TopbarProps) {
+  const { items, setCartAnchor, setOpen, bumpCount } = useCart();
+  const cartRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    setCartAnchor(cartRef.current);
+    return () => setCartAnchor(null);
+  }, [setCartAnchor]);
+
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur">
-      <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
+    <header className="sticky top-0 z-40 w-full bg-background">
+      <div className="mx-auto flex h-14 w-full max-w-[1400px] items-center justify-between px-4 sm:px-6">
         <a href="#" className="group inline-flex items-center gap-2">
           <span
             aria-hidden
-            className="relative grid h-7 w-7 place-items-center rounded-md bg-foreground text-background"
+            className="relative grid h-8 w-8 place-items-center rounded-lg bg-foreground text-background"
           >
-            <span className="h-2 w-2 rounded-full bg-background" />
+            <span className="h-2.5 w-2.5 rounded-full bg-background" />
             <span className="absolute right-1 top-1 h-1 w-1 rounded-full bg-background/70" />
           </span>
-          <span className="text-[15px] font-semibold tracking-tight text-foreground">oddicons</span>
+          <span className="text-[16px] font-semibold tracking-tight text-foreground">oddicons</span>
           <span className="hidden rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground sm:inline">
             beta
           </span>
         </a>
 
-        <div className="flex items-center gap-1.5">
-          <Tooltip content={showingFavorites ? "Show all" : "Show favorites"}>
+        <div className="flex items-center gap-1">
+          <Tooltip content={theme === "dark" ? "Light mode" : "Dark mode"}>
             <button
               type="button"
-              onClick={onToggleFavorites}
-              aria-pressed={showingFavorites}
-              className={cn(
-                "inline-flex h-9 items-center gap-1.5 rounded-md border px-2.5 text-[13px] transition-colors",
-                showingFavorites
-                  ? "border-foreground/20 bg-foreground text-background"
-                  : "border-border bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
-              )}
+              onClick={onToggleTheme}
+              aria-label="Toggle theme"
+              className="grid h-9 w-9 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
-              <Heart
-                size={14}
-                strokeWidth={1.75}
-                className={showingFavorites ? "fill-background" : ""}
-              />
-              <span className="tabular-nums">{favoriteCount}</span>
+              {theme === "dark" ? <Sun size={15} strokeWidth={1.75} /> : <Moon size={15} strokeWidth={1.75} />}
             </button>
           </Tooltip>
 
-          <Tooltip content={theme === "dark" ? "Light mode" : "Dark mode"}>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={onToggleTheme}
-              aria-label="Toggle theme"
+          <Tooltip content={items.length > 0 ? "Open cart" : "Cart is empty"}>
+            <motion.button
+              ref={cartRef}
+              type="button"
+              onClick={() => items.length > 0 && setOpen(true)}
+              aria-label="Open cart"
+              key={bumpCount}
+              animate={
+                bumpCount > 0
+                  ? { scale: [1, 1.18, 0.96, 1], rotate: [0, -6, 4, 0] }
+                  : { scale: 1, rotate: 0 }
+              }
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              className="relative inline-flex h-9 items-center gap-1.5 rounded-md bg-foreground px-3 text-[13px] text-background transition-opacity hover:opacity-90"
             >
-              {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
-            </Button>
+              <ShoppingBag size={14} strokeWidth={1.75} />
+              <span className="tabular-nums">{items.length}</span>
+              {items.length > 0 && (
+                <motion.span
+                  key={`dot-${bumpCount}`}
+                  className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-background"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: [0, 1.4, 1] }}
+                  transition={{ duration: 0.4 }}
+                />
+              )}
+            </motion.button>
           </Tooltip>
         </div>
       </div>
