@@ -2,8 +2,8 @@
 
 import { useEffect, useRef } from "react";
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
-import { Menu, Moon, ShoppingBag, Sun } from "lucide-react";
 import { Tooltip } from "@/components/ui/tooltip";
+import { OddIcon } from "@/components/ui/odd-icon";
 import { SearchBar } from "@/components/search-bar";
 import { ProgressiveBlur } from "@/components/progressive-blur";
 import { SettingsPopover } from "@/components/settings-popover";
@@ -75,7 +75,7 @@ export function Topbar({
               aria-label="open menu"
               className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-muted text-foreground transition-colors duration-[180ms] hover:bg-foreground/5 md:hidden"
             >
-              <Menu size={18} strokeWidth={1.75} />
+              <OddIcon name="menu" size={20} />
             </button>
           </Tooltip>
         )}
@@ -109,7 +109,7 @@ export function Topbar({
                   transition={springs.moderate}
                   className="inline-flex"
                 >
-                  {theme === "dark" ? <Sun size={16} strokeWidth={1.75} /> : <Moon size={16} strokeWidth={1.75} />}
+                  {theme === "dark" ? <OddIcon name="sun" size={20} /> : <OddIcon name="moon" size={20} />}
                 </motion.span>
               </AnimatePresence>
             </button>
@@ -127,7 +127,7 @@ export function Topbar({
               aria-label="open cart"
               className="flex h-11 items-center gap-2 rounded-r-xl px-4 text-[14px] font-medium text-foreground transition-colors duration-[180ms] hover:bg-foreground/5"
             >
-              <ShoppingBag size={16} strokeWidth={1.75} />
+              <OddIcon name="cart" size={20} />
               <span
                 className={cn(
                   "tabular-nums transition-colors duration-[180ms]",

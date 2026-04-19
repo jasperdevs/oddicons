@@ -2,9 +2,10 @@
 
 import { Popover, Select } from "@base-ui/react";
 import { motion } from "framer-motion";
-import { Check, ChevronDown, Settings } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip } from "@/components/ui/tooltip";
+import { OddIcon } from "@/components/ui/odd-icon";
 import { PopoverTail } from "@/components/ui/popover-tail";
 import { cn } from "@/lib/utils";
 import { fontWeights } from "@/lib/font-weight";
@@ -40,7 +41,7 @@ export function SettingsPopover() {
                 transition={springs.moderate}
                 className="inline-flex"
               >
-                <Settings size={16} strokeWidth={1.75} />
+                <OddIcon name="settings" size={20} />
               </motion.span>
             </button>
           )}

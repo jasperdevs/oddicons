@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Search, X } from "lucide-react";
+import { X } from "lucide-react";
+import { OddIcon } from "@/components/ui/odd-icon";
 import { cn } from "@/lib/utils";
 
 interface SearchBarProps {
@@ -42,7 +43,7 @@ export function SearchBar({ value, onChange, total }: SearchBarProps) {
         "focus-within:ring-1 focus-within:ring-border"
       )}
     >
-      <Search size={16} strokeWidth={1.75} className="shrink-0 text-muted-foreground" />
+      <OddIcon name="search" size={20} />
       <input
         ref={inputRef}
         type="text"

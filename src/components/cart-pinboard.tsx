@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, Copy, Download, ShoppingBag, Trash2, X } from "lucide-react";
+import { Check, Copy, Download, Trash2, X } from "lucide-react";
+import { OddIcon } from "@/components/ui/odd-icon";
 import { Button } from "@/components/ui/button";
 import { PopoverTail } from "@/components/ui/popover-tail";
 import { useCart } from "@/lib/cart-context";
@@ -191,7 +192,7 @@ export function CartPinboard() {
               >
                 {items.length === 0 ? (
                   <div className="flex min-h-[200px] flex-col items-center justify-center gap-3 px-6 text-center">
-                    <ShoppingBag size={20} strokeWidth={1.75} className="text-muted-foreground" />
+                    <OddIcon name="cart" size={44} />
                     <p className="text-[14px] font-medium text-foreground">cart is empty</p>
                     <p className="text-[12px] text-muted-foreground">tap any icon to add it</p>
                   </div>

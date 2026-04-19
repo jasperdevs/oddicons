@@ -1,6 +1,7 @@
 "use client";
 
-import { Check, ScrollText, Sparkles } from "lucide-react";
+import { Check } from "lucide-react";
+import { OddIcon } from "@/components/ui/odd-icon";
 import { RequestForm } from "@/components/request-form";
 
 const LICENSE_POINTS = [
@@ -25,8 +26,8 @@ export function UsageContent() {
 
       <section className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-6">
         <div className="flex items-start gap-3">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-foreground text-background">
-            <ScrollText size={16} strokeWidth={1.75} />
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-sidebar">
+            <OddIcon name="license" size={22} />
           </span>
           <div className="flex flex-col gap-1">
             <span className="text-[11.5px] font-semibold tracking-tight text-muted-foreground">
@@ -58,8 +59,8 @@ export function UsageContent() {
 
       <section className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-6">
         <div className="flex items-start gap-3">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-foreground text-background">
-            <Sparkles size={16} strokeWidth={1.75} />
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-sidebar">
+            <OddIcon name="sparkles" size={22} />
           </span>
           <div className="flex flex-col gap-1">
             <span className="text-[11.5px] font-semibold tracking-tight text-muted-foreground">

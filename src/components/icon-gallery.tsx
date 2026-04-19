@@ -4,6 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Select } from "@base-ui/react";
 import icons from "@/data/icons.json";
+import { OddIcon } from "@/components/ui/odd-icon";
 import { useFavorites } from "@/hooks/use-favorites";
 import { useTheme } from "@/hooks/use-theme";
 import { CartProvider, useCart } from "@/lib/cart-context";
@@ -27,9 +28,7 @@ import {
   ArrowUpAZ,
   ArrowUpDown,
   Check,
-  Heart,
   Plus,
-  SearchX,
   Send,
   Trash2,
 } from "lucide-react";
@@ -38,7 +37,6 @@ interface IconEntry {
   name: string;
   file: string;
   category: string;
-  tags: string[];
 }
 
 type SortMode = "default" | "asc" | "desc";
@@ -116,8 +114,7 @@ function GalleryInner({ view }: { view: View }) {
       if (!onlyFavorites && category !== ALL && i.category !== category) return false;
       if (!q) return true;
       if (i.name.toLowerCase().includes(q)) return true;
-      if (i.category.toLowerCase().includes(q)) return true;
-      return i.tags.some((t) => t.toLowerCase().includes(q));
+      return i.category.toLowerCase().includes(q);
     });
     if (sort === "asc") return [...matched].sort((a, b) => a.name.localeCompare(b.name));
     if (sort === "desc") return [...matched].sort((a, b) => b.name.localeCompare(a.name));
@@ -129,7 +126,7 @@ function GalleryInner({ view }: { view: View }) {
     if (onlyFavorites && favorites.length === 0) {
       return (
         <EmptyState
-          icon={<Heart size={22} strokeWidth={1.75} />}
+          icon={<OddIcon name="heart" size={48} />}
           title="no favorites yet"
           hint="tap the heart on any icon to save it here"
         />
@@ -137,7 +134,7 @@ function GalleryInner({ view }: { view: View }) {
     }
     return (
       <EmptyState
-        icon={<SearchX size={22} strokeWidth={1.75} />}
+        icon={<OddIcon name="search" size={48} />}
         title="nothing matches"
         hint="try a different word or clear the filter"
       />

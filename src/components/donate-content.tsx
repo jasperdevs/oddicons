@@ -1,6 +1,7 @@
 "use client";
 
-import { Coffee, ExternalLink, Heart, Sparkles } from "lucide-react";
+import { ExternalLink } from "lucide-react";
+import { OddIcon } from "@/components/ui/odd-icon";
 import { KOFI_COLOR, KofiLogo } from "@/components/logos/kofi";
 import { PAYPAL_COLOR, PaypalLogo } from "@/components/logos/paypal";
 
@@ -24,9 +25,9 @@ const OPTIONS = [
 ];
 
 const FUNDS = [
-  { icon: Sparkles, label: "more icons", hint: "new weekly drops" },
-  { icon: Coffee, label: "more hours", hint: "actual espresso-powered" },
-  { icon: Heart, label: "keeps it free", hint: "no paywall, ever" },
+  { icon: "sparkles", label: "more icons", hint: "new weekly drops" },
+  { icon: "bolt", label: "more hours", hint: "actual espresso-powered" },
+  { icon: "heart", label: "keeps it free", hint: "no paywall, ever" },
 ];
 
 export function DonateContent() {
@@ -89,8 +90,8 @@ export function DonateContent() {
               key={f.label}
               className="flex items-start gap-3 rounded-xl border border-border bg-sidebar/40 p-3"
             >
-              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-foreground text-background">
-                <f.icon size={14} strokeWidth={1.75} />
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-sidebar">
+                <OddIcon name={f.icon} size={22} />
               </span>
               <div className="flex min-w-0 flex-col gap-0.5">
                 <span className="text-[13px] font-semibold tracking-tight text-foreground">

@@ -2,8 +2,9 @@
 
 import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { BookOpen, Heart, HeartHandshake, Home } from "lucide-react";
+import { Heart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { OddIcon } from "@/components/ui/odd-icon";
 import { useProximityHover } from "@/hooks/use-proximity-hover";
 import { cn } from "@/lib/utils";
 
@@ -49,7 +50,7 @@ export function SidebarBody(props: SidebarProps) {
     {
       id: "home",
       label: "home",
-      icon: <Home size={16} strokeWidth={homeActive ? 2 : 1.5} />,
+      icon: <OddIcon name="house" size={18} />,
       count: props.totalCount,
       active: homeActive,
       onSelect: () => {
@@ -99,20 +100,14 @@ export function SidebarBody(props: SidebarProps) {
     {
       id: "usage",
       label: "usage",
-      icon: <BookOpen size={16} strokeWidth={props.usageActive ? 2 : 1.5} />,
+      icon: <OddIcon name="license" size={18} />,
       active: props.usageActive,
       onSelect: props.onOpenUsage,
     },
     {
       id: "donate",
       label: "donate",
-      icon: (
-        <HeartHandshake
-          size={16}
-          strokeWidth={props.donateActive ? 2 : 1.5}
-          className={props.donateActive ? "fill-rose-500/20 text-rose-500" : ""}
-        />
-      ),
+      icon: <OddIcon name="gift" size={18} />,
       active: props.donateActive,
       onSelect: props.onOpenDonate,
     },
@@ -243,7 +238,7 @@ function ProximityNav({ rows }: { rows: Row[] }) {
             )}
           >
             <span className="flex items-center gap-3">
-              <span className="grid h-4 w-4 place-items-center">{row.icon}</span>
+              <span className="grid h-[18px] w-[18px] place-items-center">{row.icon}</span>
               <span>{row.label}</span>
             </span>
             {row.count !== undefined && (
