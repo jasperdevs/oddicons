@@ -12,7 +12,7 @@ function deterministicRotation(seed: string): number {
   for (let i = 0; i < seed.length; i++) {
     h = (h * 31 + seed.charCodeAt(i)) | 0;
   }
-  const n = ((h % 1000) / 1000 - 0.5) * 10;
+  const n = ((h % 1000) / 1000 - 0.5) * 6;
   return Number(n.toFixed(2));
 }
 
@@ -68,7 +68,7 @@ export function CartPinboard() {
         <>
           <motion.div
             key="scrim"
-            className="fixed inset-0 z-50 bg-background/80"
+            className="fixed inset-0 z-50 bg-background/60 backdrop-blur-[2px]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -101,15 +101,24 @@ export function CartPinboard() {
             }}
           >
             <div className="relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[0_32px_64px_-16px_rgba(0,0,0,0.7),_0_12px_24px_-8px_rgba(0,0,0,0.4)]">
-              <div className="flex items-center justify-between px-4 pb-3 pt-4">
-                <div>
-                  <h2 className="text-[16px] font-semibold tracking-tight text-foreground">
-                    cart
-                  </h2>
+              <div className="flex items-start justify-between gap-3 px-5 pb-3 pt-4">
+                <div className="flex flex-col gap-0.5">
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-[16px] font-semibold tracking-tight text-foreground">
+                      cart
+                    </h2>
+                    {items.length > 0 && (
+                      <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-foreground px-1.5 text-[11px] font-semibold tabular-nums text-background">
+                        {items.length}
+                      </span>
+                    )}
+                  </div>
                   <p className="text-[12px] text-muted-foreground">
                     {items.length === 0
-                      ? "nothing added yet"
-                      : `${items.length} icon${items.length === 1 ? "" : "s"} · exports as png`}
+                      ? "tap the cart icon on any tile to add it"
+                      : items.length === 1
+                        ? "exports as a 512px png"
+                        : "exports as a zipped set of 512px pngs"}
                   </p>
                 </div>
                 <Button
@@ -122,23 +131,25 @@ export function CartPinboard() {
                 </Button>
               </div>
 
-              <div className="scrollbar-custom max-h-[52vh] overflow-y-auto px-4 pb-3">
+              <div className="scrollbar-custom max-h-[52vh] overflow-y-auto px-5 pb-4">
                 {items.length === 0 ? (
-                  <div className="flex min-h-[200px] flex-col items-center justify-center gap-3 px-6 text-center">
-                    <span className="grid h-11 w-11 place-items-center rounded-full bg-muted text-muted-foreground">
+                  <div className="flex min-h-[220px] flex-col items-center justify-center gap-3 px-6 text-center">
+                    <span className="grid h-12 w-12 place-items-center rounded-2xl border border-border bg-sidebar text-muted-foreground">
                       <ShoppingBag size={18} strokeWidth={1.75} />
                     </span>
                     <div className="flex flex-col gap-1">
                       <p className="text-[14px] font-medium text-foreground">
                         cart is empty
                       </p>
-                      <p className="text-[12px] text-muted-foreground">
-                        tap the cart on any icon
+                      <p className="text-[12px] leading-[1.5] text-muted-foreground">
+                        add icons one at a time, or hit
+                        <br />
+                        <span className="font-medium text-foreground">add all</span> at the bottom of the grid
                       </p>
                     </div>
                   </div>
                 ) : (
-                  <ul className="grid grid-cols-3 gap-3 sm:grid-cols-4">
+                  <ul className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
                     <AnimatePresence mode="popLayout">
                       {items.map((item, i) => {
                         const rot = rotations[item.name] ?? 0;
@@ -148,9 +159,9 @@ export function CartPinboard() {
                             layout
                             initial={{
                               opacity: 0,
-                              scale: 0.3,
-                              rotate: rot - 24,
-                              y: -20,
+                              scale: 0.4,
+                              rotate: rot - 18,
+                              y: -16,
                             }}
                             animate={{
                               opacity: 1,
@@ -159,21 +170,21 @@ export function CartPinboard() {
                               y: 0,
                               transition: {
                                 type: "spring",
-                                stiffness: 320,
-                                damping: 20,
-                                mass: 0.7,
-                                delay: 0.1 + i * 0.03,
+                                stiffness: 360,
+                                damping: 22,
+                                mass: 0.6,
+                                delay: 0.06 + i * 0.02,
                               },
                             }}
                             exit={{
                               opacity: 0,
                               scale: 0.4,
-                              rotate: rot + 30,
-                              y: 40,
-                              transition: { duration: 0.25, ease: [0.4, 0, 1, 1] },
+                              rotate: rot + 24,
+                              y: 30,
+                              transition: { duration: 0.22, ease: [0.4, 0, 1, 1] },
                             }}
-                            whileHover={{ rotate: 0, scale: 1.05, y: -2 }}
-                            className="group relative aspect-square overflow-hidden rounded-xl border border-border bg-card p-3"
+                            whileHover={{ rotate: 0, scale: 1.06, y: -3 }}
+                            className="group relative aspect-square overflow-hidden rounded-xl border border-border bg-sidebar p-2.5 transition-colors duration-[180ms] hover:border-foreground/30"
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
@@ -181,11 +192,17 @@ export function CartPinboard() {
                               alt={item.name}
                               className="h-full w-full invert transition-transform duration-200 group-hover:scale-105 dark:invert-0"
                             />
+                            <span className="pointer-events-none absolute inset-x-0 bottom-0 truncate bg-gradient-to-t from-sidebar via-sidebar/80 to-transparent px-2 pb-1 pt-4 text-center text-[10px] font-medium text-foreground opacity-0 transition-opacity duration-[180ms] group-hover:opacity-100">
+                              {item.name.toLowerCase()}
+                            </span>
                             <button
                               type="button"
-                              onClick={() => remove(item.name)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                remove(item.name);
+                              }}
                               aria-label={`remove ${item.name}`}
-                              className="absolute right-1 top-1 grid h-5 w-5 place-items-center rounded-full text-muted-foreground opacity-0 transition-opacity duration-[180ms] hover:bg-muted hover:text-foreground group-hover:opacity-100"
+                              className="absolute right-1 top-1 grid h-5 w-5 place-items-center rounded-full bg-card/90 text-muted-foreground opacity-0 shadow transition-all duration-[180ms] hover:bg-foreground hover:text-background group-hover:opacity-100"
                             >
                               <X size={11} strokeWidth={2} />
                             </button>
@@ -197,9 +214,9 @@ export function CartPinboard() {
                 )}
               </div>
 
-              <div className="flex items-center gap-3 border-t border-border px-4 py-3">
+              <div className="flex items-center gap-2 border-t border-border bg-sidebar/40 px-5 py-3">
                 <Button
-                  variant="tertiary"
+                  variant="ghost"
                   size="md"
                   leadingIcon={Trash2}
                   onClick={clear}
@@ -217,8 +234,10 @@ export function CartPinboard() {
                   className="ml-auto flex-1"
                 >
                   {items.length === 0
-                    ? "download png"
-                    : `download ${items.length} png${items.length === 1 ? "" : "s"}`}
+                    ? "download"
+                    : items.length === 1
+                      ? "download png"
+                      : `download zip (${items.length})`}
                 </Button>
               </div>
             </div>

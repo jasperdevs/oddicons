@@ -14,6 +14,7 @@ interface TopbarProps {
   query: string;
   onQueryChange: (q: string) => void;
   total: number;
+  suggestions: string[];
 }
 
 export function Topbar({
@@ -22,6 +23,7 @@ export function Topbar({
   query,
   onQueryChange,
   total,
+  suggestions,
 }: TopbarProps) {
   const { items, setCartAnchor, setOpen, bumpCount } = useCart();
   const cartRef = useRef<HTMLButtonElement>(null);
@@ -59,7 +61,7 @@ export function Topbar({
 
       <div className="pointer-events-auto relative mx-auto flex w-full items-center gap-4 py-5">
         <div className="min-w-0 flex-1">
-          <SearchBar value={query} onChange={onQueryChange} total={total} />
+          <SearchBar value={query} onChange={onQueryChange} total={total} suggestions={suggestions} />
         </div>
 
         <div className="flex h-11 items-center rounded-xl bg-muted">

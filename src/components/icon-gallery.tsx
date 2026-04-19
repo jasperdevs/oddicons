@@ -73,6 +73,19 @@ function GalleryInner() {
     return c;
   }, [all]);
 
+  const tagSuggestions = useMemo(() => {
+    const counts: Record<string, number> = {};
+    all.forEach((i) => {
+      i.tags.forEach((t) => {
+        const key = t.toLowerCase();
+        counts[key] = (counts[key] ?? 0) + 1;
+      });
+    });
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .map(([t]) => t);
+  }, [all]);
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     const matched = all.filter((i) => {
@@ -149,6 +162,7 @@ function GalleryInner() {
           query={query}
           onQueryChange={setQuery}
           total={all.length}
+          suggestions={tagSuggestions}
         />
 
         {!emptyState && (
@@ -204,7 +218,7 @@ function BottomBar({
       <div className="pointer-events-auto relative flex w-full items-center justify-center gap-2 px-6 pb-6 pt-10 sm:px-8">
         <Button
           ref={requestBtnRef}
-          variant="secondary"
+          variant="tertiary"
           size="lg"
           leadingIcon={Send}
           onClick={onOpenRequest}
