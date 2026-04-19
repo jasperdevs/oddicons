@@ -161,17 +161,12 @@ export function IconCard({
         />
       </div>
 
-      <div className="relative flex items-center justify-center px-4 py-5">
-        <span className="text-[14px] font-semibold tracking-tight text-foreground transition-opacity duration-[180ms] group-hover:opacity-0">
+      <div className="flex flex-col items-center justify-center gap-1 px-4 py-5">
+        <span className="text-[14px] font-semibold tracking-tight text-foreground">
           {name}
         </span>
-        <span className="absolute inset-0 flex flex-col items-center justify-center gap-1 px-4 opacity-0 transition-opacity duration-[180ms] group-hover:opacity-100">
-          <span className="text-[14px] font-semibold tracking-tight text-foreground">
-            {name}
-          </span>
-          <span className="text-[12px] font-medium leading-[1.4] text-muted-foreground">
-            {category}
-          </span>
+        <span className="text-[12px] font-medium leading-[1.4] text-muted-foreground">
+          {category}
         </span>
       </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { Moon, ShoppingBag, Sun } from "lucide-react";
 import { Tooltip } from "@/components/ui/tooltip";
@@ -24,23 +24,12 @@ export function Topbar({
 }: TopbarProps) {
   const { items, setCartAnchor, setOpen, bumpCount } = useCart();
   const cartRef = useRef<HTMLButtonElement>(null);
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const [scrolled, setScrolled] = useState(false);
   const bumpControls = useAnimation();
 
   useEffect(() => {
     setCartAnchor(cartRef.current);
     return () => setCartAnchor(null);
   }, [setCartAnchor]);
-
-  useEffect(() => {
-    const scroller = wrapperRef.current?.parentElement;
-    if (!scroller) return;
-    const onScroll = () => setScrolled(scroller.scrollTop > 6);
-    onScroll();
-    scroller.addEventListener("scroll", onScroll, { passive: true });
-    return () => scroller.removeEventListener("scroll", onScroll);
-  }, []);
 
   useEffect(() => {
     if (bumpCount === 0) return;
@@ -55,20 +44,18 @@ export function Topbar({
   };
 
   return (
-    <div ref={wrapperRef} className="sticky top-0 z-30 px-6 sm:px-8">
-      <motion.div
+    <div className="pointer-events-none absolute inset-x-0 top-0 z-30 px-6 sm:px-8">
+      <div
         aria-hidden
-        animate={{ opacity: scrolled ? 1 : 0 }}
-        transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
-        className="pointer-events-none absolute inset-x-0 top-0"
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10"
         style={{
-          height: "calc(100% + 2rem)",
+          height: "calc(100% + 1.5rem)",
           background:
-            "linear-gradient(to bottom, var(--sidebar) 0%, var(--sidebar) 62%, transparent 100%)",
+            "linear-gradient(to bottom, var(--sidebar) 0%, transparent 100%)",
         }}
       />
 
-      <div className="relative mx-auto flex w-full items-center gap-4 py-5">
+      <div className="pointer-events-auto relative mx-auto flex w-full items-center gap-4 py-5">
         <div className="min-w-0 flex-1">
           <SearchBar value={query} onChange={onQueryChange} total={total} />
         </div>

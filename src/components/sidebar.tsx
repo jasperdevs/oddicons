@@ -92,7 +92,7 @@ export function Sidebar({
 
   return (
     <aside className="hidden w-60 shrink-0 flex-col overflow-hidden rounded-2xl bg-sidebar md:flex">
-      <div className="flex items-center gap-3 px-4 pb-6 pt-6">
+      <div className="flex items-center gap-3 px-5 pb-8 pt-6">
         <span
           aria-hidden
           className="relative grid h-8 w-8 place-items-center rounded-xl bg-foreground text-background"
@@ -105,11 +105,11 @@ export function Sidebar({
 
       <ProximityNav rows={topRows} />
 
-      <div className="px-4 pb-2 pt-6 text-[12px] font-medium tracking-[0.02em] text-muted-foreground">
+      <div className="px-5 pb-3 pt-8 text-[12px] font-medium tracking-[0.02em] text-muted-foreground">
         tags
       </div>
 
-      <div className="scrollbar-custom flex-1 overflow-y-auto pb-4">
+      <div className="scrollbar-custom flex-1 overflow-y-auto pb-5">
         <ProximityNav rows={tagRows} />
       </div>
     </aside>

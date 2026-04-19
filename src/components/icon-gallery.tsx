@@ -121,36 +121,32 @@ function GalleryInner() {
 
       <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl bg-sidebar">
         <div className="scrollbar-custom min-w-0 flex-1 overflow-y-auto">
-          <Topbar
-            theme={theme}
-            onToggleTheme={toggleTheme}
-            query={query}
-            onQueryChange={setQuery}
-            total={all.length}
-          />
-
-          <main className="px-6 pb-24 sm:px-8">
-            <div className="w-full">
-              <section className="mt-6">
-                {emptyState ?? (
-                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-                    {filtered.map((icon) => (
-                      <IconCard
-                        key={icon.name}
-                        name={icon.name}
-                        file={icon.file}
-                        category={icon.category}
-                        basePath={basePath}
-                        isFavorite={isFavorite(icon.name)}
-                        onToggleFavorite={toggleFavorite}
-                      />
-                    ))}
-                  </div>
-                )}
-              </section>
-            </div>
+          <main className="px-6 pt-20 pb-24 sm:px-8">
+            {emptyState ?? (
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+                {filtered.map((icon) => (
+                  <IconCard
+                    key={icon.name}
+                    name={icon.name}
+                    file={icon.file}
+                    category={icon.category}
+                    basePath={basePath}
+                    isFavorite={isFavorite(icon.name)}
+                    onToggleFavorite={toggleFavorite}
+                  />
+                ))}
+              </div>
+            )}
           </main>
         </div>
+
+        <Topbar
+          theme={theme}
+          onToggleTheme={toggleTheme}
+          query={query}
+          onQueryChange={setQuery}
+          total={all.length}
+        />
 
         {!emptyState && (
           <BottomBar
@@ -183,10 +179,11 @@ function BottomBar({
     <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10">
       <div
         aria-hidden
-        className="absolute inset-0"
+        className="absolute inset-x-0 bottom-0"
         style={{
+          height: "calc(100% + 1.5rem)",
           background:
-            "linear-gradient(to top, var(--sidebar) 0%, var(--sidebar) 55%, transparent 100%)",
+            "linear-gradient(to top, var(--sidebar) 0%, transparent 100%)",
         }}
       />
       <div className="pointer-events-auto relative flex w-full items-center justify-center gap-3 px-6 pb-6 pt-10 sm:px-8">
