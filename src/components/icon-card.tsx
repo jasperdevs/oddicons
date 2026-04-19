@@ -88,9 +88,9 @@ export function IconCard({
 
   return (
     <motion.div
-      whileHover={{ y: -3 }}
+      whileHover={{ y: -2 }}
       transition={{ type: "spring", stiffness: 520, damping: 28, mass: 0.6 }}
-      className="group relative flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-colors duration-150 hover:border-foreground/30"
+      className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-colors duration-150 hover:border-foreground/30"
     >
       <button
         type="button"
@@ -98,7 +98,7 @@ export function IconCard({
         aria-label={isFavorite ? "unfavorite" : "favorite"}
         aria-pressed={isFavorite}
         className={cn(
-          "absolute right-2 top-2 z-30 grid h-8 w-8 place-items-center rounded-full transition-all",
+          "absolute right-3 top-3 z-30 grid h-8 w-8 place-items-center rounded-full transition-all",
           "text-muted-foreground opacity-0 group-hover:opacity-100 hover:bg-accent hover:text-foreground",
           isFavorite && "opacity-100 text-foreground"
         )}
@@ -148,102 +148,108 @@ export function IconCard({
         </div>
       </button>
 
-      <div className="flex aspect-[5/4] items-center justify-center p-6">
+      <div className="grid aspect-square place-items-center p-8">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           ref={imgRef}
           src={url}
           alt={name}
-          width={80}
-          height={80}
-          className="h-20 w-20 invert transition-transform duration-150 group-hover:scale-[1.08] dark:invert-0"
+          width={112}
+          height={112}
+          className="h-28 w-28 invert transition-transform duration-150 group-hover:scale-[1.06] dark:invert-0"
           loading="lazy"
         />
       </div>
 
-      <div className="flex flex-col items-center gap-1 px-4 pb-4">
-        <span className="text-[14px] font-semibold tracking-tight text-foreground">{name}</span>
-        <span className="text-[14px] font-normal text-muted-foreground">{category}</span>
-      </div>
+      <div className="flex flex-col gap-4 p-4 pt-0">
+        <div className="flex flex-col gap-1">
+          <span className="text-[14px] font-semibold tracking-tight text-foreground">
+            {name}
+          </span>
+          <span className="text-[12px] font-normal leading-[1.4] text-muted-foreground">
+            {category}
+          </span>
+        </div>
 
-      <div className="mt-auto grid grid-cols-2 border-t border-border">
-        <button
-          type="button"
-          onClick={handleCopy}
-          className="relative inline-flex h-10 items-center justify-center gap-2 text-[14px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-        >
-          <AnimatePresence mode="wait" initial={false}>
-            {copied ? (
-              <motion.span
-                key="copied"
-                className="flex items-center gap-2"
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                transition={{ duration: 0.15 }}
-              >
-                <Check size={14} strokeWidth={2} />
-                <span>copied</span>
-              </motion.span>
-            ) : (
-              <motion.span
-                key="copy"
-                className="flex items-center gap-2"
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                transition={{ duration: 0.15 }}
-              >
-                <Copy size={14} strokeWidth={1.75} />
-                <span>copy</span>
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </button>
-        <button
-          type="button"
-          onClick={handleAddToCart}
-          className={cn(
-            "group/cart relative inline-flex h-10 items-center justify-center gap-2 border-l border-border text-[14px] transition-colors",
-            inCart
-              ? "bg-accent text-foreground hover:bg-accent"
-              : "text-muted-foreground hover:bg-accent hover:text-foreground"
-          )}
-        >
-          <AnimatePresence mode="wait" initial={false}>
-            {inCart ? (
-              <motion.span
-                key="added"
-                className="flex items-center gap-2"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.18 }}
-              >
-                <span className="flex items-center gap-2 group-hover/cart:hidden">
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="relative inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-muted text-[14px] font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              {copied ? (
+                <motion.span
+                  key="copied"
+                  className="flex items-center gap-2"
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.15 }}
+                >
                   <Check size={14} strokeWidth={2} />
-                  <span>added</span>
-                </span>
-                <span className="hidden items-center gap-2 group-hover/cart:flex">
-                  <X size={14} strokeWidth={2} />
-                  <span>remove</span>
-                </span>
-              </motion.span>
-            ) : (
-              <motion.span
-                key="add"
-                className="flex items-center gap-2"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.18 }}
-              >
-                <ShoppingBag size={14} strokeWidth={1.75} />
-                <span>add</span>
-              </motion.span>
+                  <span>copied</span>
+                </motion.span>
+              ) : (
+                <motion.span
+                  key="copy"
+                  className="flex items-center gap-2"
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  <Copy size={14} strokeWidth={1.75} />
+                  <span>copy</span>
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </button>
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            className={cn(
+              "group/cart relative inline-flex h-9 items-center justify-center gap-2 rounded-xl text-[14px] font-medium transition-colors",
+              inCart
+                ? "bg-foreground text-background hover:bg-foreground/90"
+                : "bg-muted text-muted-foreground hover:bg-accent hover:text-foreground"
             )}
-          </AnimatePresence>
-        </button>
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              {inCart ? (
+                <motion.span
+                  key="added"
+                  className="flex items-center gap-2"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.18 }}
+                >
+                  <span className="flex items-center gap-2 group-hover/cart:hidden">
+                    <Check size={14} strokeWidth={2} />
+                    <span>added</span>
+                  </span>
+                  <span className="hidden items-center gap-2 group-hover/cart:flex">
+                    <X size={14} strokeWidth={2} />
+                    <span>remove</span>
+                  </span>
+                </motion.span>
+              ) : (
+                <motion.span
+                  key="add"
+                  className="flex items-center gap-2"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.18 }}
+                >
+                  <ShoppingBag size={14} strokeWidth={1.75} />
+                  <span>add</span>
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </button>
+        </div>
       </div>
     </motion.div>
   );
