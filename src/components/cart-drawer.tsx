@@ -103,30 +103,26 @@ export function CartDrawer() {
                   }}
                 >
                   {items.map((item, i) => {
-                    const originX = origin?.x ?? window.innerWidth;
-                    const originY = origin?.y ?? 0;
                     return (
                       <motion.li
                         key={item.name}
                         variants={{
                           hidden: {
                             opacity: 0,
-                            scale: 0.2,
-                            rotate: -30 + (i % 5) * 18,
-                            x: originX - window.innerWidth + 320,
-                            y: originY - 200,
+                            scale: 0.3,
+                            rotate: -20 + (i % 5) * 10,
+                            y: -40,
                           },
                           visible: {
                             opacity: 1,
                             scale: 1,
                             rotate: 0,
-                            x: 0,
                             y: 0,
                             transition: {
                               type: "spring",
-                              stiffness: 260,
-                              damping: 22,
-                              mass: 0.8,
+                              stiffness: 280,
+                              damping: 20,
+                              mass: 0.7,
                             },
                           },
                         }}

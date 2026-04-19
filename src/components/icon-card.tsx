@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Check, Copy, Heart, ShoppingBag } from "lucide-react";
-import { Tooltip } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/lib/cart-context";
 
@@ -35,6 +35,7 @@ export function IconCard({
 }: IconCardProps) {
   const url = `${basePath}/icons/${file}`;
   const [copied, setCopied] = useState(false);
+  const [favPulse, setFavPulse] = useState(0);
   const imgRef = useRef<HTMLImageElement>(null);
   const { add, has } = useCart();
   const inCart = has(name);
@@ -67,16 +68,21 @@ export function IconCard({
     );
   }, [add, name, file, url, inCart]);
 
+  const handleFavorite = useCallback(() => {
+    onToggleFavorite(name);
+    setFavPulse((v) => v + 1);
+  }, [onToggleFavorite, name]);
+
   return (
     <div
       className={cn(
         "group relative flex flex-col overflow-hidden rounded-xl bg-card transition-all",
-        "hover:-translate-y-0.5 hover:shadow-[0_8px_24px_-12px_rgba(0,0,0,0.25)] dark:hover:shadow-[0_8px_24px_-12px_rgba(0,0,0,0.8)]"
+        "hover:-translate-y-0.5 hover:shadow-[0_8px_24px_-12px_rgba(0,0,0,0.25)] dark:hover:shadow-[0_8px_24px_-12px_rgba(0,0,0,0.9)]"
       )}
     >
       <button
         type="button"
-        onClick={() => onToggleFavorite(name)}
+        onClick={handleFavorite}
         aria-label={isFavorite ? "Unfavorite" : "Favorite"}
         aria-pressed={isFavorite}
         className={cn(
@@ -85,11 +91,38 @@ export function IconCard({
           isFavorite && "opacity-100 text-foreground"
         )}
       >
-        <Heart
-          size={14}
-          strokeWidth={1.75}
-          className={isFavorite ? "fill-foreground" : ""}
-        />
+        <motion.span
+          key={favPulse}
+          initial={favPulse > 0 ? { scale: 0.6 } : false}
+          animate={
+            favPulse > 0
+              ? { scale: [0.6, 1.45, 0.9, 1.1, 1] }
+              : { scale: 1 }
+          }
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          className="relative inline-flex"
+        >
+          <Heart
+            size={14}
+            strokeWidth={1.75}
+            className={cn(
+              "transition-colors",
+              isFavorite ? "fill-foreground text-foreground" : ""
+            )}
+          />
+          <AnimatePresence>
+            {favPulse > 0 && isFavorite && (
+              <motion.span
+                key={`ring-${favPulse}`}
+                className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border border-foreground"
+                initial={{ scale: 0.4, opacity: 0.7 }}
+                animate={{ scale: 2.6, opacity: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              />
+            )}
+          </AnimatePresence>
+        </motion.span>
       </button>
 
       <div className="flex aspect-[5/4] items-center justify-center px-6 py-8">
@@ -110,33 +143,63 @@ export function IconCard({
         <span className="text-[11px] leading-none text-muted-foreground">{category}</span>
       </div>
 
-      <div className="mt-auto grid grid-cols-2 gap-1 p-1.5">
-        <Tooltip content={copied ? "Copied SVG" : "Copy SVG"}>
-          <button
-            type="button"
-            onClick={handleCopy}
-            className="inline-flex h-8 items-center justify-center gap-1.5 rounded-md text-[12px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          >
-            {copied ? <Check size={13} strokeWidth={2} /> : <Copy size={13} strokeWidth={1.75} />}
-            <span>{copied ? "Copied" : "Copy"}</span>
-          </button>
-        </Tooltip>
-        <Tooltip content={inCart ? "In cart" : "Add to cart"}>
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            disabled={inCart}
-            className={cn(
-              "inline-flex h-8 items-center justify-center gap-1.5 rounded-md text-[12px] transition-colors",
-              inCart
-                ? "bg-muted text-foreground cursor-default"
-                : "text-muted-foreground hover:bg-foreground hover:text-background"
+      <div className="mt-auto grid grid-cols-2">
+        <button
+          type="button"
+          onClick={handleCopy}
+          className="relative inline-flex h-10 items-center justify-center gap-1.5 border-t border-border/30 text-[12px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        >
+          <AnimatePresence mode="wait" initial={false}>
+            {copied ? (
+              <motion.span
+                key="copied"
+                className="flex items-center gap-1.5"
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.15 }}
+              >
+                <Check size={13} strokeWidth={2} />
+                <span>Copied</span>
+              </motion.span>
+            ) : (
+              <motion.span
+                key="copy"
+                className="flex items-center gap-1.5"
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.15 }}
+              >
+                <Copy size={13} strokeWidth={1.75} />
+                <span>Copy</span>
+              </motion.span>
             )}
-          >
-            {inCart ? <Check size={13} strokeWidth={2} /> : <ShoppingBag size={13} strokeWidth={1.75} />}
-            <span>{inCart ? "Added" : "Add"}</span>
-          </button>
-        </Tooltip>
+          </AnimatePresence>
+        </button>
+        <button
+          type="button"
+          onClick={handleAddToCart}
+          disabled={inCart}
+          className={cn(
+            "inline-flex h-10 items-center justify-center gap-1.5 border-l border-t border-border/30 text-[12px] transition-colors",
+            inCart
+              ? "cursor-default bg-muted text-foreground"
+              : "text-muted-foreground hover:bg-foreground hover:text-background"
+          )}
+        >
+          {inCart ? (
+            <>
+              <Check size={13} strokeWidth={2} />
+              <span>In cart</span>
+            </>
+          ) : (
+            <>
+              <ShoppingBag size={13} strokeWidth={1.75} />
+              <span>Add</span>
+            </>
+          )}
+        </button>
       </div>
     </div>
   );
