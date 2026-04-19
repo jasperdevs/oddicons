@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Check, ChevronDown, Settings } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip } from "@/components/ui/tooltip";
+import { PopoverTail } from "@/components/ui/popover-tail";
 import { cn } from "@/lib/utils";
 import { fontWeights } from "@/lib/font-weight";
 import { springs } from "@/lib/springs";
@@ -57,18 +58,14 @@ export function SettingsPopover() {
           <Popover.Popup
             className={cn(
               "relative w-[288px] rounded-2xl border border-border bg-card p-2 text-foreground",
-              "shadow-[0_32px_64px_-16px_rgba(0,0,0,0.7),_0_12px_24px_-8px_rgba(0,0,0,0.4)]",
+              "shadow-[0_10px_24px_-10px_rgba(0,0,0,0.45),_0_2px_6px_-2px_rgba(0,0,0,0.22)]",
               "origin-[var(--transform-origin)] outline-none",
               "transition-all duration-[180ms] ease-out",
               "data-[starting-style]:opacity-0 data-[starting-style]:scale-[0.97] data-[starting-style]:-translate-y-1",
               "data-[ending-style]:opacity-0 data-[ending-style]:scale-[0.97] data-[ending-style]:-translate-y-1"
             )}
           >
-            <div
-              aria-hidden
-              className="absolute h-3 w-3 rotate-45 border-l border-t border-border bg-card"
-              style={{ top: -6, right: 16 }}
-            />
+            <PopoverTail direction="up" style={{ top: -9, right: 18 }} />
             <Popover.Title className="px-2 pb-1.5 pt-1 text-[13px] font-semibold tracking-tight">
               settings
             </Popover.Title>
@@ -129,7 +126,7 @@ function SizeRow({
             <Select.Popup
               className={cn(
                 "max-h-[240px] min-w-[var(--anchor-width)] overflow-y-auto rounded-lg border border-border bg-card p-1 text-foreground",
-                "shadow-[0_24px_48px_-16px_rgba(0,0,0,0.6),_0_8px_16px_-6px_rgba(0,0,0,0.35)]",
+                "shadow-[0_8px_20px_-8px_rgba(0,0,0,0.4),_0_2px_4px_-2px_rgba(0,0,0,0.2)]",
                 "origin-[var(--transform-origin)] outline-none",
                 "transition-all duration-[150ms] ease-out",
                 "data-[starting-style]:opacity-0 data-[starting-style]:scale-[0.97]",

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { RequestForm } from "@/components/request-form";
+import { PopoverTail } from "@/components/ui/popover-tail";
 import { springs } from "@/lib/springs";
 
 interface RequestModalProps {
@@ -104,13 +105,12 @@ export function RequestModal({ open, onClose, anchorRef }: RequestModalProps) {
           }}
           className="fixed z-[61]"
         >
-          <div className="relative rounded-2xl border border-border bg-card p-5 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.7),_0_12px_24px_-8px_rgba(0,0,0,0.4)]">
-              <div
-                aria-hidden
-                className="absolute h-3 w-3 rotate-45 border-b border-r border-border bg-card"
+          <div className="relative rounded-2xl border border-border bg-card p-5 shadow-[0_10px_24px_-10px_rgba(0,0,0,0.45),_0_2px_6px_-2px_rgba(0,0,0,0.22)]">
+              <PopoverTail
+                direction="down"
                 style={{
-                  left: pos.tailX - 6,
-                  bottom: -6,
+                  left: pos.tailX - 11,
+                  bottom: -9,
                 }}
               />
               <RequestForm />

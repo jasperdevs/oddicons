@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, Copy, Download, ShoppingBag, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PopoverTail } from "@/components/ui/popover-tail";
 import { useCart } from "@/lib/cart-context";
 import { useSettings } from "@/lib/settings-context";
 import { cn } from "@/lib/utils";
@@ -153,12 +154,11 @@ export function CartPinboard() {
               transition: springs.fast,
             }}
           >
-            <div
-              aria-hidden
-              className="absolute h-3 w-3 rotate-45 border-l border-t border-border bg-card"
-              style={{ top: -6, right: anchor.tailRight }}
+            <PopoverTail
+              direction="up"
+              style={{ top: -9, right: anchor.tailRight - 5 }}
             />
-            <div className="relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[0_32px_64px_-16px_rgba(0,0,0,0.7),_0_12px_24px_-8px_rgba(0,0,0,0.4)]">
+            <div className="relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[0_10px_24px_-10px_rgba(0,0,0,0.45),_0_2px_6px_-2px_rgba(0,0,0,0.22)]">
               <div className="flex items-start justify-between gap-3 px-5 pb-3 pt-4">
                 <div className="flex flex-col gap-0.5">
                   <div className="flex items-center gap-2">
@@ -187,7 +187,15 @@ export function CartPinboard() {
                 </Button>
               </div>
 
-              <div className="scrollbar-custom max-h-[52vh] overflow-y-auto px-5 pb-4">
+              <div
+                className="scrollbar-custom max-h-[52vh] overflow-y-auto px-5 pb-4 pt-2"
+                style={{
+                  WebkitMaskImage:
+                    "linear-gradient(to bottom, transparent 0, black 16px, black calc(100% - 16px), transparent 100%)",
+                  maskImage:
+                    "linear-gradient(to bottom, transparent 0, black 16px, black calc(100% - 16px), transparent 100%)",
+                }}
+              >
                 {items.length === 0 ? (
                   <div className="flex min-h-[200px] flex-col items-center justify-center gap-3 px-6 text-center">
                     <ShoppingBag size={20} strokeWidth={1.75} className="text-muted-foreground" />

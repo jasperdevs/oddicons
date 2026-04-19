@@ -154,7 +154,7 @@ const Switch = forwardRef<HTMLDivElement, SwitchProps>(
       <div
         ref={ref}
         className={cn(
-          "relative z-10 flex items-center gap-2.5 px-3 py-2 cursor-pointer select-none touch-none",
+          "relative z-10 flex items-center justify-between gap-3 px-3 py-2 cursor-pointer select-none touch-none rounded-lg",
           disabled && "opacity-50 pointer-events-none",
           className
         )}
@@ -171,6 +171,17 @@ const Switch = forwardRef<HTMLDivElement, SwitchProps>(
         }}
         {...props}
       >
+        {/* Label */}
+        <span
+          className={cn(
+            "text-[12.5px] transition-[color] duration-80 min-w-0 flex-1 truncate",
+            checked ? "text-foreground" : "text-muted-foreground"
+          )}
+          style={{ fontVariationSettings: "'wght' 500" }}
+        >
+          {label}
+        </span>
+
         {/* Switch */}
         <SwitchPrimitive.Root
           checked={checked}
@@ -210,16 +221,6 @@ const Switch = forwardRef<HTMLDivElement, SwitchProps>(
             />
           </SwitchPrimitive.Thumb>
         </SwitchPrimitive.Root>
-
-        {/* Label */}
-        <span
-          className={cn(
-            "text-[13px] transition-[color] duration-80",
-            checked ? "text-foreground" : "text-muted-foreground"
-          )}
-        >
-          {label}
-        </span>
       </div>
     );
   }
