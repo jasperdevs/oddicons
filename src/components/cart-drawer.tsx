@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Download, ShoppingBag, Trash2, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart-context";
 import { downloadPng, svgToPngBlob, downloadBlob } from "@/lib/png";
 import { cn } from "@/lib/utils";
@@ -70,14 +71,14 @@ export function CartDrawer() {
                     : `${items.length} icon${items.length === 1 ? "" : "s"} · exports as PNG`}
                 </p>
               </div>
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setOpen(false)}
                 aria-label="Close cart"
-                className="grid h-9 w-9 place-items-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
               >
-                <X size={16} strokeWidth={1.75} />
-              </button>
+                <X />
+              </Button>
             </div>
 
             <div className="scrollbar-custom flex-1 overflow-y-auto px-4 pb-4">
@@ -165,31 +166,29 @@ export function CartDrawer() {
               )}
             </div>
 
-            <div className="flex items-center gap-2 border-t border-border/40 px-6 py-4">
-              <button
-                type="button"
+            <div className="flex items-center gap-2 border-t border-border/40 px-4 py-4">
+              <Button
+                variant="ghost"
+                size="md"
+                leadingIcon={Trash2}
                 onClick={clear}
                 disabled={items.length === 0}
-                className="inline-flex h-10 items-center justify-center gap-1.5 rounded-md px-3 text-[13px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-40 disabled:hover:bg-transparent"
               >
-                <Trash2 size={13} strokeWidth={1.75} />
-                <span>Clear</span>
-              </button>
-              <button
-                type="button"
+                Clear
+              </Button>
+              <Button
+                variant="primary"
+                size="md"
+                leadingIcon={Download}
+                loading={downloading}
+                disabled={items.length === 0}
                 onClick={handleDownloadAll}
-                disabled={items.length === 0 || downloading}
-                className="ml-auto inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-md bg-foreground px-4 text-[13px] font-medium text-background transition-opacity hover:opacity-90 disabled:opacity-40"
+                className="ml-auto flex-1"
               >
-                <Download size={14} strokeWidth={2} />
-                <span>
-                  {downloading
-                    ? "Downloading…"
-                    : items.length === 0
-                      ? "Download PNG"
-                      : `Download ${items.length} PNG${items.length === 1 ? "" : "s"}`}
-                </span>
-              </button>
+                {items.length === 0
+                  ? "Download PNG"
+                  : `Download ${items.length} PNG${items.length === 1 ? "" : "s"}`}
+              </Button>
             </div>
           </motion.aside>
         </>

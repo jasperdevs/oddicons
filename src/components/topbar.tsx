@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Moon, ShoppingBag, Sun } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Tooltip } from "@/components/ui/tooltip";
 import { useCart } from "@/lib/cart-context";
 
@@ -28,22 +29,18 @@ export function Topbar({ theme, onToggleTheme }: TopbarProps) {
     <header className="flex h-12 w-full shrink-0 items-center justify-end px-4 sm:px-6">
       <div className="flex items-center gap-1">
         <Tooltip content={theme === "dark" ? "Light mode" : "Dark mode"}>
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={handleTheme}
             aria-label="Toggle theme"
-            className="grid h-9 w-9 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
-            {theme === "dark" ? <Sun size={15} strokeWidth={1.75} /> : <Moon size={15} strokeWidth={1.75} />}
-          </button>
+            {theme === "dark" ? <Sun /> : <Moon />}
+          </Button>
         </Tooltip>
 
         <Tooltip content={items.length > 0 ? "Open cart" : "Cart is empty"}>
-          <motion.button
-            ref={cartRef}
-            type="button"
-            onClick={() => items.length > 0 && setOpen(true)}
-            aria-label="Open cart"
+          <motion.div
             key={bumpCount}
             animate={
               bumpCount > 0
@@ -51,11 +48,18 @@ export function Topbar({ theme, onToggleTheme }: TopbarProps) {
                 : { scale: 1, rotate: 0 }
             }
             transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            className="relative inline-flex h-9 items-center gap-1.5 rounded-md bg-foreground px-3 text-[13px] text-background transition-opacity hover:opacity-90"
           >
-            <ShoppingBag size={14} strokeWidth={1.75} />
-            <span className="tabular-nums">{items.length}</span>
-          </motion.button>
+            <Button
+              ref={cartRef}
+              variant="primary"
+              size="md"
+              leadingIcon={ShoppingBag}
+              onClick={() => items.length > 0 && setOpen(true)}
+              aria-label="Open cart"
+            >
+              <span className="tabular-nums">{items.length}</span>
+            </Button>
+          </motion.div>
         </Tooltip>
       </div>
     </header>

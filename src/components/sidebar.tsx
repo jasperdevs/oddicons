@@ -1,6 +1,7 @@
 "use client";
 
 import { Heart, Home } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 interface SidebarProps {
@@ -129,14 +130,17 @@ function SidebarItem({
         <span className="grid h-4 w-4 place-items-center">{icon}</span>
         <span>{label}</span>
       </span>
-      <span
+      <Badge
+        variant="solid"
+        size="sm"
+        color="gray"
         className={cn(
-          "rounded px-1.5 py-0.5 text-[10px] tabular-nums transition-colors",
-          active ? "text-background/70" : "text-muted-foreground/70"
+          "tabular-nums transition-colors",
+          active && "bg-background/15! text-background!"
         )}
       >
         {count}
-      </span>
+      </Badge>
     </button>
   );
 }
