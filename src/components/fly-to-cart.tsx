@@ -4,9 +4,6 @@ import { useEffect, useMemo } from "react";
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 import { useCart, type FlyEvent } from "@/lib/cart-context";
 
-const APPROACH = 0.68;
-const SPIRAL_TURNS = 1.8;
-
 interface FlyProps {
   event: FlyEvent;
   onDone: (id: number) => void;
@@ -19,54 +16,45 @@ function Fly({ event, onDone }: FlyProps) {
     const dx = to.x - from.x;
     const dy = to.y - from.y;
     const dist = Math.hypot(dx, dy);
-    const lift = Math.min(Math.max(dist * 0.22, 60), 180);
-    const cx = from.x + dx * 0.55 + (dx >= 0 ? 40 : -40);
-    const cy = Math.max(40, Math.min(from.y, to.y) - lift);
-    // Point on bezier at t=APPROACH — the spiral's starting anchor.
-    const u = 1 - APPROACH;
-    const nearX = u * u * from.x + 2 * u * APPROACH * cx + APPROACH * APPROACH * to.x;
-    const nearY = u * u * from.y + 2 * u * APPROACH * cy + APPROACH * APPROACH * to.y;
-    const startRadius = Math.max(36, Math.hypot(nearX - to.x, nearY - to.y));
-    const startAngle = Math.atan2(nearY - to.y, nearX - to.x);
-    return { cx, cy, startRadius, startAngle };
+    const lift = Math.min(Math.max(dist * 0.22, 60), 160);
+    // Two control points — a smooth cubic bezier arc that settles into the target.
+    const c1x = from.x + dx * 0.3;
+    const c1y = Math.max(32, Math.min(from.y, to.y) - lift);
+    const c2x = to.x + (dx >= 0 ? 24 : -24);
+    const c2y = to.y - lift * 0.35;
+    return { c1x, c1y, c2x, c2y };
   }, [from.x, from.y, to.x, to.y]);
 
   const t = useMotionValue(0);
 
   const x = useTransform(t, (v) => {
-    if (v <= APPROACH) {
-      const p = v / APPROACH;
-      const u = 1 - p;
-      return u * u * from.x + 2 * u * p * geo.cx + p * p * to.x;
-    }
-    const p = (v - APPROACH) / (1 - APPROACH);
-    const eased = p * p;
-    const radius = geo.startRadius * (1 - eased);
-    const angle = geo.startAngle + p * Math.PI * 2 * SPIRAL_TURNS;
-    return to.x + Math.cos(angle) * radius;
+    const u = 1 - v;
+    return (
+      u * u * u * from.x +
+      3 * u * u * v * geo.c1x +
+      3 * u * v * v * geo.c2x +
+      v * v * v * to.x
+    );
   });
 
   const y = useTransform(t, (v) => {
-    if (v <= APPROACH) {
-      const p = v / APPROACH;
-      const u = 1 - p;
-      return u * u * from.y + 2 * u * p * geo.cy + p * p * to.y;
-    }
-    const p = (v - APPROACH) / (1 - APPROACH);
-    const eased = p * p;
-    const radius = geo.startRadius * (1 - eased);
-    const angle = geo.startAngle + p * Math.PI * 2 * SPIRAL_TURNS;
-    return to.y + Math.sin(angle) * radius;
+    const u = 1 - v;
+    return (
+      u * u * u * from.y +
+      3 * u * u * v * geo.c1y +
+      3 * u * v * v * geo.c2y +
+      v * v * v * to.y
+    );
   });
 
-  const scale = useTransform(t, [0, APPROACH, 1], [1, 0.55, 0]);
-  const rotate = useTransform(t, [0, APPROACH, 1], [0, 160, 900]);
-  const opacity = useTransform(t, [0, 0.85, 1], [1, 1, 0]);
+  const scale = useTransform(t, [0, 0.85, 1], [1, 0.45, 0]);
+  const rotate = useTransform(t, [0, 1], [0, 32]);
+  const opacity = useTransform(t, [0, 0.88, 1], [1, 1, 0]);
 
   useEffect(() => {
     const controls = animate(t, 1, {
-      duration: 0.85,
-      ease: [0.22, 1, 0.36, 1],
+      duration: 1,
+      ease: [0.4, 0, 0.2, 1],
       onComplete: () => onDone(id),
     });
     return () => controls.stop();
@@ -75,10 +63,10 @@ function Fly({ event, onDone }: FlyProps) {
 
   const sparkles = useMemo(
     () =>
-      Array.from({ length: 8 }, (_, i) => ({
+      Array.from({ length: 6 }, (_, i) => ({
         id: i,
-        dx: (Math.random() - 0.5) * 56,
-        dy: (Math.random() - 0.5) * 56,
+        dx: (Math.random() - 0.5) * 48,
+        dy: (Math.random() - 0.5) * 48,
         delay: i * 0.025,
       })),
     []
@@ -98,10 +86,10 @@ function Fly({ event, onDone }: FlyProps) {
             animate={{
               x: s.dx,
               y: s.dy,
-              opacity: [0, 0.9, 0],
+              opacity: [0, 0.8, 0],
               scale: [0, 1, 0],
             }}
-            transition={{ duration: 0.55, delay: s.delay, ease: "easeOut" }}
+            transition={{ duration: 0.5, delay: s.delay, ease: "easeOut" }}
           />
         ))}
       </div>
