@@ -169,8 +169,8 @@ export function RequestModal({ open, onClose, anchorRef }: RequestModalProps) {
               />
 
               <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-                <div className="flex flex-col items-center gap-1 text-center">
-                  <h1 className="text-[16px] font-semibold tracking-tight text-foreground">
+                <div className="flex flex-col gap-0.5">
+                  <h1 className="text-[15px] font-semibold tracking-tight text-foreground">
                     send an email
                   </h1>
                   <p className="text-[12px] text-muted-foreground">
@@ -207,22 +207,22 @@ export function RequestModal({ open, onClose, anchorRef }: RequestModalProps) {
               </form>
 
               <div className="mt-4 flex flex-col gap-2 border-t border-border pt-4">
-                <span className="text-center text-[11px] uppercase tracking-[0.08em] text-muted-foreground/70">
+                <span className="text-[12px] text-muted-foreground">
                   or find me at
                 </span>
                 <div className="grid grid-cols-3 gap-1.5">
                   {CONTACTS.map((c) => {
                     const copied = copiedId === c.id;
                     const cls = cn(
-                      "group/chip relative flex h-14 flex-col items-center justify-center gap-1 rounded-lg border border-border bg-sidebar text-muted-foreground transition-all duration-[180ms]",
+                      "group/chip relative flex h-11 items-center justify-center gap-2 rounded-lg border border-border bg-sidebar text-[12px] font-medium text-muted-foreground transition-all duration-[180ms]",
                       "hover:-translate-y-0.5 hover:border-foreground/30 hover:bg-accent hover:text-foreground"
                     );
                     const content = (
                       <>
-                        <span className="inline-flex">
-                          {copied ? <Check size={14} strokeWidth={2} /> : c.icon}
+                        <span className="inline-flex shrink-0">
+                          {copied ? <Check size={13} strokeWidth={2} /> : c.icon}
                         </span>
-                        <span className="truncate text-[10px] font-medium">
+                        <span className="truncate">
                           {copied ? "copied" : c.label}
                         </span>
                       </>

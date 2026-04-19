@@ -133,17 +133,20 @@ export function CartPinboard() {
 
               <div className="scrollbar-custom max-h-[52vh] overflow-y-auto px-5 pb-4">
                 {items.length === 0 ? (
-                  <div className="flex min-h-[220px] flex-col items-center justify-center gap-3 px-6 text-center">
-                    <span className="grid h-12 w-12 place-items-center rounded-2xl border border-border bg-sidebar text-muted-foreground">
-                      <ShoppingBag size={18} strokeWidth={1.75} />
-                    </span>
-                    <div className="flex flex-col gap-1">
-                      <p className="text-[14px] font-medium text-foreground">
+                  <div className="flex min-h-[220px] flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-border bg-sidebar/30 px-6 py-10 text-center">
+                    <div className="relative grid place-items-center">
+                      <span className="absolute inset-0 -m-2.5 rounded-full bg-foreground/[0.02]" />
+                      <span className="absolute inset-0 -m-1 rounded-full bg-foreground/[0.03]" />
+                      <span className="relative grid h-12 w-12 place-items-center rounded-full border border-border bg-card text-foreground">
+                        <ShoppingBag size={18} strokeWidth={1.75} />
+                      </span>
+                    </div>
+                    <div className="flex max-w-[240px] flex-col gap-1.5">
+                      <p className="text-[14px] font-semibold tracking-tight text-foreground">
                         cart is empty
                       </p>
-                      <p className="text-[12px] leading-[1.5] text-muted-foreground">
-                        add icons one at a time, or hit
-                        <br />
+                      <p className="text-[12px] leading-[1.55] text-muted-foreground">
+                        add icons one at a time, or hit{" "}
                         <span className="font-medium text-foreground">add all</span> at the bottom of the grid
                       </p>
                     </div>

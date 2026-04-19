@@ -73,19 +73,6 @@ function GalleryInner() {
     return c;
   }, [all]);
 
-  const tagSuggestions = useMemo(() => {
-    const counts: Record<string, number> = {};
-    all.forEach((i) => {
-      i.tags.forEach((t) => {
-        const key = t.toLowerCase();
-        counts[key] = (counts[key] ?? 0) + 1;
-      });
-    });
-    return Object.entries(counts)
-      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-      .map(([t]) => t);
-  }, [all]);
-
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     const matched = all.filter((i) => {
@@ -107,16 +94,16 @@ function GalleryInner() {
       return (
         <EmptyState
           icon={<Heart size={22} strokeWidth={1.75} />}
-          title="No favorites yet"
-          hint="Tap the heart on any icon to save it here."
+          title="no favorites yet"
+          hint="tap the heart on any icon to save it here"
         />
       );
     }
     return (
       <EmptyState
         icon={<SearchX size={22} strokeWidth={1.75} />}
-        title="Nothing matches"
-        hint="Try a different word or clear the filter."
+        title="nothing matches"
+        hint="try a different word or clear the filter"
       />
     );
   })();
@@ -162,7 +149,6 @@ function GalleryInner() {
           query={query}
           onQueryChange={setQuery}
           total={all.length}
-          suggestions={tagSuggestions}
         />
 
         {!emptyState && (
@@ -218,7 +204,7 @@ function BottomBar({
       <div className="pointer-events-auto relative flex w-full items-center justify-center gap-2 px-6 pb-6 pt-10 sm:px-8">
         <Button
           ref={requestBtnRef}
-          variant="tertiary"
+          variant="secondary"
           size="lg"
           leadingIcon={Send}
           onClick={onOpenRequest}
@@ -275,7 +261,7 @@ function SortDropdown({
     <div className="relative">
       <Button
         ref={triggerRef}
-        variant="tertiary"
+        variant="secondary"
         size="lg"
         leadingIcon={active.Icon}
         onClick={() => setOpen((v) => !v)}
@@ -422,7 +408,7 @@ function AddAllButton({
   return (
     <Button
       ref={ref}
-      variant="tertiary"
+      variant="secondary"
       size="lg"
       leadingIcon={allAdded ? Trash2 : Plus}
       onClick={handleClick}
@@ -444,14 +430,18 @@ function EmptyState({
   hint: string;
 }) {
   return (
-    <div className="grid place-items-center rounded-2xl bg-card py-24 text-center">
-      <div className="flex flex-col items-center gap-3">
-        <span className="grid h-11 w-11 place-items-center rounded-full bg-muted text-muted-foreground">
-          {icon}
-        </span>
-        <div className="flex flex-col gap-1">
-          <p className="text-[16px] font-medium text-foreground">{title}</p>
-          <p className="text-[14px] text-muted-foreground">{hint}</p>
+    <div className="grid place-items-center rounded-2xl border border-dashed border-border bg-card/40 py-28 text-center">
+      <div className="flex max-w-[280px] flex-col items-center gap-4">
+        <div className="relative grid place-items-center">
+          <span className="absolute inset-0 -m-3 rounded-full bg-foreground/[0.02]" />
+          <span className="absolute inset-0 -m-1.5 rounded-full bg-foreground/[0.03]" />
+          <span className="relative grid h-14 w-14 place-items-center rounded-full border border-border bg-sidebar text-foreground">
+            {icon}
+          </span>
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <p className="text-[15px] font-semibold tracking-tight text-foreground">{title}</p>
+          <p className="text-[13px] leading-[1.5] text-muted-foreground">{hint}</p>
         </div>
       </div>
     </div>
