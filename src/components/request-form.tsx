@@ -55,11 +55,13 @@ const CONTACTS: ContactRow[] = [
 interface RequestFormProps {
   heading?: string;
   subheading?: string;
+  hideHeader?: boolean;
 }
 
 export function RequestForm({
   heading = "send an email",
   subheading = "request an icon or just say hi",
+  hideHeader = false,
 }: RequestFormProps) {
   const [subject, setSubject] = useState("icon request");
   const [message, setMessage] = useState(EMAIL_TEMPLATE);
@@ -88,14 +90,16 @@ export function RequestForm({
   return (
     <>
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <div className="flex flex-col gap-0.5">
-          <h2 className="text-[15px] font-semibold tracking-tight text-foreground">
-            {heading}
-          </h2>
-          <p className="text-[12px] text-muted-foreground">
-            {subheading}
-          </p>
-        </div>
+        {!hideHeader && (
+          <div className="flex flex-col gap-0.5">
+            <h2 className="text-[15px] font-semibold tracking-tight text-foreground">
+              {heading}
+            </h2>
+            <p className="text-[12px] text-muted-foreground">
+              {subheading}
+            </p>
+          </div>
+        )}
 
         <input
           type="text"

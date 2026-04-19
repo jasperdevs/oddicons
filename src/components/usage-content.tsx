@@ -70,11 +70,11 @@ export function UsageContent() {
             </h2>
           </div>
         </div>
+        <p className="text-[13.5px] leading-[1.6] text-muted-foreground">
+          most requests turn into new icons within a week.
+        </p>
         <div className="border-t border-border pt-5">
-          <RequestForm
-            heading="request an icon"
-            subheading="most requests turn into new icons within a week"
-          />
+          <RequestForm hideHeader />
         </div>
       </section>
     </div>

@@ -12,6 +12,7 @@ import { motion, useMotionValue, animate } from "framer-motion";
 import * as SwitchPrimitive from "@radix-ui/react-switch";
 import { cn } from "@/lib/utils";
 import { springs } from "@/lib/springs";
+import { fontWeights } from "@/lib/font-weight";
 
 interface SwitchProps extends HTMLAttributes<HTMLDivElement> {
   label: string;
@@ -177,7 +178,7 @@ const Switch = forwardRef<HTMLDivElement, SwitchProps>(
             "text-[12.5px] transition-[color] duration-80 min-w-0 flex-1 truncate",
             checked ? "text-foreground" : "text-muted-foreground"
           )}
-          style={{ fontVariationSettings: "'wght' 500" }}
+          style={{ fontVariationSettings: fontWeights.medium }}
         >
           {label}
         </span>
