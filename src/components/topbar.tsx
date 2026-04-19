@@ -55,14 +55,14 @@ export function Topbar({
 
   return (
     <div className="pointer-events-none absolute inset-x-0 top-0 z-30 px-3 sm:px-8">
-      <ProgressiveBlur direction="top" />
+      <ProgressiveBlur direction="top" strength={1.8} />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 -z-10"
         style={{
-          height: "calc(100% + 1.5rem)",
+          height: "calc(100% + 3rem)",
           background:
-            "linear-gradient(to bottom, var(--sidebar) 0%, transparent 100%)",
+            "linear-gradient(to bottom, var(--sidebar) 0%, var(--sidebar) 35%, transparent 100%)",
         }}
       />
 

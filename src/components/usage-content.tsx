@@ -1,6 +1,5 @@
 "use client";
 
-import { Check } from "lucide-react";
 import { OddIcon } from "@/components/ui/odd-icon";
 import { RequestForm } from "@/components/request-form";
 
@@ -25,9 +24,9 @@ export function UsageContent() {
       </header>
 
       <section className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-6">
-        <div className="flex items-start gap-3">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-sidebar">
-            <OddIcon name="license" size={22} />
+        <div className="flex items-start gap-4">
+          <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-sidebar">
+            <OddIcon name="license" size={36} />
           </span>
           <div className="flex flex-col gap-1">
             <span className="text-[11.5px] font-semibold tracking-tight text-muted-foreground">
@@ -42,15 +41,13 @@ export function UsageContent() {
             </p>
           </div>
         </div>
-        <ul className="flex flex-col gap-2.5 border-t border-border pt-5">
+        <ul className="flex flex-col gap-3 border-t border-border pt-5">
           {LICENSE_POINTS.map((point) => (
             <li
               key={point}
-              className="flex gap-2.5 text-[13.5px] leading-[1.55] text-foreground"
+              className="flex items-start gap-3 text-[13.5px] leading-[1.55] text-foreground"
             >
-              <span className="mt-0.5 grid h-4 w-4 shrink-0 place-items-center rounded-full bg-foreground text-background">
-                <Check size={10} strokeWidth={3} />
-              </span>
+              <OddIcon name="check" size={22} className="mt-0.5 shrink-0" />
               <span>{point}</span>
             </li>
           ))}
@@ -58,9 +55,9 @@ export function UsageContent() {
       </section>
 
       <section className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-6">
-        <div className="flex items-start gap-3">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-sidebar">
-            <OddIcon name="sparkles" size={22} />
+        <div className="flex items-start gap-4">
+          <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-sidebar">
+            <OddIcon name="sparkles" size={36} />
           </span>
           <div className="flex flex-col gap-1">
             <span className="text-[11.5px] font-semibold tracking-tight text-muted-foreground">

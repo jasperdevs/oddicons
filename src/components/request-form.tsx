@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy, Send } from "lucide-react";
+import { Copy, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { OddIcon } from "@/components/ui/odd-icon";
 import { cn } from "@/lib/utils";
 
 const EMAIL = "jasper.mceligott@gmail.com";
@@ -139,7 +140,7 @@ export function RequestForm({
           const content = (
             <>
               <span className="inline-flex shrink-0">
-                {copied ? <Check size={13} strokeWidth={2} /> : c.icon}
+                {copied ? <OddIcon name="check" size={16} /> : c.icon}
               </span>
               <span className="truncate">
                 {copied ? "copied" : c.label}

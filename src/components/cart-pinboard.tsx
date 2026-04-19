@@ -2,8 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, Copy, Download, Trash2, X } from "lucide-react";
-import { OddIcon } from "@/components/ui/odd-icon";
+import { Check, Copy, Download, X } from "lucide-react";
+import { OddIcon, oddIconComponent } from "@/components/ui/odd-icon";
+
+const TrashIcon = oddIconComponent("trash");
 import { iconThumbUrl } from "@/lib/icon-url";
 import { Button } from "@/components/ui/button";
 import { PopoverTail } from "@/components/ui/popover-tail";
@@ -312,7 +314,7 @@ export function CartPinboard() {
                 <Button
                   variant="ghost"
                   size="lg"
-                  leadingIcon={Trash2}
+                  leadingIcon={TrashIcon}
                   onClick={clear}
                   disabled={items.length === 0}
                   className="h-11 px-5 text-[14px]"

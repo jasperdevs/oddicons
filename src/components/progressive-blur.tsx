@@ -2,6 +2,7 @@
 
 interface ProgressiveBlurProps {
   direction: "top" | "bottom";
+  strength?: number;
 }
 
 const LAYERS = [
@@ -11,7 +12,7 @@ const LAYERS = [
   { blur: 10, stop: 30 },
 ];
 
-export function ProgressiveBlur({ direction }: ProgressiveBlurProps) {
+export function ProgressiveBlur({ direction, strength = 1 }: ProgressiveBlurProps) {
   const anchor = direction === "top" ? "top" : "bottom";
   const gradDir = direction === "top" ? "bottom" : "top";
 
@@ -28,8 +29,8 @@ export function ProgressiveBlur({ direction }: ProgressiveBlurProps) {
             style={{
               [anchor]: 0,
               height: "calc(100% + 2rem)",
-              backdropFilter: `blur(${layer.blur}px)`,
-              WebkitBackdropFilter: `blur(${layer.blur}px)`,
+              backdropFilter: `blur(${layer.blur * strength}px)`,
+              WebkitBackdropFilter: `blur(${layer.blur * strength}px)`,
               maskImage: mask,
               WebkitMaskImage: mask,
             }}

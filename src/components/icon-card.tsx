@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, Heart } from "lucide-react";
+import { Check } from "lucide-react";
+import { OddIcon } from "@/components/ui/odd-icon";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/lib/cart-context";
 import { getIconColors } from "@/lib/icon-colors";
@@ -201,10 +202,13 @@ export function IconCard({
             }
             transition={{ ...springs.slow, duration: 0.5 }}
           >
-            <Heart
-              size={16}
-              strokeWidth={1.75}
-              className={cn("transition-colors", isFavorite && "fill-foreground text-foreground")}
+            <OddIcon
+              name="heart"
+              size={18}
+              className={cn(
+                "transition-[opacity,filter] duration-[180ms]",
+                !isFavorite && "opacity-70 saturate-0"
+              )}
             />
           </motion.span>
         </span>
@@ -246,11 +250,31 @@ export function IconCard({
         />
       </div>
 
-      <div className="flex flex-col items-center gap-0.5 px-3 pb-3">
-        <span className="max-w-full truncate text-[13px] font-semibold tracking-tight text-foreground">
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-24"
+        style={{
+          backdropFilter: "blur(6px)",
+          WebkitBackdropFilter: "blur(6px)",
+          maskImage:
+            "linear-gradient(to top, black 0%, black 40%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to top, black 0%, black 40%, transparent 100%)",
+        }}
+      />
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-20"
+        style={{
+          background:
+            "linear-gradient(to top, var(--card) 0%, var(--card) 30%, transparent 100%)",
+        }}
+      />
+      <div className="relative z-20 flex flex-col items-center gap-0.5 px-3 pb-3">
+        <span className="max-w-full truncate text-[14px] font-semibold tracking-tight text-foreground">
           {name}
         </span>
-        <span className="text-[11px] font-medium leading-[1.4] text-muted-foreground">
+        <span className="text-[12px] font-medium leading-[1.4] text-muted-foreground">
           {category}
         </span>
       </div>

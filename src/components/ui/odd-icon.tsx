@@ -1,5 +1,6 @@
 "use client";
 
+import type { IconComponent } from "@/lib/icon-context";
 import { iconThumbUrl } from "@/lib/icon-url";
 import { cn } from "@/lib/utils";
 
@@ -24,4 +25,19 @@ export function OddIcon({ name, size = 20, className, alt = "" }: OddIconProps) 
       style={{ width: size, height: size }}
     />
   );
+}
+
+const oddIconCache = new Map<string, IconComponent>();
+
+export function oddIconComponent(name: string): IconComponent {
+  let c = oddIconCache.get(name);
+  if (!c) {
+    const Adapter: IconComponent = ({ size, className }) => (
+      <OddIcon name={name} size={size ?? 20} className={className} />
+    );
+    Adapter.displayName = `OddIcon(${name})`;
+    c = Adapter;
+    oddIconCache.set(name, c);
+  }
+  return c;
 }

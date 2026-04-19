@@ -4,7 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Select } from "@base-ui/react";
 import icons from "@/data/icons.json";
-import { OddIcon } from "@/components/ui/odd-icon";
+import { OddIcon, oddIconComponent } from "@/components/ui/odd-icon";
 import { useFavorites } from "@/hooks/use-favorites";
 import { useTheme } from "@/hooks/use-theme";
 import { CartProvider, useCart } from "@/lib/cart-context";
@@ -28,10 +28,11 @@ import {
   ArrowUpAZ,
   ArrowUpDown,
   Check,
-  Plus,
   Send,
-  Trash2,
 } from "lucide-react";
+
+const PlusIcon = oddIconComponent("plus");
+const TrashIcon = oddIconComponent("trash");
 
 interface IconEntry {
   name: string;
@@ -473,7 +474,7 @@ function AddAllButton({
       ref={ref}
       variant="secondary"
       size="lg"
-      leadingIcon={allAdded ? Trash2 : Plus}
+      leadingIcon={allAdded ? TrashIcon : PlusIcon}
       onClick={handleClick}
       disabled={items.length === 0}
       className="h-11 px-5 text-[14px]"

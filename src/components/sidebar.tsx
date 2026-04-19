@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Heart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { OddIcon } from "@/components/ui/odd-icon";
 import { useProximityHover } from "@/hooks/use-proximity-hover";
@@ -62,10 +61,10 @@ export function SidebarBody(props: SidebarProps) {
       id: "favorites",
       label: "favorites",
       icon: (
-        <Heart
-          size={16}
-          strokeWidth={favActive ? 2 : 1.5}
-          className={favActive ? "fill-current" : ""}
+        <OddIcon
+          name="heart"
+          size={18}
+          className={cn("transition-opacity duration-[180ms]", !favActive && "opacity-70")}
         />
       ),
       count: props.favoriteCount,
