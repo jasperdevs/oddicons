@@ -157,7 +157,7 @@ function GalleryInner() {
             basePath={basePath}
             sort={sort}
             onChangeSort={setSort}
-            onOpenRequest={() => setRequestOpen(true)}
+            onOpenRequest={() => setRequestOpen((v) => !v)}
             requestBtnRef={requestBtnRef}
           />
         )}

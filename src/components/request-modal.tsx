@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, Copy, Mail, Send } from "lucide-react";
+import { Check, Copy, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -51,7 +51,6 @@ const CONTACTS: ContactRow[] = [
   { id: "x", label: "@jasperdevs", icon: <XIcon />, href: "https://x.com/jasperdevs" },
   { id: "github", label: "jasperdevs", icon: <GithubIcon />, href: "https://github.com/jasperdevs" },
   { id: "discord", label: "jasperdevs", icon: <DiscordIcon />, copyValue: "jasperdevs" },
-  { id: "email", label: "email", icon: <Mail size={14} strokeWidth={1.75} />, copyValue: EMAIL },
 ];
 
 interface RequestModalProps {
@@ -211,7 +210,7 @@ export function RequestModal({ open, onClose, anchorRef }: RequestModalProps) {
                 <span className="text-center text-[11px] uppercase tracking-[0.08em] text-muted-foreground/70">
                   or find me at
                 </span>
-                <div className="grid grid-cols-4 gap-1.5">
+                <div className="grid grid-cols-3 gap-1.5">
                   {CONTACTS.map((c) => {
                     const copied = copiedId === c.id;
                     const cls = cn(
