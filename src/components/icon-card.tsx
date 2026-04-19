@@ -149,16 +149,14 @@ export function IconCard({
         </span>
       )}
 
-      <div className="grid aspect-square place-items-center p-4">
+      <div className="grid aspect-square place-items-center p-3">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           ref={imgRef}
           src={url}
           alt={name}
-          width={96}
-          height={96}
           data-icon-card={name}
-          className="h-[88px] w-[88px] transition-transform duration-[180ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:scale-[1.06]"
+          className="h-full w-full object-contain transition-transform duration-[180ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:scale-[1.06]"
           loading="lazy"
         />
       </div>
