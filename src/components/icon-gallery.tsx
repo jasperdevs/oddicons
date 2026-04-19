@@ -195,10 +195,10 @@ function BottomBar({
         className="absolute inset-x-0 bottom-0"
         style={{
           height: "calc(100% + 1.5rem)",
-          backdropFilter: "blur(10px)",
-          WebkitBackdropFilter: "blur(10px)",
-          maskImage: "linear-gradient(to top, black 0%, black 55%, transparent 100%)",
-          WebkitMaskImage: "linear-gradient(to top, black 0%, black 55%, transparent 100%)",
+          backdropFilter: "blur(3px)",
+          WebkitBackdropFilter: "blur(3px)",
+          maskImage: "linear-gradient(to top, black 0%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to top, black 0%, transparent 100%)",
         }}
       />
       <div

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type RefObject } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, Copy, Mail, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,9 +12,6 @@ const EMAIL_TEMPLATE = `hi jasper,
 
 i'd love to see an icon for:
 [describe what you want]
-
-any references or vibes:
-[optional]
 
 thanks!`;
 
@@ -63,7 +60,7 @@ interface RequestModalProps {
   anchorRef: RefObject<HTMLButtonElement | null>;
 }
 
-const PANEL_WIDTH = 340;
+const PANEL_WIDTH = 440;
 const GAP = 14;
 
 export function RequestModal({ open, onClose, anchorRef }: RequestModalProps) {
@@ -71,6 +68,7 @@ export function RequestModal({ open, onClose, anchorRef }: RequestModalProps) {
   const [message, setMessage] = useState(EMAIL_TEMPLATE);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [pos, setPos] = useState<{ left: number; bottom: number; tailX: number } | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -108,9 +106,19 @@ export function RequestModal({ open, onClose, anchorRef }: RequestModalProps) {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
+    const onDown = (e: MouseEvent) => {
+      const t = e.target as Node;
+      if (panelRef.current?.contains(t)) return;
+      if (anchorRef.current?.contains(t)) return;
+      onClose();
+    };
     document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+    document.addEventListener("mousedown", onDown);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onDown);
+    };
+  }, [open, onClose, anchorRef]);
 
   const canSubmit = message.trim().length > 0;
 
@@ -134,35 +142,24 @@ export function RequestModal({ open, onClose, anchorRef }: RequestModalProps) {
   return (
     <AnimatePresence>
       {open && pos && (
-        <>
-          <motion.div
-            key="scrim"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.18 }}
-            onClick={onClose}
-            className="fixed inset-0 z-[60] bg-background/70"
-          />
-
-          <motion.div
-            key="panel"
-            role="dialog"
-            aria-modal="true"
-            aria-label="request an icon"
-            initial={{ opacity: 0, y: 6, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 6, scale: 0.96 }}
-            transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
-            style={{
-              left: pos.left,
-              bottom: pos.bottom,
-              width: PANEL_WIDTH,
-              transformOrigin: `${pos.tailX}px calc(100% + ${GAP}px)`,
-            }}
-            className="fixed z-[61]"
-          >
-            <div className="relative rounded-2xl border border-border bg-card p-5 shadow-2xl">
+        <motion.div
+          key="panel"
+          ref={panelRef}
+          role="dialog"
+          aria-label="request an icon"
+          initial={{ opacity: 0, y: 6, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 6, scale: 0.96 }}
+          transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+          style={{
+            left: pos.left,
+            bottom: pos.bottom,
+            width: PANEL_WIDTH,
+            transformOrigin: `${pos.tailX}px calc(100% + ${GAP}px)`,
+          }}
+          className="fixed z-[61]"
+        >
+          <div className="relative rounded-2xl border border-border bg-card p-5 shadow-2xl">
               <div
                 aria-hidden
                 className="absolute h-3 w-3 rotate-45 border-b border-r border-border bg-card"
@@ -248,10 +245,9 @@ export function RequestModal({ open, onClose, anchorRef }: RequestModalProps) {
                     </button>
                   );
                 })}
-              </div>
             </div>
-          </motion.div>
-        </>
+          </div>
+        </motion.div>
       )}
     </AnimatePresence>
   );

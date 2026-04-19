@@ -20,43 +20,30 @@ function Fly({ event, onDone }: FlyProps) {
     const lift = Math.min(Math.max(dist * 0.22, 56), 160);
     const cx = from.x + dx * 0.5;
     const cy = Math.max(32, Math.min(from.y, to.y) - lift);
-    const startAngle = Math.atan2(from.y - to.y, from.x - to.x);
-    const startRadius = dist;
-    return { cx, cy, startAngle, startRadius };
+    return { cx, cy };
   }, [from.x, from.y, to.x, to.y]);
 
   const size = from.size;
-  const duration = compact ? 1.2 : 0.9;
+  const duration = compact ? 0.85 : 0.9;
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     const controls = animate(0, 1, {
       duration,
-      ease: compact ? [0.32, 0, 0.2, 1] : [0.4, 0, 0.2, 1],
+      ease: [0.4, 0, 0.2, 1],
       onUpdate: (v) => {
-        let x: number;
-        let y: number;
-        let rotate = 0;
-        if (compact) {
-          const angle = geo.startAngle + v * Math.PI * 2 * 1.6;
-          const radius = geo.startRadius * (1 - v);
-          x = to.x + Math.cos(angle) * radius;
-          y = to.y + Math.sin(angle) * radius;
-          rotate = v * 540;
-        } else {
-          const u = 1 - v;
-          x = u * u * from.x + 2 * u * v * geo.cx + v * v * to.x;
-          y = u * u * from.y + 2 * u * v * geo.cy + v * v * to.y;
-        }
-        const shrinkStart = compact ? 0.75 : 0.9;
-        const scale =
-          v < shrinkStart
-            ? 1 - (v / shrinkStart) * 0.5
-            : 0.5 * (1 - (v - shrinkStart) / (1 - shrinkStart));
-        const fadeStart = compact ? 0.82 : 0.88;
+        const u = 1 - v;
+        const x = u * u * from.x + 2 * u * v * geo.cx + v * v * to.x;
+        const y = u * u * from.y + 2 * u * v * geo.cy + v * v * to.y;
+        const scale = compact
+          ? Math.max(0.12, 1 - v * 0.88)
+          : v < 0.9
+            ? 1 - (v / 0.9) * 0.5
+            : 0.5 * (1 - (v - 0.9) / 0.1);
+        const fadeStart = compact ? 0.85 : 0.88;
         const opacity = v < fadeStart ? 1 : 1 - (v - fadeStart) / (1 - fadeStart);
-        el.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%) rotate(${rotate}deg) scale(${scale})`;
+        el.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%) scale(${scale})`;
         el.style.opacity = String(opacity);
       },
       onComplete: () => onDone(id),

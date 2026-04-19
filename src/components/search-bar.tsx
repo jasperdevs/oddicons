@@ -61,12 +61,12 @@ export function SearchBar({ value, onChange, total }: SearchBarProps) {
           <X size={14} />
         </button>
       ) : (
-        <kbd
+        <span
           aria-hidden
-          className="hidden shrink-0 rounded-md border border-border bg-background px-1.5 py-0.5 font-mono text-[11px] leading-none text-muted-foreground sm:inline-flex"
+          className="hidden shrink-0 text-[14px] text-muted-foreground sm:inline"
         >
           /
-        </kbd>
+        </span>
       )}
     </div>
   );

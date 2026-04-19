@@ -50,10 +50,10 @@ export function Topbar({
         className="pointer-events-none absolute inset-x-0 top-0 -z-10"
         style={{
           height: "calc(100% + 1.5rem)",
-          backdropFilter: "blur(10px)",
-          WebkitBackdropFilter: "blur(10px)",
-          maskImage: "linear-gradient(to bottom, black 0%, black 55%, transparent 100%)",
-          WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 55%, transparent 100%)",
+          backdropFilter: "blur(3px)",
+          WebkitBackdropFilter: "blur(3px)",
+          maskImage: "linear-gradient(to bottom, black 0%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to bottom, black 0%, transparent 100%)",
         }}
       />
       <div
