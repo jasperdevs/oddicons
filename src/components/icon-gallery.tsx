@@ -17,6 +17,8 @@ import { IconCard } from "@/components/icon-card";
 import { CartPinboard } from "@/components/cart-pinboard";
 import { FlyToCart } from "@/components/fly-to-cart";
 import { RequestModal } from "@/components/request-modal";
+import { UsageContent } from "@/components/usage-content";
+import { DonateContent } from "@/components/donate-content";
 import { ProgressiveBlur } from "@/components/progressive-blur";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import {
@@ -43,7 +45,9 @@ type SortMode = "default" | "asc" | "desc";
 export type View =
   | { type: "all" }
   | { type: "favorites" }
-  | { type: "category"; slug: string };
+  | { type: "category"; slug: string }
+  | { type: "usage" }
+  | { type: "donate" };
 
 const ALL = "All";
 
@@ -77,6 +81,9 @@ function GalleryInner({ view }: { view: View }) {
   }, [all]);
 
   const onlyFavorites = view.type === "favorites";
+  const isUsage = view.type === "usage";
+  const isDonate = view.type === "donate";
+  const isInfoView = isUsage || isDonate;
   const category = useMemo(() => {
     if (view.type !== "category") return ALL;
     const match = categories.find((c) => slugify(c) === view.slug);
@@ -90,6 +97,8 @@ function GalleryInner({ view }: { view: View }) {
 
   const goFavorites = () => router.push("/favorites/");
   const goHome = () => router.push("/");
+  const goUsage = () => router.push("/usage/");
+  const goDonate = () => router.push("/donate/");
 
   const counts = useMemo(() => {
     const c: Record<string, number> = { [ALL]: all.length };
@@ -146,25 +155,42 @@ function GalleryInner({ view }: { view: View }) {
         onlyFavorites={onlyFavorites}
         onToggleFavorites={onlyFavorites ? goHome : goFavorites}
         totalCount={all.length}
+        usageActive={isUsage}
+        donateActive={isDonate}
+        onOpenUsage={goUsage}
+        onOpenDonate={goDonate}
       />
 
       <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl bg-sidebar">
         <div className="scrollbar-custom min-w-0 flex-1 overflow-y-auto">
-          <main className="px-4 pt-24 pb-28 sm:px-8 sm:pt-20 sm:pb-24 md:pt-20">
-            {emptyState ?? (
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-                {filtered.map((icon) => (
-                  <IconCard
-                    key={icon.name}
-                    name={icon.name}
-                    file={icon.file}
-                    category={icon.category}
-                    basePath={basePath}
-                    isFavorite={isFavorite(icon.name)}
-                    onToggleFavorite={toggleFavorite}
-                  />
-                ))}
-              </div>
+          <main
+            className={cn(
+              "px-4 sm:px-8",
+              isInfoView
+                ? "pt-24 pb-10 sm:pt-24 md:pt-24"
+                : "pt-24 pb-28 sm:pt-20 sm:pb-24 md:pt-20"
+            )}
+          >
+            {isUsage ? (
+              <UsageContent />
+            ) : isDonate ? (
+              <DonateContent />
+            ) : (
+              emptyState ?? (
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+                  {filtered.map((icon) => (
+                    <IconCard
+                      key={icon.name}
+                      name={icon.name}
+                      file={icon.file}
+                      category={icon.category}
+                      basePath={basePath}
+                      isFavorite={isFavorite(icon.name)}
+                      onToggleFavorite={toggleFavorite}
+                    />
+                  ))}
+                </div>
+              )
             )}
           </main>
         </div>
@@ -176,9 +202,11 @@ function GalleryInner({ view }: { view: View }) {
           onQueryChange={setQuery}
           total={all.length}
           onOpenMenu={() => setMenuOpen(true)}
+          hideSearch={isInfoView}
+          title={isUsage ? "usage" : isDonate ? "donate" : undefined}
         />
 
-        {!emptyState && (
+        {!isInfoView && !emptyState && (
           <BottomBar
             items={filtered}
             basePath={basePath}
@@ -201,6 +229,10 @@ function GalleryInner({ view }: { view: View }) {
         onlyFavorites={onlyFavorites}
         onToggleFavorites={onlyFavorites ? goHome : goFavorites}
         totalCount={all.length}
+        usageActive={isUsage}
+        donateActive={isDonate}
+        onOpenUsage={goUsage}
+        onOpenDonate={goDonate}
       />
 
       <CartPinboard />

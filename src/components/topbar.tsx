@@ -17,6 +17,8 @@ interface TopbarProps {
   onQueryChange: (q: string) => void;
   total: number;
   onOpenMenu?: () => void;
+  hideSearch?: boolean;
+  title?: string;
 }
 
 export function Topbar({
@@ -26,6 +28,8 @@ export function Topbar({
   onQueryChange,
   total,
   onOpenMenu,
+  hideSearch,
+  title,
 }: TopbarProps) {
   const { items, setCartAnchor, setOpen, bumpCount } = useCart();
   const cartRef = useRef<HTMLButtonElement>(null);
@@ -76,7 +80,15 @@ export function Topbar({
         )}
 
         <div className="min-w-0 flex-1">
-          <SearchBar value={query} onChange={onQueryChange} total={total} />
+          {hideSearch ? (
+            <div className="flex h-11 items-center">
+              <span className="truncate text-[18px] font-semibold tracking-tight text-foreground">
+                {title ?? ""}
+              </span>
+            </div>
+          ) : (
+            <SearchBar value={query} onChange={onQueryChange} total={total} />
+          )}
         </div>
 
         <div className="relative flex h-11 shrink-0 items-center rounded-xl bg-muted">

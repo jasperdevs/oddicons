@@ -15,6 +15,10 @@ interface MobileDrawerProps {
   onlyFavorites: boolean;
   onToggleFavorites: () => void;
   totalCount: number;
+  usageActive: boolean;
+  donateActive: boolean;
+  onOpenUsage: () => void;
+  onOpenDonate: () => void;
 }
 
 export function MobileDrawer({
@@ -22,6 +26,8 @@ export function MobileDrawer({
   onOpenChange,
   onSelect,
   onToggleFavorites,
+  onOpenUsage,
+  onOpenDonate,
   ...rest
 }: MobileDrawerProps) {
   const close = () => onOpenChange(false);
@@ -33,6 +39,16 @@ export function MobileDrawer({
 
   const wrappedToggleFavorites = () => {
     onToggleFavorites();
+    close();
+  };
+
+  const wrappedOpenUsage = () => {
+    onOpenUsage();
+    close();
+  };
+
+  const wrappedOpenDonate = () => {
+    onOpenDonate();
     close();
   };
 
@@ -58,6 +74,8 @@ export function MobileDrawer({
             {...rest}
             onSelect={wrappedSelect}
             onToggleFavorites={wrappedToggleFavorites}
+            onOpenUsage={wrappedOpenUsage}
+            onOpenDonate={wrappedOpenDonate}
           />
         </Drawer.Popup>
       </Drawer.Portal>

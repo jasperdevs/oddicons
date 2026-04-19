@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Heart, Home } from "lucide-react";
+import { BookOpen, Heart, HeartHandshake, Home } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useProximityHover } from "@/hooks/use-proximity-hover";
 import { cn } from "@/lib/utils";
@@ -16,13 +16,17 @@ interface SidebarProps {
   onlyFavorites: boolean;
   onToggleFavorites: () => void;
   totalCount: number;
+  usageActive: boolean;
+  donateActive: boolean;
+  onOpenUsage: () => void;
+  onOpenDonate: () => void;
 }
 
 interface Row {
   id: string;
   label: string;
   icon: React.ReactNode;
-  count: number;
+  count?: number;
   active: boolean;
   onSelect: () => void;
 }
@@ -37,7 +41,9 @@ export function Sidebar(props: SidebarProps) {
 
 export function SidebarBody(props: SidebarProps) {
   const tagCategories = props.categories.filter((c) => c !== "All");
-  const homeActive = !props.onlyFavorites && props.selected === "All";
+  const inGallery = !props.usageActive && !props.donateActive;
+  const homeActive = inGallery && !props.onlyFavorites && props.selected === "All";
+  const favActive = inGallery && props.onlyFavorites;
 
   const topRows: Row[] = [
     {
@@ -57,18 +63,18 @@ export function SidebarBody(props: SidebarProps) {
       icon: (
         <Heart
           size={16}
-          strokeWidth={props.onlyFavorites ? 2 : 1.5}
-          className={props.onlyFavorites ? "fill-current" : ""}
+          strokeWidth={favActive ? 2 : 1.5}
+          className={favActive ? "fill-current" : ""}
         />
       ),
       count: props.favoriteCount,
-      active: props.onlyFavorites,
+      active: favActive,
       onSelect: props.onToggleFavorites,
     },
   ];
 
   const tagRows: Row[] = tagCategories.map((cat) => {
-    const active = !props.onlyFavorites && props.selected === cat;
+    const active = inGallery && !props.onlyFavorites && props.selected === cat;
     return {
       id: `tag-${cat}`,
       label: cat.toLowerCase(),
@@ -89,10 +95,43 @@ export function SidebarBody(props: SidebarProps) {
     };
   });
 
-  return <SidebarBodyInner topRows={topRows} tagRows={tagRows} />;
+  const infoRows: Row[] = [
+    {
+      id: "usage",
+      label: "usage",
+      icon: <BookOpen size={16} strokeWidth={props.usageActive ? 2 : 1.5} />,
+      active: props.usageActive,
+      onSelect: props.onOpenUsage,
+    },
+    {
+      id: "donate",
+      label: "donate",
+      icon: (
+        <HeartHandshake
+          size={16}
+          strokeWidth={props.donateActive ? 2 : 1.5}
+          className={props.donateActive ? "fill-rose-500/20 text-rose-500" : ""}
+        />
+      ),
+      active: props.donateActive,
+      onSelect: props.onOpenDonate,
+    },
+  ];
+
+  return (
+    <SidebarBodyInner topRows={topRows} tagRows={tagRows} infoRows={infoRows} />
+  );
 }
 
-function SidebarBodyInner({ topRows, tagRows }: { topRows: Row[]; tagRows: Row[] }) {
+function SidebarBodyInner({
+  topRows,
+  tagRows,
+  infoRows,
+}: {
+  topRows: Row[];
+  tagRows: Row[];
+  infoRows: Row[];
+}) {
   return (
     <>
       <div className="flex items-center justify-center gap-2.5 px-5 pb-8 pt-6">
@@ -117,8 +156,18 @@ function SidebarBodyInner({ topRows, tagRows }: { topRows: Row[]; tagRows: Row[]
         <span className="h-px flex-1 bg-border" />
       </div>
 
-      <div className="scrollbar-custom flex-1 overflow-y-auto pb-5">
+      <div className="scrollbar-custom min-h-0 flex-1 overflow-y-auto">
         <ProximityNav rows={tagRows} />
+      </div>
+
+      <div className="mt-4 flex items-center gap-2 px-5 pb-3">
+        <span className="text-[12px] font-medium text-muted-foreground">
+          info
+        </span>
+        <span className="h-px flex-1 bg-border" />
+      </div>
+      <div className="pb-5">
+        <ProximityNav rows={infoRows} />
       </div>
     </>
   );
@@ -195,17 +244,19 @@ function ProximityNav({ rows }: { rows: Row[] }) {
               <span className="grid h-4 w-4 place-items-center">{row.icon}</span>
               <span>{row.label}</span>
             </span>
-            <Badge
-              variant="solid"
-              size="sm"
-              color="gray"
-              className={cn(
-                "tabular-nums transition-colors",
-                isActive && "bg-background/15! text-background!"
-              )}
-            >
-              {row.count}
-            </Badge>
+            {row.count !== undefined && (
+              <Badge
+                variant="solid"
+                size="sm"
+                color="gray"
+                className={cn(
+                  "tabular-nums transition-colors",
+                  isActive && "bg-background/15! text-background!"
+                )}
+              >
+                {row.count}
+              </Badge>
+            )}
           </button>
         );
       })}
