@@ -13,6 +13,7 @@ import { IconCard } from "@/components/icon-card";
 import { CartPinboard } from "@/components/cart-pinboard";
 import { FlyToCart } from "@/components/fly-to-cart";
 import { RequestModal } from "@/components/request-modal";
+import { ProgressiveBlur } from "@/components/progressive-blur";
 import { Button } from "@/components/ui/button";
 import {
   ArrowDownAZ,
@@ -190,17 +191,7 @@ function BottomBar({
 }) {
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10">
-      <div
-        aria-hidden
-        className="absolute inset-x-0 bottom-0"
-        style={{
-          height: "calc(100% + 1.5rem)",
-          backdropFilter: "blur(3px)",
-          WebkitBackdropFilter: "blur(3px)",
-          maskImage: "linear-gradient(to top, black 0%, transparent 100%)",
-          WebkitMaskImage: "linear-gradient(to top, black 0%, transparent 100%)",
-        }}
-      />
+      <ProgressiveBlur direction="bottom" />
       <div
         aria-hidden
         className="absolute inset-x-0 bottom-0"
@@ -326,7 +317,9 @@ function SortDropdown({
 }
 
 const ADD_ALL_DURATION_MS = 2500;
-const MAX_FLIES = 18;
+const FLIGHT_DURATION_MS = 900;
+const FIRE_WINDOW_MS = ADD_ALL_DURATION_MS - FLIGHT_DURATION_MS;
+const MAX_FLIES = 22;
 
 function AddAllButton({
   items,
@@ -353,40 +346,60 @@ function AddAllButton({
       y: btnRect.top + btnRect.height / 2,
       size: 72,
     };
-    const shuffled = [...pending];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+
+    const visible: IconEntry[] = [];
+    for (const icon of pending) {
+      const card = document.querySelector<HTMLImageElement>(
+        `[data-icon-card="${CSS.escape(icon.name)}"]`
+      );
+      if (!card) continue;
+      const r = card.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      if (cy > 0 && cy < window.innerHeight && cx > 0 && cx < window.innerWidth) {
+        visible.push(icon);
+      }
     }
-    const flyCount = Math.min(shuffled.length, MAX_FLIES);
-    const flySet = new Set(shuffled.slice(0, flyCount).map((i) => i.name));
-    const step = flyCount > 1 ? ADD_ALL_DURATION_MS / (flyCount - 1) : 0;
-    let flyIndex = 0;
-    shuffled.forEach((icon) => {
-      const shouldFly = flySet.has(icon.name);
-      const delay = shouldFly ? flyIndex * step : 0;
-      if (shouldFly) flyIndex += 1;
+
+    for (let i = visible.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [visible[i], visible[j]] = [visible[j], visible[i]];
+    }
+
+    const flyCount = Math.min(visible.length, MAX_FLIES);
+    const flies = visible.slice(0, flyCount);
+    const flySet = new Set(flies.map((i) => i.name));
+
+    for (const icon of pending) {
+      if (flySet.has(icon.name)) continue;
+      add(
+        { name: icon.name, file: icon.file, url: `${basePath}/icons/${icon.file}` },
+        fallback,
+        { silent: true }
+      );
+    }
+
+    flies.forEach((icon, i) => {
+      const t = flyCount > 1 ? i / (flyCount - 1) : 0;
+      const eased = t * t;
+      const delay = eased * FIRE_WINDOW_MS;
       window.setTimeout(() => {
         let from = fallback;
-        if (shouldFly) {
-          const card = document.querySelector<HTMLImageElement>(
-            `[data-icon-card="${CSS.escape(icon.name)}"]`
-          );
-          if (card) {
-            const r = card.getBoundingClientRect();
-            const cx = r.left + r.width / 2;
-            const cy = r.top + r.height / 2;
-            const inView =
-              cy > 0 && cy < window.innerHeight && cx > 0 && cx < window.innerWidth;
-            if (inView) {
-              from = { x: cx, y: cy, size: r.width };
-            }
-          }
+        const card = document.querySelector<HTMLImageElement>(
+          `[data-icon-card="${CSS.escape(icon.name)}"]`
+        );
+        if (card) {
+          const r = card.getBoundingClientRect();
+          from = {
+            x: r.left + r.width / 2,
+            y: r.top + r.height / 2,
+            size: r.width,
+          };
         }
         add(
           { name: icon.name, file: icon.file, url: `${basePath}/icons/${icon.file}` },
           from,
-          shouldFly ? { compact: true } : { silent: true }
+          { compact: true }
         );
       }, delay);
     });

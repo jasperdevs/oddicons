@@ -159,7 +159,7 @@ export function RequestModal({ open, onClose, anchorRef }: RequestModalProps) {
           }}
           className="fixed z-[61]"
         >
-          <div className="relative rounded-2xl border border-border bg-card p-5 shadow-2xl">
+          <div className="relative rounded-2xl border border-border bg-card p-5 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.7),_0_12px_24px_-8px_rgba(0,0,0,0.4)]">
               <div
                 aria-hidden
                 className="absolute h-3 w-3 rotate-45 border-b border-r border-border bg-card"

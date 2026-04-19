@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { Moon, ShoppingBag, Sun } from "lucide-react";
 import { Tooltip } from "@/components/ui/tooltip";
 import { SearchBar } from "@/components/search-bar";
+import { ProgressiveBlur } from "@/components/progressive-blur";
 import { useCart } from "@/lib/cart-context";
 
 interface TopbarProps {
@@ -45,17 +46,7 @@ export function Topbar({
 
   return (
     <div className="pointer-events-none absolute inset-x-0 top-0 z-30 px-6 sm:px-8">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10"
-        style={{
-          height: "calc(100% + 1.5rem)",
-          backdropFilter: "blur(3px)",
-          WebkitBackdropFilter: "blur(3px)",
-          maskImage: "linear-gradient(to bottom, black 0%, transparent 100%)",
-          WebkitMaskImage: "linear-gradient(to bottom, black 0%, transparent 100%)",
-        }}
-      />
+      <ProgressiveBlur direction="top" />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 -z-10"

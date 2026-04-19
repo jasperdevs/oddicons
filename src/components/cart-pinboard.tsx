@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Download, ShoppingBag, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart-context";
-import { downloadPng, svgToPngBlob, downloadBlob } from "@/lib/png";
+import { downloadAsZip, downloadPng } from "@/lib/png";
 
 function deterministicRotation(seed: string): number {
   let h = 0;
@@ -55,11 +55,7 @@ export function CartPinboard() {
       if (items.length === 1) {
         await downloadPng(items[0].url, items[0].name.toLowerCase());
       } else {
-        for (const item of items) {
-          const blob = await svgToPngBlob(item.url);
-          downloadBlob(blob, `${item.name.toLowerCase()}.png`);
-          await new Promise((r) => setTimeout(r, 120));
-        }
+        await downloadAsZip(items, `oddicons-${items.length}.zip`);
       }
     } finally {
       setDownloading(false);
@@ -104,7 +100,7 @@ export function CartPinboard() {
               transition: { duration: 0.18, ease: [0.4, 0, 1, 1] },
             }}
           >
-            <div className="relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
+            <div className="relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[0_32px_64px_-16px_rgba(0,0,0,0.7),_0_12px_24px_-8px_rgba(0,0,0,0.4)]">
               <div className="flex items-center justify-between px-4 pb-3 pt-4">
                 <div>
                   <h2 className="text-[16px] font-semibold tracking-tight text-foreground">

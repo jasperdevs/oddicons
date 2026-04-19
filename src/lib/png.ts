@@ -1,3 +1,5 @@
+import JSZip from "jszip";
+
 export async function svgToPngBlob(url: string, size = 512): Promise<Blob> {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Failed to fetch ${url}`);
@@ -38,4 +40,35 @@ export function downloadBlob(blob: Blob, filename: string) {
 export async function downloadPng(url: string, nameNoExt: string, size = 512) {
   const blob = await svgToPngBlob(url, size);
   downloadBlob(blob, `${nameNoExt}.png`);
+}
+
+export async function downloadAsZip(
+  items: { url: string; name: string }[],
+  zipName = "oddicons.zip",
+  size = 512,
+  onProgress?: (done: number, total: number) => void
+) {
+  const zip = new JSZip();
+  let done = 0;
+  const CONCURRENCY = 6;
+  let idx = 0;
+  async function worker() {
+    while (idx < items.length) {
+      const i = idx++;
+      const item = items[i];
+      const blob = await svgToPngBlob(item.url, size);
+      zip.file(`${item.name.toLowerCase()}.png`, blob);
+      done += 1;
+      onProgress?.(done, items.length);
+    }
+  }
+  await Promise.all(
+    Array.from({ length: Math.min(CONCURRENCY, items.length) }, worker)
+  );
+  const out = await zip.generateAsync({
+    type: "blob",
+    compression: "DEFLATE",
+    compressionOptions: { level: 6 },
+  });
+  downloadBlob(out, zipName);
 }
