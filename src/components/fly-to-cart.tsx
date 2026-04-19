@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/lib/cart-context";
 
 const STEPS = 30;
-const FINAL_SIZE = 16;
 
 function buildPath(
   from: { x: number; y: number },
@@ -14,7 +13,8 @@ function buildPath(
   const dx = to.x - from.x;
   const dy = to.y - from.y;
   const dist = Math.hypot(dx, dy);
-  // Control point: biased toward target, slight lift but viewport-safe.
+  // Control point biased toward target, with a capped vertical lift so the
+  // arc never flies above the viewport.
   const lift = Math.min(Math.max(dist * 0.18, 40), 140);
   const cx = from.x + dx * 0.55 + (dx > 0 ? 20 : -20);
   const cy = Math.max(40, Math.min(from.y, to.y) - lift);
@@ -42,16 +42,7 @@ function buildPath(
 }
 
 export function FlyToCart() {
-  const { pendingFly, consumeFly, getCartPoint } = useCart();
-  const [target, setTarget] = useState<{ x: number; y: number } | null>(null);
-
-  useEffect(() => {
-    if (!pendingFly) {
-      setTarget(null);
-      return;
-    }
-    setTarget(getCartPoint());
-  }, [pendingFly, getCartPoint]);
+  const { pendingFly, consumeFly } = useCart();
 
   const sparkles = useMemo(
     () =>
@@ -64,13 +55,12 @@ export function FlyToCart() {
     [pendingFly?.id]
   );
 
-  if (!pendingFly || !target) return null;
+  if (!pendingFly) return null;
 
-  const path = buildPath(pendingFly.from, target);
+  const path = buildPath(pendingFly.from, pendingFly.to);
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[70]">
-      {/* Sparkle burst at the source */}
       <div
         className="absolute"
         style={{ left: pendingFly.from.x, top: pendingFly.from.y }}

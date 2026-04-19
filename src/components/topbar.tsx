@@ -5,14 +5,26 @@ import { motion } from "framer-motion";
 import { Moon, ShoppingBag, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip } from "@/components/ui/tooltip";
+import { SearchBar } from "@/components/search-bar";
 import { useCart } from "@/lib/cart-context";
 
 interface TopbarProps {
   theme: "dark" | "light";
   onToggleTheme: (origin?: { x: number; y: number }) => void;
+  query: string;
+  onQueryChange: (q: string) => void;
+  total: number;
+  visible: number;
 }
 
-export function Topbar({ theme, onToggleTheme }: TopbarProps) {
+export function Topbar({
+  theme,
+  onToggleTheme,
+  query,
+  onQueryChange,
+  total,
+  visible,
+}: TopbarProps) {
   const { items, setCartAnchor, setOpen, bumpCount } = useCart();
   const cartRef = useRef<HTMLButtonElement>(null);
 
@@ -26,14 +38,24 @@ export function Topbar({ theme, onToggleTheme }: TopbarProps) {
   };
 
   return (
-    <header className="flex h-12 w-full shrink-0 items-center justify-end px-4 sm:px-6">
-      <div className="flex items-center gap-1">
+    <div className="sticky top-0 z-30 bg-sidebar/95 px-6 py-3 backdrop-blur-sm sm:px-8">
+      <div className="mx-auto flex w-full max-w-[1400px] items-center gap-2">
+        <div className="min-w-0 flex-1">
+          <SearchBar
+            value={query}
+            onChange={onQueryChange}
+            total={total}
+            visible={visible}
+          />
+        </div>
+
         <Tooltip content={theme === "dark" ? "Light mode" : "Dark mode"}>
           <Button
-            variant="ghost"
-            size="icon"
+            variant="secondary"
+            size="icon-lg"
             onClick={handleTheme}
             aria-label="Toggle theme"
+            className="bg-[var(--button)] hover:bg-[var(--button)]/80"
           >
             {theme === "dark" ? <Sun /> : <Moon />}
           </Button>
@@ -52,16 +74,17 @@ export function Topbar({ theme, onToggleTheme }: TopbarProps) {
             <Button
               ref={cartRef}
               variant="primary"
-              size="md"
+              size="lg"
               leadingIcon={ShoppingBag}
               onClick={() => items.length > 0 && setOpen(true)}
               aria-label="Open cart"
+              className="h-11"
             >
               <span className="tabular-nums">{items.length}</span>
             </Button>
           </motion.div>
         </Tooltip>
       </div>
-    </header>
+    </div>
   );
 }

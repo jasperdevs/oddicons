@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Check, Copy, Heart, ShoppingBag, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/lib/cart-context";
@@ -40,33 +40,11 @@ export function IconCard({
   const { add, has, remove } = useCart();
   const inCart = has(name);
 
-  // Gyro / tilt on hover
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const springCfg = { stiffness: 220, damping: 18, mass: 0.4 };
-  const rx = useSpring(useTransform(my, [-0.5, 0.5], [8, -8]), springCfg);
-  const ry = useSpring(useTransform(mx, [-0.5, 0.5], [-10, 10]), springCfg);
-  const lift = useSpring(useTransform(my, [-0.5, 0.5], [-4, 2]), springCfg);
-
   useEffect(() => {
     if (!copied) return;
     const t = setTimeout(() => setCopied(false), 1800);
     return () => clearTimeout(t);
   }, [copied]);
-
-  const handleMove = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      const rect = e.currentTarget.getBoundingClientRect();
-      mx.set((e.clientX - rect.left) / rect.width - 0.5);
-      my.set((e.clientY - rect.top) / rect.height - 0.5);
-    },
-    [mx, my]
-  );
-
-  const handleLeave = useCallback(() => {
-    mx.set(0);
-    my.set(0);
-  }, [mx, my]);
 
   const handleCopy = useCallback(async () => {
     const svg = await fetchSvg(url);
@@ -110,10 +88,9 @@ export function IconCard({
 
   return (
     <motion.div
-      onMouseMove={handleMove}
-      onMouseLeave={handleLeave}
-      style={{ y: lift }}
-      className="group relative flex flex-col overflow-hidden rounded-xl bg-card transition-colors [perspective:900px]"
+      whileHover={{ y: -3 }}
+      transition={{ type: "spring", stiffness: 520, damping: 28, mass: 0.6 }}
+      className="group relative flex flex-col overflow-hidden rounded-xl border border-border/60 bg-card transition-colors duration-150 hover:border-foreground/30"
     >
       <button
         type="button"
@@ -146,7 +123,7 @@ export function IconCard({
                       opacity: [0, 1, 0],
                       scale: [0.6, 1, 0.4],
                     }}
-                    transition={{ duration: 0.55, ease: "easeOut" }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
                   />
                 ))}
               </motion.span>
@@ -160,7 +137,7 @@ export function IconCard({
                 ? { scale: [0.6, 1.45, 0.92, 1.08, 1], rotate: [0, -8, 6, -2, 0] }
                 : { scale: 1, rotate: 0 }
             }
-            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
             <Heart
               size={15}
@@ -171,22 +148,17 @@ export function IconCard({
         </div>
       </button>
 
-      <div className="flex aspect-[5/4] items-center justify-center px-6 py-6 [transform-style:preserve-3d]">
-        <motion.div
-          style={{ rotateX: rx, rotateY: ry }}
-          className="grid h-20 w-20 place-items-center [transform-style:preserve-3d] will-change-transform"
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            ref={imgRef}
-            src={url}
-            alt={name}
-            width={80}
-            height={80}
-            className="h-20 w-20 invert transition-transform duration-200 group-hover:scale-[1.08] dark:invert-0"
-            loading="lazy"
-          />
-        </motion.div>
+      <div className="flex aspect-[5/4] items-center justify-center px-6 py-6">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          ref={imgRef}
+          src={url}
+          alt={name}
+          width={80}
+          height={80}
+          className="h-20 w-20 invert transition-transform duration-150 group-hover:scale-[1.08] dark:invert-0"
+          loading="lazy"
+        />
       </div>
 
       <div className="flex flex-col items-center gap-1 pb-3.5">

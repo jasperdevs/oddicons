@@ -1,7 +1,10 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Heart, Home } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useProximityHover } from "@/hooks/use-proximity-hover";
 import { cn } from "@/lib/utils";
 
 interface SidebarProps {
@@ -13,6 +16,15 @@ interface SidebarProps {
   onlyFavorites: boolean;
   onToggleFavorites: () => void;
   totalCount: number;
+}
+
+interface Row {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+  count: number;
+  active: boolean;
+  onSelect: () => void;
 }
 
 export function Sidebar({
@@ -28,6 +40,56 @@ export function Sidebar({
   const tagCategories = categories.filter((c) => c !== "All");
   const homeActive = !onlyFavorites && selected === "All";
 
+  const topRows: Row[] = [
+    {
+      id: "home",
+      label: "Home",
+      icon: <Home size={14} strokeWidth={homeActive ? 2 : 1.5} />,
+      count: totalCount,
+      active: homeActive,
+      onSelect: () => {
+        if (onlyFavorites) onToggleFavorites();
+        onSelect("All");
+      },
+    },
+    {
+      id: "favorites",
+      label: "Favorites",
+      icon: (
+        <Heart
+          size={14}
+          strokeWidth={onlyFavorites ? 2 : 1.5}
+          className={onlyFavorites ? "fill-current" : ""}
+        />
+      ),
+      count: favoriteCount,
+      active: onlyFavorites,
+      onSelect: onToggleFavorites,
+    },
+  ];
+
+  const tagRows: Row[] = tagCategories.map((cat) => {
+    const active = !onlyFavorites && selected === cat;
+    return {
+      id: `tag-${cat}`,
+      label: cat,
+      icon: (
+        <span
+          className={cn(
+            "h-1.5 w-1.5 rounded-full",
+            active ? "bg-foreground" : "bg-muted-foreground/60"
+          )}
+        />
+      ),
+      count: counts[cat] ?? 0,
+      active,
+      onSelect: () => {
+        if (onlyFavorites) onToggleFavorites();
+        onSelect(cat);
+      },
+    };
+  });
+
   return (
     <aside className="hidden w-60 shrink-0 flex-col overflow-hidden rounded-2xl bg-sidebar md:flex">
       <div className="flex items-center gap-2 px-5 pb-4 pt-5">
@@ -41,106 +103,106 @@ export function Sidebar({
         <span className="text-[15px] font-semibold tracking-tight text-foreground">oddicons</span>
       </div>
 
-      <nav className="flex flex-col gap-0.5 px-3">
-        <SidebarItem
-          icon={<Home size={14} strokeWidth={homeActive ? 2 : 1.5} />}
-          label="Home"
-          count={totalCount}
-          active={homeActive}
-          onClick={() => {
-            if (onlyFavorites) onToggleFavorites();
-            onSelect("All");
-          }}
-        />
-        <SidebarItem
-          icon={
-            <Heart
-              size={14}
-              strokeWidth={onlyFavorites ? 2 : 1.5}
-              className={onlyFavorites ? "fill-current" : ""}
-            />
-          }
-          label="Favorites"
-          count={favoriteCount}
-          active={onlyFavorites}
-          onClick={onToggleFavorites}
-        />
-      </nav>
+      <ProximityNav rows={topRows} />
 
       <div className="mx-5 my-4 h-px bg-border/40" />
 
-      <div className="px-5 pb-2 text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground/70">
+      <div className="px-5 pb-2 text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground/80">
         Tags
       </div>
 
-      <nav className="scrollbar-custom flex flex-1 flex-col gap-0.5 overflow-y-auto px-3 pb-4">
-        {tagCategories.map((cat) => {
-          const active = !onlyFavorites && selected === cat;
-          return (
-            <SidebarItem
-              key={cat}
-              icon={
-                <span
-                  className={cn(
-                    "h-1.5 w-1.5 rounded-full",
-                    active ? "bg-background" : "bg-muted-foreground/50"
-                  )}
-                />
-              }
-              label={cat}
-              count={counts[cat] ?? 0}
-              active={active}
-              onClick={() => {
-                if (onlyFavorites) onToggleFavorites();
-                onSelect(cat);
-              }}
-            />
-          );
-        })}
-      </nav>
+      <div className="scrollbar-custom flex-1 overflow-y-auto pb-4">
+        <ProximityNav rows={tagRows} />
+      </div>
     </aside>
   );
 }
 
-function SidebarItem({
-  icon,
-  label,
-  count,
-  active,
-  onClick,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  count: number;
-  active: boolean;
-  onClick: () => void;
-}) {
+function ProximityNav({ rows }: { rows: Row[] }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const {
+    activeIndex,
+    itemRects,
+    handlers,
+    registerItem,
+    measureItems,
+  } = useProximityHover<HTMLDivElement>(containerRef);
+
+  useEffect(() => {
+    measureItems();
+  }, [rows.length, measureItems]);
+
+  const activeRect =
+    activeIndex !== null ? itemRects[activeIndex] : null;
+
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "group flex h-9 items-center justify-between rounded-md px-3 text-[13px] transition-colors",
-        active
-          ? "bg-foreground text-background"
-          : "text-muted-foreground hover:bg-muted hover:text-foreground"
-      )}
+    <div
+      ref={containerRef}
+      {...handlers}
+      className="relative flex flex-col gap-0.5 px-3"
     >
-      <span className="flex items-center gap-2.5">
-        <span className="grid h-4 w-4 place-items-center">{icon}</span>
-        <span>{label}</span>
-      </span>
-      <Badge
-        variant="solid"
-        size="sm"
-        color="gray"
-        className={cn(
-          "tabular-nums transition-colors",
-          active && "bg-background/15! text-background!"
+      <AnimatePresence>
+        {activeRect && (
+          <motion.span
+            key="hover"
+            aria-hidden
+            className="pointer-events-none absolute rounded-md bg-muted"
+            initial={{ opacity: 0 }}
+            animate={{
+              opacity: 1,
+              top: activeRect.top,
+              left: activeRect.left,
+              width: activeRect.width,
+              height: activeRect.height,
+            }}
+            exit={{ opacity: 0 }}
+            transition={{
+              type: "spring",
+              stiffness: 520,
+              damping: 40,
+              mass: 0.4,
+              opacity: { duration: 0.12 },
+            }}
+          />
         )}
-      >
-        {count}
-      </Badge>
-    </button>
+      </AnimatePresence>
+
+      {rows.map((row, i) => {
+        const isActive = row.active;
+        const isHovered = activeIndex === i;
+        return (
+          <button
+            key={row.id}
+            type="button"
+            ref={(el) => registerItem(i, el)}
+            onClick={row.onSelect}
+            className={cn(
+              "relative z-10 flex h-9 items-center justify-between rounded-md px-3 text-[13px] transition-colors",
+              isActive
+                ? "bg-foreground text-background"
+                : isHovered
+                  ? "text-foreground"
+                  : "text-muted-foreground"
+            )}
+          >
+            <span className="flex items-center gap-2.5">
+              <span className="grid h-4 w-4 place-items-center">{row.icon}</span>
+              <span>{row.label}</span>
+            </span>
+            <Badge
+              variant="solid"
+              size="sm"
+              color="gray"
+              className={cn(
+                "tabular-nums transition-colors",
+                isActive && "bg-background/15! text-background!"
+              )}
+            >
+              {row.count}
+            </Badge>
+          </button>
+        );
+      })}
+    </div>
   );
 }

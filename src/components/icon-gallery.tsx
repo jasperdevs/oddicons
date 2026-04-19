@@ -6,10 +6,9 @@ import { useFavorites } from "@/hooks/use-favorites";
 import { useTheme } from "@/hooks/use-theme";
 import { CartProvider } from "@/lib/cart-context";
 import { Topbar } from "@/components/topbar";
-import { SearchBar } from "@/components/search-bar";
 import { Sidebar } from "@/components/sidebar";
 import { IconCard } from "@/components/icon-card";
-import { CartDrawer } from "@/components/cart-drawer";
+import { CartPinboard } from "@/components/cart-pinboard";
 import { FlyToCart } from "@/components/fly-to-cart";
 import { Heart, SearchX } from "lucide-react";
 
@@ -100,41 +99,41 @@ function GalleryInner() {
       />
 
       <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl bg-sidebar">
-        <Topbar theme={theme} onToggleTheme={toggleTheme} />
+        <div className="scrollbar-custom fade-bottom min-w-0 flex-1 overflow-y-auto">
+          <Topbar
+            theme={theme}
+            onToggleTheme={toggleTheme}
+            query={query}
+            onQueryChange={setQuery}
+            total={all.length}
+            visible={filtered.length}
+          />
 
-        <main className="scrollbar-custom fade-bottom min-w-0 flex-1 overflow-y-auto px-6 pb-12 sm:px-8">
-          <div className="mx-auto w-full max-w-[1400px]">
-            <div className="pt-1">
-              <SearchBar
-                value={query}
-                onChange={setQuery}
-                total={all.length}
-                visible={filtered.length}
-              />
+          <main className="px-6 pb-12 sm:px-8">
+            <div className="mx-auto w-full max-w-[1400px]">
+              <section className="mt-3">
+                {emptyState ?? (
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+                    {filtered.map((icon) => (
+                      <IconCard
+                        key={icon.name}
+                        name={icon.name}
+                        file={icon.file}
+                        category={icon.category}
+                        basePath={basePath}
+                        isFavorite={isFavorite(icon.name)}
+                        onToggleFavorite={toggleFavorite}
+                      />
+                    ))}
+                  </div>
+                )}
+              </section>
             </div>
-
-            <section className="mt-4">
-              {emptyState ?? (
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-                  {filtered.map((icon) => (
-                    <IconCard
-                      key={icon.name}
-                      name={icon.name}
-                      file={icon.file}
-                      category={icon.category}
-                      basePath={basePath}
-                      isFavorite={isFavorite(icon.name)}
-                      onToggleFavorite={toggleFavorite}
-                    />
-                  ))}
-                </div>
-              )}
-            </section>
-          </div>
-        </main>
+          </main>
+        </div>
       </div>
 
-      <CartDrawer />
+      <CartPinboard />
       <FlyToCart />
     </div>
   );

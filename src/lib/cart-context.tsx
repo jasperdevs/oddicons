@@ -21,6 +21,7 @@ interface FlyEvent {
   id: number;
   item: CartItem;
   from: { x: number; y: number; size: number };
+  to: { x: number; y: number };
 }
 
 interface CartContextValue {
@@ -74,9 +75,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const add = useCallback(
     (item: CartItem, from: { x: number; y: number; size: number }) => {
+      // Resolve cart target NOW so a mid-animation cart button can't shift it.
+      const el = anchorRef.current;
+      const to = el
+        ? (() => {
+            const r = el.getBoundingClientRect();
+            return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+          })()
+        : { x: window.innerWidth - 40, y: 40 };
       setItems((prev) => (prev.some((i) => i.name === item.name) ? prev : [...prev, item]));
       idRef.current += 1;
-      setPendingFly({ id: idRef.current, item, from });
+      setPendingFly({ id: idRef.current, item, from, to });
     },
     []
   );
