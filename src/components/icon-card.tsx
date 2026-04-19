@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Check, Copy, Heart, ShoppingBag, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/lib/cart-context";
@@ -35,16 +35,38 @@ export function IconCard({
 }: IconCardProps) {
   const url = `${basePath}/icons/${file}`;
   const [copied, setCopied] = useState(false);
-  const [favBurst, setFavBurst] = useState<{ id: number; on: boolean } | null>(null);
+  const [favBurstId, setFavBurstId] = useState<number | null>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const { add, has, remove } = useCart();
   const inCart = has(name);
+
+  // Gyro / tilt on hover
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const springCfg = { stiffness: 220, damping: 18, mass: 0.4 };
+  const rx = useSpring(useTransform(my, [-0.5, 0.5], [8, -8]), springCfg);
+  const ry = useSpring(useTransform(mx, [-0.5, 0.5], [-10, 10]), springCfg);
+  const lift = useSpring(useTransform(my, [-0.5, 0.5], [-4, 2]), springCfg);
 
   useEffect(() => {
     if (!copied) return;
     const t = setTimeout(() => setCopied(false), 1800);
     return () => clearTimeout(t);
   }, [copied]);
+
+  const handleMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      mx.set((e.clientX - rect.left) / rect.width - 0.5);
+      my.set((e.clientY - rect.top) / rect.height - 0.5);
+    },
+    [mx, my]
+  );
+
+  const handleLeave = useCallback(() => {
+    mx.set(0);
+    my.set(0);
+  }, [mx, my]);
 
   const handleCopy = useCallback(async () => {
     const svg = await fetchSvg(url);
@@ -74,50 +96,25 @@ export function IconCard({
   const handleFavorite = useCallback(() => {
     const willFav = !isFavorite;
     onToggleFavorite(name);
-    setFavBurst({ id: Date.now(), on: willFav });
+    if (willFav) setFavBurstId(Date.now());
   }, [isFavorite, onToggleFavorite, name]);
 
-  return (
-    <div
-      className={cn(
-        "group relative flex flex-col overflow-hidden rounded-xl bg-card transition-all",
-        "hover:-translate-y-0.5 hover:shadow-[0_8px_24px_-12px_rgba(0,0,0,0.25)] dark:hover:shadow-[0_8px_24px_-12px_rgba(0,0,0,0.9)]"
-      )}
-    >
-      <AnimatePresence>
-        {favBurst && favBurst.on && (
-          <motion.div
-            key={favBurst.id}
-            aria-hidden
-            className="pointer-events-none absolute inset-0 z-20 grid place-items-center rounded-xl bg-foreground"
-            initial={{ clipPath: "circle(0% at 50% 85%)" }}
-            animate={{
-              clipPath: [
-                "circle(0% at 50% 85%)",
-                "circle(120% at 50% 85%)",
-                "circle(120% at 50% 85%)",
-              ],
-              opacity: [1, 1, 0],
-            }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.75, times: [0, 0.4, 1], ease: [0.22, 1, 0.36, 1] }}
-            onAnimationComplete={() => setFavBurst(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.2, rotate: -10 }}
-              animate={{ scale: [0.2, 1.2, 1], rotate: [-10, 6, 0] }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <Heart
-                size={72}
-                strokeWidth={0}
-                className="fill-background"
-              />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+  const sparks = useMemo(
+    () =>
+      Array.from({ length: 6 }, (_, i) => ({
+        id: i,
+        angle: (i / 6) * Math.PI * 2 + Math.PI / 6,
+      })),
+    []
+  );
 
+  return (
+    <motion.div
+      onMouseMove={handleMove}
+      onMouseLeave={handleLeave}
+      style={{ y: lift }}
+      className="group relative flex flex-col overflow-hidden rounded-xl bg-card transition-colors [perspective:900px]"
+    >
       <button
         type="button"
         onClick={handleFavorite}
@@ -129,39 +126,77 @@ export function IconCard({
           isFavorite && "opacity-100 text-foreground"
         )}
       >
-        <motion.span
-          key={favBurst?.id ?? "idle"}
-          initial={favBurst ? { scale: 0.6 } : false}
-          animate={favBurst ? { scale: [0.6, 1.5, 0.95, 1.08, 1] } : { scale: 1 }}
-          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <Heart
-            size={15}
-            strokeWidth={1.75}
-            className={cn("transition-colors", isFavorite && "fill-foreground text-foreground")}
-          />
-        </motion.span>
+        <div className="relative grid place-items-center">
+          <AnimatePresence>
+            {favBurstId !== null && (
+              <motion.span
+                key={favBurstId}
+                aria-hidden
+                className="pointer-events-none absolute inset-0"
+                onAnimationComplete={() => setFavBurstId(null)}
+              >
+                {sparks.map((s) => (
+                  <motion.span
+                    key={s.id}
+                    className="absolute left-1/2 top-1/2 h-1 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground"
+                    initial={{ x: 0, y: 0, opacity: 0, scale: 0.6 }}
+                    animate={{
+                      x: Math.cos(s.angle) * 16,
+                      y: Math.sin(s.angle) * 16,
+                      opacity: [0, 1, 0],
+                      scale: [0.6, 1, 0.4],
+                    }}
+                    transition={{ duration: 0.55, ease: "easeOut" }}
+                  />
+                ))}
+              </motion.span>
+            )}
+          </AnimatePresence>
+          <motion.span
+            key={favBurstId ?? "idle"}
+            initial={favBurstId !== null ? { scale: 0.6 } : false}
+            animate={
+              favBurstId !== null
+                ? { scale: [0.6, 1.45, 0.92, 1.08, 1], rotate: [0, -8, 6, -2, 0] }
+                : { scale: 1, rotate: 0 }
+            }
+            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <Heart
+              size={15}
+              strokeWidth={1.75}
+              className={cn("transition-colors", isFavorite && "fill-foreground text-foreground")}
+            />
+          </motion.span>
+        </div>
       </button>
 
-      <div className="flex aspect-[5/4] items-center justify-center px-6 py-8">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          ref={imgRef}
-          src={url}
-          alt={name}
-          width={64}
-          height={64}
-          className="h-14 w-14 invert transition-transform duration-200 group-hover:scale-[1.06] dark:invert-0"
-          loading="lazy"
-        />
+      <div className="flex aspect-[5/4] items-center justify-center px-6 py-6 [transform-style:preserve-3d]">
+        <motion.div
+          style={{ rotateX: rx, rotateY: ry }}
+          className="grid h-20 w-20 place-items-center [transform-style:preserve-3d] will-change-transform"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            ref={imgRef}
+            src={url}
+            alt={name}
+            width={80}
+            height={80}
+            className="h-20 w-20 invert transition-transform duration-200 group-hover:scale-[1.08] dark:invert-0"
+            loading="lazy"
+          />
+        </motion.div>
       </div>
 
-      <div className="flex flex-col items-center gap-0.5 pb-3">
-        <span className="text-[13px] font-medium leading-none text-foreground">{name}</span>
-        <span className="text-[11px] leading-none text-muted-foreground">{category}</span>
+      <div className="flex flex-col items-center gap-1 pb-3.5">
+        <span className="text-[13.5px] font-semibold tracking-tight text-foreground">{name}</span>
+        <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+          {category}
+        </span>
       </div>
 
-      <div className="mt-auto grid grid-cols-2 border-t border-border/40">
+      <div className="mt-auto grid grid-cols-2 border-t border-border/50">
         <button
           type="button"
           onClick={handleCopy}
@@ -199,31 +234,47 @@ export function IconCard({
           type="button"
           onClick={handleAddToCart}
           className={cn(
-            "group/cart inline-flex h-10 items-center justify-center gap-1.5 border-l border-border/40 text-[12px] transition-colors",
+            "group/cart relative inline-flex h-10 items-center justify-center gap-1.5 border-l border-border/50 text-[12px] transition-colors",
             inCart
-              ? "bg-muted text-foreground hover:bg-destructive/10"
+              ? "bg-muted text-foreground hover:bg-muted"
               : "text-muted-foreground hover:bg-foreground hover:text-background"
           )}
         >
-          {inCart ? (
-            <>
-              <span className="flex items-center gap-1.5 group-hover/cart:hidden">
-                <Check size={13} strokeWidth={2} />
-                <span>Added</span>
-              </span>
-              <span className="hidden items-center gap-1.5 group-hover/cart:flex">
-                <X size={13} strokeWidth={2} />
-                <span>Remove</span>
-              </span>
-            </>
-          ) : (
-            <>
-              <ShoppingBag size={13} strokeWidth={1.75} />
-              <span>Add</span>
-            </>
-          )}
+          <AnimatePresence mode="wait" initial={false}>
+            {inCart ? (
+              <motion.span
+                key="added"
+                className="flex items-center gap-1.5"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.18 }}
+              >
+                <span className="flex items-center gap-1.5 group-hover/cart:hidden">
+                  <Check size={13} strokeWidth={2} />
+                  <span>Added</span>
+                </span>
+                <span className="hidden items-center gap-1.5 group-hover/cart:flex">
+                  <X size={13} strokeWidth={2} />
+                  <span>Remove</span>
+                </span>
+              </motion.span>
+            ) : (
+              <motion.span
+                key="add"
+                className="flex items-center gap-1.5"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.18 }}
+              >
+                <ShoppingBag size={13} strokeWidth={1.75} />
+                <span>Add</span>
+              </motion.span>
+            )}
+          </AnimatePresence>
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }

@@ -105,10 +105,11 @@ export function CartDrawer() {
                     visible: { transition: { staggerChildren: 0.05, delayChildren: 0.05 } },
                   }}
                 >
-                  {items.map((item, i) => {
-                    return (
+                  <AnimatePresence mode="popLayout">
+                    {items.map((item, i) => (
                       <motion.li
                         key={item.name}
+                        layout
                         variants={{
                           hidden: {
                             opacity: 0,
@@ -128,6 +129,13 @@ export function CartDrawer() {
                               mass: 0.7,
                             },
                           },
+                        }}
+                        exit={{
+                          opacity: 0,
+                          scale: 0.4,
+                          rotate: 14,
+                          y: 24,
+                          transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] },
                         }}
                         className={cn(
                           "group relative aspect-square overflow-hidden rounded-xl bg-card p-4 transition-transform hover:-translate-y-0.5"
@@ -151,8 +159,8 @@ export function CartDrawer() {
                           {item.name}
                         </span>
                       </motion.li>
-                    );
-                  })}
+                    ))}
+                  </AnimatePresence>
                 </motion.ul>
               )}
             </div>

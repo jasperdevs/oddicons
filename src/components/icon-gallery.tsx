@@ -102,7 +102,7 @@ function GalleryInner() {
       <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl bg-sidebar">
         <Topbar theme={theme} onToggleTheme={toggleTheme} />
 
-        <main className="scrollbar-custom relative min-w-0 flex-1 overflow-y-auto px-6 pb-24 sm:px-8">
+        <main className="scrollbar-custom fade-bottom min-w-0 flex-1 overflow-y-auto px-6 pb-12 sm:px-8">
           <div className="mx-auto w-full max-w-[1400px]">
             <div className="pt-1">
               <SearchBar
@@ -131,11 +131,6 @@ function GalleryInner() {
               )}
             </section>
           </div>
-
-          <div
-            aria-hidden
-            className="pointer-events-none sticky bottom-0 -mx-6 -mb-24 h-20 bg-gradient-to-t from-sidebar via-sidebar/80 to-transparent sm:-mx-8"
-          />
         </main>
       </div>
 
