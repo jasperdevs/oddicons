@@ -8,7 +8,7 @@ import { OddIcon, oddIconComponent } from "@/components/ui/odd-icon";
 import { useFavorites } from "@/hooks/use-favorites";
 import { useTheme } from "@/hooks/use-theme";
 import { CartProvider, useCart } from "@/lib/cart-context";
-import { SettingsProvider } from "@/lib/settings-context";
+import { SettingsProvider, useSettings } from "@/lib/settings-context";
 import { cn } from "@/lib/utils";
 import { slugify } from "@/lib/slug";
 import { Topbar } from "@/components/topbar";
@@ -380,10 +380,9 @@ function SortDropdown({
   );
 }
 
-const ADD_ALL_DURATION_MS = 2200;
+const ADD_ALL_DURATION_MS = 3000;
 const FLIGHT_DURATION_MS = 500;
 const FIRE_WINDOW_MS = ADD_ALL_DURATION_MS - FLIGHT_DURATION_MS;
-const MAX_FLIES = 22;
 
 function AddAllButton({
   items,
@@ -393,6 +392,7 @@ function AddAllButton({
   basePath: string;
 }) {
   const { add, has, remove } = useCart();
+  const { settings } = useSettings();
   const ref = useRef<HTMLButtonElement>(null);
   const pending = useMemo(() => items.filter((i) => !has(i.name)), [items, has]);
   const allAdded = items.length > 0 && pending.length === 0;
@@ -405,63 +405,39 @@ function AddAllButton({
     const el = ref.current;
     if (!el) return;
     const btnRect = el.getBoundingClientRect();
-    const fallback = {
+    const origin = {
       x: btnRect.left + btnRect.width / 2,
       y: btnRect.top + btnRect.height / 2,
-      size: 72,
+      size: Math.max(56, btnRect.height * 1.1),
     };
 
-    const visible: IconEntry[] = [];
-    for (const icon of pending) {
-      const card = document.querySelector<HTMLImageElement>(
-        `[data-icon-card="${CSS.escape(icon.name)}"]`
-      );
-      if (!card) continue;
-      const r = card.getBoundingClientRect();
-      const cx = r.left + r.width / 2;
-      const cy = r.top + r.height / 2;
-      if (cy > 0 && cy < window.innerHeight && cx > 0 && cx < window.innerWidth) {
-        visible.push(icon);
-      }
-    }
-
-    for (let i = visible.length - 1; i > 0; i--) {
+    const shuffled = pending.slice();
+    for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [visible[i], visible[j]] = [visible[j], visible[i]];
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
 
-    const flyCount = Math.min(visible.length, MAX_FLIES);
-    const flies = visible.slice(0, flyCount);
-    const flySet = new Set(flies.map((i) => i.name));
+    const n = shuffled.length;
+    if (n === 0) return;
 
-    for (const icon of pending) {
-      if (flySet.has(icon.name)) continue;
-      add(
-        { name: icon.name, file: icon.file, url: `${basePath}/icons/${icon.file}` },
-        fallback,
-        { silent: true }
-      );
-    }
-
-    flies.forEach((icon, i) => {
-      const t = flyCount > 1 ? i / (flyCount - 1) : 0;
-      const eased = t * t;
-      const delay = eased * FIRE_WINDOW_MS;
+    shuffled.forEach((icon, i) => {
+      const t = n > 1 ? i / (n - 1) : 0;
+      const eased = Math.pow(t, 1.35);
+      const jitter = (Math.random() - 0.5) * 80;
+      const delay = Math.max(0, eased * FIRE_WINDOW_MS + jitter);
+      const from = {
+        x: origin.x + (Math.random() - 0.5) * 18,
+        y: origin.y + (Math.random() - 0.5) * 18,
+        size: origin.size,
+      };
       window.setTimeout(() => {
-        let from = fallback;
-        const card = document.querySelector<HTMLImageElement>(
-          `[data-icon-card="${CSS.escape(icon.name)}"]`
-        );
-        if (card) {
-          const r = card.getBoundingClientRect();
-          from = {
-            x: r.left + r.width / 2,
-            y: r.top + r.height / 2,
-            size: r.width,
-          };
-        }
         add(
-          { name: icon.name, file: icon.file, url: `${basePath}/icons/${icon.file}` },
+          {
+            name: icon.name,
+            file: icon.file,
+            url: `${basePath}/icons/${icon.file}`,
+            monochrome: settings.monochrome,
+          },
           from,
           { compact: true }
         );

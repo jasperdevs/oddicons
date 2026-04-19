@@ -71,6 +71,7 @@ function Fly({ event, onDone }: FlyProps) {
         willChange: "transform, opacity",
         transform: `translate3d(${from.x}px, ${from.y}px, 0) translate(-50%, -50%)`,
         transformOrigin: "center",
+        filter: item.monochrome ? "grayscale(100%)" : undefined,
       }}
     />
   );

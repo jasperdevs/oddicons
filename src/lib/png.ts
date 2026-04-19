@@ -82,9 +82,9 @@ export async function downloadPng(url: string, nameNoExt: string, opts?: Process
 }
 
 export async function downloadAsZip(
-  items: { url: string; name: string }[],
+  items: { url: string; name: string; monochrome?: boolean }[],
   zipName = "oddicons.zip",
-  opts?: ProcessOpts,
+  opts?: { size: number },
   onProgress?: (done: number, total: number) => void
 ) {
   const zip = new JSZip();
@@ -96,7 +96,10 @@ export async function downloadAsZip(
       const i = idx++;
       const item = items[i];
       const source = await fetchIconBlob(item.url);
-      const blob = await processBlob(source, opts);
+      const perItemOpts: ProcessOpts | undefined = opts
+        ? { size: opts.size, monochrome: Boolean(item.monochrome) }
+        : undefined;
+      const blob = await processBlob(source, perItemOpts);
       const name = filenameFromUrl(item.url, `${item.name.toLowerCase()}.png`);
       zip.file(name, blob);
       done += 1;

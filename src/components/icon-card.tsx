@@ -90,10 +90,10 @@ export function IconCard({
     if (!el) return;
     const rect = el.getBoundingClientRect();
     add(
-      { name, file, url },
+      { name, file, url, monochrome: settings.monochrome },
       { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2, size: rect.width }
     );
-  }, [add, remove, name, file, url, inCart]);
+  }, [add, remove, name, file, url, inCart, settings.monochrome]);
 
   const handleFavorite = useCallback(
     (e: React.MouseEvent) => {
@@ -125,19 +125,17 @@ export function IconCard({
       transition={springs.moderate}
       className={cn(
         "group relative flex flex-col overflow-hidden rounded-2xl border bg-card text-left transition-[box-shadow,border-color,background-color] duration-[180ms] outline-none",
-        borderBackground
-          ? "hover:border-transparent"
-          : "hover:border-foreground/30",
+        borderBackground ? "border-transparent" : "border-border hover:border-foreground/30",
         "hover:shadow-[0_12px_24px_-12px_rgba(0,0,0,0.45),_0_4px_8px_-4px_rgba(0,0,0,0.25)]",
         "focus-visible:border-foreground/40 focus-visible:ring-1 focus-visible:ring-foreground/30",
-        inCart ? "border-foreground/40" : "border-border"
+        inCart && !borderBackground && "border-foreground/40"
       )}
     >
       {borderBackground && (
         <span
           ref={borderRef}
           aria-hidden
-          className="pointer-events-none absolute inset-0 z-20 rounded-2xl opacity-0 transition-opacity duration-[180ms] group-hover:opacity-100"
+          className="pointer-events-none absolute inset-0 z-20 rounded-2xl opacity-80 transition-opacity duration-[180ms] group-hover:opacity-100"
           style={{
             padding: 1,
             background: borderBackground,

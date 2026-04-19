@@ -2,10 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, Copy, Download, X } from "lucide-react";
+import { Copy, X } from "lucide-react";
 import { OddIcon, oddIconComponent } from "@/components/ui/odd-icon";
 
 const TrashIcon = oddIconComponent("trash");
+const DownloadIcon = oddIconComponent("download");
 import { iconThumbUrl } from "@/lib/icon-url";
 import { Button } from "@/components/ui/button";
 import { PopoverTail } from "@/components/ui/popover-tail";
@@ -52,10 +53,10 @@ export function CartPinboard() {
   const [copiedName, setCopiedName] = useState<string | null>(null);
   const [anchor, setAnchor] = useState<{ top: number; right: number; tailRight: number } | null>(null);
 
-  const handleCopy = async (name: string, url: string) => {
+  const handleCopy = async (name: string, url: string, monochrome: boolean) => {
     const ok = await copyIconToClipboard(url, {
       size: settings.downloadSize,
-      monochrome: settings.monochrome,
+      monochrome,
     });
     if (!ok) return;
     setCopiedName(name);
@@ -106,14 +107,15 @@ export function CartPinboard() {
     if (items.length === 0 || downloading) return;
     setDownloading(true);
     try {
-      const opts = {
-        size: settings.downloadSize,
-        monochrome: settings.monochrome,
-      };
       if (items.length === 1) {
-        await downloadPng(items[0].url, items[0].name.toLowerCase(), opts);
+        await downloadPng(items[0].url, items[0].name.toLowerCase(), {
+          size: settings.downloadSize,
+          monochrome: items[0].monochrome,
+        });
       } else {
-        await downloadAsZip(items, `oddicons-${items.length}.zip`, opts);
+        await downloadAsZip(items, `oddicons-${items.length}.zip`, {
+          size: settings.downloadSize,
+        });
       }
     } finally {
       setDownloading(false);
@@ -241,7 +243,7 @@ export function CartPinboard() {
                             >
                               <button
                                 type="button"
-                                onClick={() => handleCopy(item.name, item.url)}
+                                onClick={() => handleCopy(item.name, item.url, item.monochrome)}
                                 aria-label={copied ? `copied ${item.name}` : `copy ${item.name}`}
                                 className={cn(
                                   "relative block aspect-square w-full overflow-hidden rounded-xl border bg-sidebar p-2.5 transition-colors duration-[180ms] outline-none",
@@ -264,7 +266,7 @@ export function CartPinboard() {
                                     copied && "opacity-20"
                                   )}
                                   style={{
-                                    filter: settings.monochrome ? "grayscale(100%)" : undefined,
+                                    filter: item.monochrome ? "grayscale(100%)" : undefined,
                                   }}
                                 />
                                 <span className="pointer-events-none absolute inset-x-0 bottom-0 truncate bg-gradient-to-t from-sidebar via-sidebar/80 to-transparent px-2 pb-1 pt-4 text-center text-[10px] font-medium text-foreground opacity-0 transition-opacity duration-[180ms] group-hover:opacity-100">
@@ -277,7 +279,7 @@ export function CartPinboard() {
                                     copied ? "opacity-100" : "opacity-0"
                                   )}
                                 >
-                                  <Check size={22} strokeWidth={2} />
+                                  <OddIcon name="check" size={32} />
                                 </span>
                                 <span
                                   aria-hidden
@@ -324,7 +326,7 @@ export function CartPinboard() {
                 <Button
                   variant="primary"
                   size="lg"
-                  leadingIcon={Download}
+                  leadingIcon={DownloadIcon}
                   loading={downloading}
                   disabled={items.length === 0}
                   onClick={handleDownloadAll}

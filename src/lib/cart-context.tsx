@@ -15,6 +15,7 @@ export interface CartItem {
   name: string;
   file: string;
   url: string;
+  monochrome: boolean;
 }
 
 export interface FlyEvent {
@@ -62,7 +63,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) setItems(parsed);
+        if (Array.isArray(parsed)) {
+          setItems(
+            parsed.map((i) => ({
+              name: String(i.name ?? ""),
+              file: String(i.file ?? ""),
+              url: String(i.url ?? ""),
+              monochrome: Boolean(i.monochrome),
+            }))
+          );
+        }
       }
     } catch {
       // ignore
