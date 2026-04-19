@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -10,19 +10,18 @@ interface SearchBarProps {
   total: number;
 }
 
+function isEditable(el: EventTarget | null) {
+  if (!(el instanceof HTMLElement)) return false;
+  const tag = el.tagName;
+  return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || el.isContentEditable;
+}
+
 export function SearchBar({ value, onChange, total }: SearchBarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [isMac, setIsMac] = useState(false);
-
-  useEffect(() => {
-    const ua = navigator.userAgent || navigator.platform || "";
-    setIsMac(/Mac|iPhone|iPod|iPad/i.test(ua));
-  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      const mod = isMac ? e.metaKey : e.ctrlKey;
-      if (mod && (e.key === "k" || e.key === "K")) {
+      if (e.key === "/" && !e.ctrlKey && !e.metaKey && !e.altKey && !isEditable(e.target)) {
         e.preventDefault();
         inputRef.current?.focus();
         inputRef.current?.select();
@@ -34,7 +33,7 @@ export function SearchBar({ value, onChange, total }: SearchBarProps) {
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [isMac]);
+  }, []);
 
   return (
     <div
@@ -62,12 +61,12 @@ export function SearchBar({ value, onChange, total }: SearchBarProps) {
           <X size={14} />
         </button>
       ) : (
-        <span
+        <kbd
           aria-hidden
-          className="hidden shrink-0 font-mono text-[12px] text-muted-foreground sm:inline"
+          className="hidden shrink-0 rounded-md border border-border bg-background px-1.5 py-0.5 font-mono text-[11px] leading-none text-muted-foreground sm:inline-flex"
         >
-          {isMac ? "⌘K" : "Ctrl+K"}
-        </span>
+          /
+        </kbd>
       )}
     </div>
   );

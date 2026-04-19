@@ -148,24 +148,25 @@ export function IconCard({
         </div>
       </button>
 
-      <div className="grid aspect-square place-items-center p-8">
+      <div className="grid aspect-square place-items-center p-5">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           ref={imgRef}
           src={url}
           alt={name}
-          width={112}
-          height={112}
-          className="h-28 w-28 invert transition-transform duration-[180ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:scale-[1.06] dark:invert-0"
+          width={96}
+          height={96}
+          data-icon-card={name}
+          className="h-24 w-24 invert transition-transform duration-[180ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:scale-[1.06] dark:invert-0"
           loading="lazy"
         />
       </div>
 
-      <div className="flex flex-col items-center justify-center gap-1 px-4 py-5">
-        <span className="text-[14px] font-semibold tracking-tight text-foreground">
+      <div className="flex flex-col items-center justify-center gap-0.5 px-3 pb-3">
+        <span className="text-[13px] font-semibold tracking-tight text-foreground">
           {name}
         </span>
-        <span className="text-[12px] font-medium leading-[1.4] text-muted-foreground">
+        <span className="text-[11px] font-medium leading-[1.4] text-muted-foreground">
           {category}
         </span>
       </div>
@@ -174,7 +175,7 @@ export function IconCard({
         <button
           type="button"
           onClick={handleCopy}
-          className="relative inline-flex h-10 items-center justify-center gap-2 text-[14px] font-medium text-muted-foreground transition-colors duration-[180ms] hover:bg-accent hover:text-foreground"
+          className="relative inline-flex h-9 items-center justify-center gap-2 text-[13px] font-medium text-muted-foreground transition-colors duration-[180ms] hover:bg-accent hover:text-foreground"
         >
           <AnimatePresence mode="wait" initial={false}>
             {copied ? (
@@ -208,7 +209,7 @@ export function IconCard({
           type="button"
           onClick={handleAddToCart}
           className={cn(
-            "group/cart relative inline-flex h-10 items-center justify-center gap-2 border-l border-border text-[14px] font-medium transition-colors duration-[180ms]",
+            "group/cart relative inline-flex h-9 items-center justify-center gap-2 border-l border-border text-[13px] font-medium transition-colors duration-[180ms]",
             inCart
               ? "bg-foreground text-background hover:bg-foreground/90"
               : "text-muted-foreground hover:bg-accent hover:text-foreground"

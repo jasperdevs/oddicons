@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useRouter } from "next/navigation";
 import icons from "@/data/icons.json";
 import { useFavorites } from "@/hooks/use-favorites";
 import { useTheme } from "@/hooks/use-theme";
@@ -13,6 +12,7 @@ import { Sidebar } from "@/components/sidebar";
 import { IconCard } from "@/components/icon-card";
 import { CartPinboard } from "@/components/cart-pinboard";
 import { FlyToCart } from "@/components/fly-to-cart";
+import { RequestModal } from "@/components/request-modal";
 import { Button } from "@/components/ui/button";
 import {
   ArrowDownAZ,
@@ -52,6 +52,8 @@ function GalleryInner() {
   const [category, setCategory] = useState(ALL);
   const [onlyFavorites, setOnlyFavorites] = useState(false);
   const [sort, setSort] = useState<SortMode>("default");
+  const [requestOpen, setRequestOpen] = useState(false);
+  const requestBtnRef = useRef<HTMLButtonElement>(null);
 
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
   const all = icons as IconEntry[];
@@ -154,12 +156,19 @@ function GalleryInner() {
             basePath={basePath}
             sort={sort}
             onChangeSort={setSort}
+            onOpenRequest={() => setRequestOpen(true)}
+            requestBtnRef={requestBtnRef}
           />
         )}
       </div>
 
       <CartPinboard />
       <FlyToCart />
+      <RequestModal
+        open={requestOpen}
+        onClose={() => setRequestOpen(false)}
+        anchorRef={requestBtnRef}
+      />
     </div>
   );
 }
@@ -169,14 +178,29 @@ function BottomBar({
   basePath,
   sort,
   onChangeSort,
+  onOpenRequest,
+  requestBtnRef,
 }: {
   items: IconEntry[];
   basePath: string;
   sort: SortMode;
   onChangeSort: (m: SortMode) => void;
+  onOpenRequest: () => void;
+  requestBtnRef: React.RefObject<HTMLButtonElement | null>;
 }) {
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10">
+      <div
+        aria-hidden
+        className="absolute inset-x-0 bottom-0"
+        style={{
+          height: "calc(100% + 1.5rem)",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)",
+          maskImage: "linear-gradient(to top, black 0%, black 55%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to top, black 0%, black 55%, transparent 100%)",
+        }}
+      />
       <div
         aria-hidden
         className="absolute inset-x-0 bottom-0"
@@ -187,26 +211,20 @@ function BottomBar({
         }}
       />
       <div className="pointer-events-auto relative flex w-full items-center justify-center gap-3 px-6 pb-6 pt-10 sm:px-8">
-        <RequestButton />
+        <Button
+          ref={requestBtnRef}
+          variant="ghost"
+          size="md"
+          leadingIcon={Send}
+          onClick={onOpenRequest}
+          className="h-11 px-5 text-muted-foreground hover:bg-accent hover:text-foreground"
+        >
+          request
+        </Button>
         <SortDropdown mode={sort} onChange={onChangeSort} />
         <AddAllButton items={items} basePath={basePath} />
       </div>
     </div>
-  );
-}
-
-function RequestButton() {
-  const router = useRouter();
-  return (
-    <Button
-      variant="ghost"
-      size="md"
-      leadingIcon={Send}
-      onClick={() => router.push("/request")}
-      className="h-11 px-5 text-muted-foreground hover:bg-accent hover:text-foreground"
-    >
-      request
-    </Button>
   );
 }
 
@@ -307,6 +325,9 @@ function SortDropdown({
   );
 }
 
+const ADD_ALL_DURATION_MS = 2500;
+const MAX_FLIES = 18;
+
 function AddAllButton({
   items,
   basePath,
@@ -326,20 +347,48 @@ function AddAllButton({
     }
     const el = ref.current;
     if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const from = {
-      x: rect.left + rect.width / 2,
-      y: rect.top + rect.height / 2,
-      size: 20,
+    const btnRect = el.getBoundingClientRect();
+    const fallback = {
+      x: btnRect.left + btnRect.width / 2,
+      y: btnRect.top + btnRect.height / 2,
+      size: 72,
     };
-    pending.forEach((icon, i) => {
+    const shuffled = [...pending];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    const flyCount = Math.min(shuffled.length, MAX_FLIES);
+    const flySet = new Set(shuffled.slice(0, flyCount).map((i) => i.name));
+    const step = flyCount > 1 ? ADD_ALL_DURATION_MS / (flyCount - 1) : 0;
+    let flyIndex = 0;
+    shuffled.forEach((icon) => {
+      const shouldFly = flySet.has(icon.name);
+      const delay = shouldFly ? flyIndex * step : 0;
+      if (shouldFly) flyIndex += 1;
       window.setTimeout(() => {
+        let from = fallback;
+        if (shouldFly) {
+          const card = document.querySelector<HTMLImageElement>(
+            `[data-icon-card="${CSS.escape(icon.name)}"]`
+          );
+          if (card) {
+            const r = card.getBoundingClientRect();
+            const cx = r.left + r.width / 2;
+            const cy = r.top + r.height / 2;
+            const inView =
+              cy > 0 && cy < window.innerHeight && cx > 0 && cx < window.innerWidth;
+            if (inView) {
+              from = { x: cx, y: cy, size: r.width };
+            }
+          }
+        }
         add(
           { name: icon.name, file: icon.file, url: `${basePath}/icons/${icon.file}` },
           from,
-          { compact: true }
+          shouldFly ? { compact: true } : { silent: true }
         );
-      }, i * 35);
+      }, delay);
     });
   };
 

@@ -23,7 +23,7 @@ const bytesized = Bytesized({
 });
 
 export const metadata: Metadata = {
-  title: "oddicons — a weird little pack of AI icons",
+  title: "oddicons · a weird little pack of AI icons",
   description: "A free pack of AI-themed icons. Copy, download, use.",
 };
 

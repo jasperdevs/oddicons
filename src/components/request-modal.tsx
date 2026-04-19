@@ -1,0 +1,258 @@
+"use client";
+
+import { useEffect, useState, type RefObject } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Check, Copy, Mail, Send } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+const EMAIL = "jasper.mceligott@gmail.com";
+
+const EMAIL_TEMPLATE = `hi jasper,
+
+i'd love to see an icon for:
+[describe what you want]
+
+any references or vibes:
+[optional]
+
+thanks!`;
+
+function XIcon({ size = 14 }: { size?: number }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  );
+}
+
+function GithubIcon({ size = 14 }: { size?: number }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.53.12-3.19 0 0 1-.32 3.3 1.23a11.4 11.4 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.89.12 3.19.77.84 1.24 1.91 1.24 3.22 0 4.61-2.8 5.62-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.22.7.83.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5" />
+    </svg>
+  );
+}
+
+function DiscordIcon({ size = 14 }: { size?: number }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M19.27 5.33A19 19 0 0 0 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.35-.76-.54-1.09a.1.1 0 0 0-.07-.03c-1.5.26-2.93.71-4.27 1.33a.06.06 0 0 0-.03.02c-2.72 4.07-3.47 8.03-3.1 11.95 0 .02.01.04.03.05a19.3 19.3 0 0 0 5.24 2.65c.03.01.06 0 .07-.02.4-.55.76-1.13 1.07-1.74a.07.07 0 0 0-.04-.09c-.57-.22-1.11-.48-1.64-.78a.07.07 0 0 1-.01-.11q.165-.12.33-.25a.07.07 0 0 1 .07-.01c3.44 1.57 7.15 1.57 10.55 0a.07.07 0 0 1 .07.01q.165.135.33.26a.07.07 0 0 1-.01.11c-.52.31-1.07.56-1.64.78a.07.07 0 0 0-.04.09c.32.61.68 1.19 1.07 1.74.03.01.06.02.09.01a19.2 19.2 0 0 0 5.25-2.65.07.07 0 0 0 .03-.05c.44-4.53-.73-8.46-3.1-11.95a.05.05 0 0 0-.04-.02M8.52 14.91c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12 0 1.17-.84 2.12-1.89 2.12m6.97 0c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12 0 1.17-.83 2.12-1.89 2.12" />
+    </svg>
+  );
+}
+
+interface ContactRow {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+  href?: string;
+  copyValue?: string;
+}
+
+const CONTACTS: ContactRow[] = [
+  { id: "x", label: "@jasperdevs", icon: <XIcon />, href: "https://x.com/jasperdevs" },
+  { id: "github", label: "jasperdevs", icon: <GithubIcon />, href: "https://github.com/jasperdevs" },
+  { id: "discord", label: "jasperdevs", icon: <DiscordIcon />, copyValue: "jasperdevs" },
+  { id: "email", label: "email", icon: <Mail size={14} strokeWidth={1.75} />, copyValue: EMAIL },
+];
+
+interface RequestModalProps {
+  open: boolean;
+  onClose: () => void;
+  anchorRef: RefObject<HTMLButtonElement | null>;
+}
+
+const PANEL_WIDTH = 340;
+const GAP = 14;
+
+export function RequestModal({ open, onClose, anchorRef }: RequestModalProps) {
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState(EMAIL_TEMPLATE);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [pos, setPos] = useState<{ left: number; bottom: number; tailX: number } | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const compute = () => {
+      const el = anchorRef.current;
+      if (!el) {
+        setPos({
+          left: (window.innerWidth - PANEL_WIDTH) / 2,
+          bottom: 80,
+          tailX: PANEL_WIDTH / 2,
+        });
+        return;
+      }
+      const r = el.getBoundingClientRect();
+      const centerX = r.left + r.width / 2;
+      let left = centerX - PANEL_WIDTH / 2;
+      const minLeft = 12;
+      const maxLeft = window.innerWidth - PANEL_WIDTH - 12;
+      left = Math.max(minLeft, Math.min(left, maxLeft));
+      const bottom = window.innerHeight - r.top + GAP;
+      const tailX = centerX - left;
+      setPos({ left, bottom, tailX });
+    };
+    compute();
+    window.addEventListener("resize", compute);
+    window.addEventListener("scroll", compute, true);
+    return () => {
+      window.removeEventListener("resize", compute);
+      window.removeEventListener("scroll", compute, true);
+    };
+  }, [open, anchorRef]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
+
+  const canSubmit = message.trim().length > 0;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!canSubmit) return;
+    const subj = subject.trim() || "icon request";
+    window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(message.trim())}`;
+  };
+
+  const handleCopy = async (id: string, value: string) => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopiedId(id);
+      window.setTimeout(() => setCopiedId((c) => (c === id ? null : c)), 1600);
+    } catch {
+      // ignore
+    }
+  };
+
+  return (
+    <AnimatePresence>
+      {open && pos && (
+        <>
+          <motion.div
+            key="scrim"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            onClick={onClose}
+            className="fixed inset-0 z-[60] bg-background/70"
+          />
+
+          <motion.div
+            key="panel"
+            role="dialog"
+            aria-modal="true"
+            aria-label="request an icon"
+            initial={{ opacity: 0, y: 6, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 6, scale: 0.96 }}
+            transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+            style={{
+              left: pos.left,
+              bottom: pos.bottom,
+              width: PANEL_WIDTH,
+              transformOrigin: `${pos.tailX}px calc(100% + ${GAP}px)`,
+            }}
+            className="fixed z-[61]"
+          >
+            <div className="relative rounded-2xl border border-border bg-card p-5 shadow-2xl">
+              <div
+                aria-hidden
+                className="absolute h-3 w-3 rotate-45 border-b border-r border-border bg-card"
+                style={{
+                  left: pos.tailX - 6,
+                  bottom: -6,
+                }}
+              />
+
+              <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+                <div className="flex flex-col items-center gap-1 text-center">
+                  <h1 className="text-[16px] font-semibold tracking-tight text-foreground">
+                    send an email
+                  </h1>
+                  <p className="text-[12px] text-muted-foreground">
+                    request an icon or just say hi
+                  </p>
+                </div>
+
+                <input
+                  type="text"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  placeholder="subject (optional)"
+                  className="h-10 w-full rounded-lg border border-border bg-sidebar px-3 text-[13px] text-foreground placeholder:text-muted-foreground/70 outline-none transition-colors duration-[180ms] focus:border-foreground/30"
+                />
+
+                <textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  rows={6}
+                  required
+                  className="scrollbar-custom w-full resize-none rounded-lg border border-border bg-sidebar px-3 py-2.5 text-[13px] leading-[1.55] text-foreground placeholder:text-muted-foreground/70 outline-none transition-colors duration-[180ms] focus:border-foreground/30"
+                />
+
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="md"
+                  leadingIcon={Send}
+                  disabled={!canSubmit}
+                  className="h-10 w-full"
+                >
+                  send an email
+                </Button>
+              </form>
+
+              <div className="mt-4 flex items-center gap-2 border-t border-border pt-3">
+                {CONTACTS.map((c) => {
+                  const copied = copiedId === c.id;
+                  const label = copied ? "copied" : c.label;
+                  const iconNode = copied ? <Check size={14} strokeWidth={2} /> : c.icon;
+                  const cls = cn(
+                    "flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-border bg-sidebar px-2 py-1.5 text-[11px] font-medium text-muted-foreground transition-colors duration-[180ms]",
+                    "hover:border-foreground/30 hover:text-foreground"
+                  );
+                  if (c.href) {
+                    return (
+                      <a
+                        key={c.id}
+                        href={c.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={cls}
+                        title={c.id}
+                      >
+                        {iconNode}
+                        <span className="truncate">{label}</span>
+                      </a>
+                    );
+                  }
+                  return (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => c.copyValue && handleCopy(c.id, c.copyValue)}
+                      className={cls}
+                      title={c.copyValue}
+                    >
+                      {iconNode}
+                      <span className="truncate">{label}</span>
+                      {!copied && <Copy size={11} strokeWidth={1.75} className="opacity-60" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}

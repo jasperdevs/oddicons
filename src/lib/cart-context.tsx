@@ -31,7 +31,7 @@ interface CartContextValue {
   add: (
     item: CartItem,
     from: { x: number; y: number; size: number },
-    opts?: { compact?: boolean }
+    opts?: { compact?: boolean; silent?: boolean }
   ) => void;
   remove: (name: string) => void;
   clear: () => void;
@@ -83,8 +83,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     (
       item: CartItem,
       from: { x: number; y: number; size: number },
-      opts?: { compact?: boolean }
+      opts?: { compact?: boolean; silent?: boolean }
     ) => {
+      setItems((prev) => (prev.some((i) => i.name === item.name) ? prev : [...prev, item]));
+      if (opts?.silent) {
+        setBumpCount((c) => c + 1);
+        return;
+      }
       const el = anchorRef.current;
       const to = el
         ? (() => {
@@ -92,7 +97,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
             return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
           })()
         : { x: window.innerWidth - 40, y: 40 };
-      setItems((prev) => (prev.some((i) => i.name === item.name) ? prev : [...prev, item]));
       idRef.current += 1;
       const id = idRef.current;
       setFlies((prev) => [...prev, { id, item, from, to, compact: opts?.compact }]);
