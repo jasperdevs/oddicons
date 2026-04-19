@@ -140,7 +140,9 @@ function SidebarBodyInner({
           src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/sitelogo.png`}
           alt=""
           aria-hidden
-          className="h-9 w-9 shrink-0"
+          draggable={false}
+          onDragStart={(e) => e.preventDefault()}
+          className="h-9 w-9 shrink-0 select-none [-webkit-user-drag:none]"
         />
         <span className="text-[20px] font-semibold tracking-tight text-foreground">
           oddicons
