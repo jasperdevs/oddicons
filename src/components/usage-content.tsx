@@ -23,11 +23,7 @@ export function UsageContent() {
         </p>
       </header>
 
-      <section className="relative flex flex-col gap-5 overflow-hidden rounded-2xl border border-border bg-card p-6">
-        <span
-          aria-hidden
-          className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-foreground/[0.04] blur-2xl"
-        />
+      <section className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-6">
         <div className="flex items-start gap-3">
           <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-foreground text-background">
             <ScrollText size={16} strokeWidth={1.75} />
@@ -60,11 +56,7 @@ export function UsageContent() {
         </ul>
       </section>
 
-      <section className="relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-border bg-card p-6">
-        <span
-          aria-hidden
-          className="pointer-events-none absolute -left-16 -bottom-16 h-48 w-48 rounded-full bg-foreground/[0.04] blur-2xl"
-        />
+      <section className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-6">
         <div className="flex items-start gap-3">
           <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-foreground text-background">
             <Sparkles size={16} strokeWidth={1.75} />
