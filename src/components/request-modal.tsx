@@ -63,7 +63,7 @@ const PANEL_WIDTH = 440;
 const GAP = 14;
 
 export function RequestModal({ open, onClose, anchorRef }: RequestModalProps) {
-  const [subject, setSubject] = useState("");
+  const [subject, setSubject] = useState("icon request");
   const [message, setMessage] = useState(EMAIL_TEMPLATE);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [pos, setPos] = useState<{ left: number; bottom: number; tailX: number } | null>(null);
