@@ -6,9 +6,14 @@ import { Check, ChevronDown, Settings } from "lucide-react";
 import { Tooltip } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import {
+  DOWNLOAD_SIZE_ORIGINAL,
   DOWNLOAD_SIZE_STEPS,
   useSettings,
 } from "@/lib/settings-context";
+
+function formatSize(n: number): string {
+  return n === DOWNLOAD_SIZE_ORIGINAL ? "max" : `${n}px`;
+}
 
 export function SettingsPopover() {
   const { settings, setMonochrome, setDownloadSize } = useSettings();
@@ -135,7 +140,7 @@ function SizeRow({
             "data-[popup-open]:border-foreground/40"
           )}
         >
-          <Select.Value>{(val) => `${val}px`}</Select.Value>
+          <Select.Value>{(val) => formatSize(val as number)}</Select.Value>
           <Select.Icon>
             <ChevronDown size={13} strokeWidth={1.75} className="text-muted-foreground" />
           </Select.Icon>
@@ -165,7 +170,7 @@ function SizeRow({
                   <Select.ItemIndicator className="absolute left-2 inline-flex">
                     <Check size={13} strokeWidth={2} />
                   </Select.ItemIndicator>
-                  <Select.ItemText>{step}px</Select.ItemText>
+                  <Select.ItemText>{formatSize(step)}</Select.ItemText>
                 </Select.Item>
               ))}
             </Select.Popup>

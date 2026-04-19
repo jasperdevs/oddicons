@@ -41,7 +41,7 @@ export function MobileDrawer({
       <Drawer.Portal>
         <Drawer.Backdrop
           className={cn(
-            "fixed inset-0 z-50 bg-background/60 backdrop-blur-[2px]",
+            "fixed inset-0 z-50 bg-background/60",
             "transition-opacity duration-[220ms] ease-out",
             "data-[starting-style]:opacity-0 data-[ending-style]:opacity-0"
           )}

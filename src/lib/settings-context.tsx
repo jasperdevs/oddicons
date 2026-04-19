@@ -16,11 +16,11 @@ export interface Settings {
 
 const STORAGE_KEY = "oddicons:settings";
 
-export const DOWNLOAD_SIZE_MAX = 1024;
+export const DOWNLOAD_SIZE_ORIGINAL = Number.MAX_SAFE_INTEGER;
 export const DOWNLOAD_SIZE_MIN = 32;
-export const DOWNLOAD_SIZE_STEPS = [32, 64, 128, 256, 512, 1024];
+export const DOWNLOAD_SIZE_STEPS = [32, 64, 128, 256, 512, DOWNLOAD_SIZE_ORIGINAL];
 
-const DEFAULTS: Settings = { monochrome: false, downloadSize: DOWNLOAD_SIZE_MAX };
+const DEFAULTS: Settings = { monochrome: false, downloadSize: DOWNLOAD_SIZE_ORIGINAL };
 
 interface Ctx {
   settings: Settings;
@@ -32,7 +32,8 @@ const SettingsContext = createContext<Ctx | null>(null);
 
 function clampSize(v: number): number {
   if (!Number.isFinite(v)) return DEFAULTS.downloadSize;
-  return Math.max(DOWNLOAD_SIZE_MIN, Math.min(DOWNLOAD_SIZE_MAX, Math.round(v)));
+  if (v >= 1024) return DOWNLOAD_SIZE_ORIGINAL;
+  return Math.max(DOWNLOAD_SIZE_MIN, Math.round(v));
 }
 
 function persist(next: Settings) {

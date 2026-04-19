@@ -32,6 +32,7 @@ export function IconCard({
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [colors, setColors] = useState<string[] | null>(null);
   const imgRef = useRef<HTMLImageElement>(null);
+  const borderRef = useRef<HTMLSpanElement>(null);
   const { add, has, remove } = useCart();
   const { settings } = useSettings();
   const inCart = has(name);
@@ -46,11 +47,23 @@ export function IconCard({
     };
   }, [url]);
 
-  const gradient = useMemo(() => {
+  const borderBackground = useMemo(() => {
     if (!colors || colors.length === 0) return null;
-    const stops = colors.length === 1 ? [colors[0], colors[0]] : colors;
-    return `linear-gradient(135deg, ${stops.join(", ")})`;
+    const c1 = colors[0];
+    const c2 = colors[1] ?? colors[0];
+    return [
+      `radial-gradient(circle 150px at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.95) 0%, ${c1} 22%, ${c2} 46%, transparent 72%)`,
+      `radial-gradient(circle 60px at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.6) 0%, transparent 70%)`,
+    ].join(", ");
   }, [colors]);
+
+  const handleCardMove = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    const el = borderRef.current;
+    if (!el) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    el.style.setProperty("--mx", `${e.clientX - rect.left}px`);
+    el.style.setProperty("--my", `${e.clientY - rect.top}px`);
+  }, []);
 
   const handleIconMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -100,13 +113,14 @@ export function IconCard({
     <motion.button
       type="button"
       onClick={handleToggleCart}
+      onMouseMove={handleCardMove}
       aria-label={inCart ? `remove ${name} from cart` : `add ${name} to cart`}
       aria-pressed={inCart}
       whileHover={{ y: -2 }}
       transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
       className={cn(
         "group relative flex flex-col overflow-hidden rounded-2xl border bg-card text-left transition-[box-shadow,border-color,background-color] duration-[180ms] outline-none",
-        gradient
+        borderBackground
           ? "hover:border-transparent"
           : "hover:border-foreground/30",
         "hover:shadow-[0_12px_24px_-12px_rgba(0,0,0,0.45),_0_4px_8px_-4px_rgba(0,0,0,0.25)]",
@@ -114,13 +128,14 @@ export function IconCard({
         inCart ? "border-foreground/40" : "border-border"
       )}
     >
-      {gradient && (
+      {borderBackground && (
         <span
+          ref={borderRef}
           aria-hidden
           className="pointer-events-none absolute inset-0 z-20 rounded-2xl opacity-0 transition-opacity duration-[180ms] group-hover:opacity-100"
           style={{
             padding: 1,
-            background: gradient,
+            background: borderBackground,
             WebkitMask:
               "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
             WebkitMaskComposite: "xor",
