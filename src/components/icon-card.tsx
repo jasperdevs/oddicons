@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, Copy, Heart, ShoppingBag, X } from "lucide-react";
+import { Check, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/lib/cart-context";
 
@@ -15,16 +15,6 @@ interface IconCardProps {
   onToggleFavorite: (name: string) => void;
 }
 
-async function fetchSvg(url: string): Promise<string | null> {
-  try {
-    const res = await fetch(url);
-    if (!res.ok) return null;
-    return await res.text();
-  } catch {
-    return null;
-  }
-}
-
 export function IconCard({
   name,
   file,
@@ -34,30 +24,12 @@ export function IconCard({
   onToggleFavorite,
 }: IconCardProps) {
   const url = `${basePath}/icons/${file}`;
-  const [copied, setCopied] = useState(false);
   const [favBurstId, setFavBurstId] = useState<number | null>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const { add, has, remove } = useCart();
   const inCart = has(name);
 
-  useEffect(() => {
-    if (!copied) return;
-    const t = setTimeout(() => setCopied(false), 1800);
-    return () => clearTimeout(t);
-  }, [copied]);
-
-  const handleCopy = useCallback(async () => {
-    const svg = await fetchSvg(url);
-    if (!svg) return;
-    try {
-      await navigator.clipboard.writeText(svg);
-      setCopied(true);
-    } catch {
-      // ignore
-    }
-  }, [url]);
-
-  const handleAddToCart = useCallback(() => {
+  const handleToggleCart = useCallback(() => {
     if (inCart) {
       remove(name);
       return;
@@ -71,11 +43,15 @@ export function IconCard({
     );
   }, [add, remove, name, file, url, inCart]);
 
-  const handleFavorite = useCallback(() => {
-    const willFav = !isFavorite;
-    onToggleFavorite(name);
-    if (willFav) setFavBurstId(Date.now());
-  }, [isFavorite, onToggleFavorite, name]);
+  const handleFavorite = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      const willFav = !isFavorite;
+      onToggleFavorite(name);
+      if (willFav) setFavBurstId(Date.now());
+    },
+    [isFavorite, onToggleFavorite, name]
+  );
 
   const sparks = useMemo(
     () =>
@@ -87,23 +63,39 @@ export function IconCard({
   );
 
   return (
-    <motion.div
+    <motion.button
+      type="button"
+      onClick={handleToggleCart}
+      aria-label={inCart ? `remove ${name} from cart` : `add ${name} to cart`}
+      aria-pressed={inCart}
       whileHover={{ y: -2 }}
       transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-[box-shadow,border-color] duration-[180ms] hover:border-foreground/30 hover:shadow-[0_12px_24px_-12px_rgba(0,0,0,0.45),_0_4px_8px_-4px_rgba(0,0,0,0.25)]"
+      className={cn(
+        "group relative flex flex-col overflow-hidden rounded-2xl border bg-card text-left transition-[box-shadow,border-color,background-color] duration-[180ms] outline-none",
+        "hover:border-foreground/30 hover:shadow-[0_12px_24px_-12px_rgba(0,0,0,0.45),_0_4px_8px_-4px_rgba(0,0,0,0.25)]",
+        "focus-visible:border-foreground/40 focus-visible:ring-1 focus-visible:ring-foreground/30",
+        inCart ? "border-foreground/40" : "border-border"
+      )}
     >
-      <button
-        type="button"
+      <span
         onClick={handleFavorite}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleFavorite(e as unknown as React.MouseEvent);
+          }
+        }}
         aria-label={isFavorite ? "unfavorite" : "favorite"}
         aria-pressed={isFavorite}
         className={cn(
-          "absolute right-3 top-3 z-30 grid h-8 w-8 place-items-center rounded-full transition-all",
+          "card-fav absolute right-3 top-3 z-30 grid h-8 w-8 place-items-center rounded-full transition-all",
           "text-muted-foreground opacity-0 group-hover:opacity-100 hover:bg-accent hover:text-foreground",
           isFavorite && "opacity-100 text-foreground"
         )}
       >
-        <div className="relative grid place-items-center">
+        <span className="relative grid place-items-center">
           <AnimatePresence>
             {favBurstId !== null && (
               <motion.span
@@ -145,8 +137,8 @@ export function IconCard({
               className={cn("transition-colors", isFavorite && "fill-foreground text-foreground")}
             />
           </motion.span>
-        </div>
-      </button>
+        </span>
+      </span>
 
       {inCart && (
         <span
@@ -171,56 +163,14 @@ export function IconCard({
         />
       </div>
 
-      <div className="relative h-[44px] px-3 pb-3">
-        <div className="absolute inset-x-3 bottom-3 flex flex-col items-center gap-0.5 transition-[opacity,transform] duration-[180ms] group-hover:-translate-y-1 group-hover:opacity-0">
-          <span className="truncate text-[13px] font-semibold tracking-tight text-foreground">
-            {name}
-          </span>
-          <span className="text-[11px] font-medium leading-[1.4] text-muted-foreground">
-            {category}
-          </span>
-        </div>
-
-        <div className="absolute inset-x-0 bottom-2 flex translate-y-1 items-center justify-center gap-1.5 px-3 opacity-0 transition-[opacity,transform] duration-[180ms] group-hover:translate-y-0 group-hover:opacity-100">
-          <button
-            type="button"
-            onClick={handleCopy}
-            className={cn(
-              "inline-flex h-7 items-center gap-1.5 rounded-full border border-border px-2.5 text-[11.5px] font-medium transition-colors duration-[140ms]",
-              copied
-                ? "border-foreground/30 bg-accent text-foreground"
-                : "bg-sidebar text-muted-foreground hover:border-foreground/30 hover:bg-accent hover:text-foreground"
-            )}
-          >
-            {copied ? <Check size={12} strokeWidth={2} /> : <Copy size={12} strokeWidth={1.75} />}
-            <span>{copied ? "copied" : "copy"}</span>
-          </button>
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            className={cn(
-              "group/cart inline-flex h-7 items-center gap-1.5 rounded-full border px-2.5 text-[11.5px] font-medium transition-colors duration-[140ms]",
-              inCart
-                ? "border-foreground bg-foreground text-background hover:bg-foreground/90"
-                : "border-border bg-sidebar text-muted-foreground hover:border-foreground/30 hover:bg-accent hover:text-foreground"
-            )}
-          >
-            {inCart ? (
-              <>
-                <Check size={12} strokeWidth={2} className="group-hover/cart:hidden" />
-                <X size={12} strokeWidth={2} className="hidden group-hover/cart:inline" />
-                <span className="group-hover/cart:hidden">added</span>
-                <span className="hidden group-hover/cart:inline">remove</span>
-              </>
-            ) : (
-              <>
-                <ShoppingBag size={12} strokeWidth={1.75} />
-                <span>add</span>
-              </>
-            )}
-          </button>
-        </div>
+      <div className="flex flex-col items-center gap-0.5 px-3 pb-3">
+        <span className="max-w-full truncate text-[13px] font-semibold tracking-tight text-foreground">
+          {name}
+        </span>
+        <span className="text-[11px] font-medium leading-[1.4] text-muted-foreground">
+          {category}
+        </span>
       </div>
-    </motion.div>
+    </motion.button>
   );
 }

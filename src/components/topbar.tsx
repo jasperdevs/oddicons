@@ -46,7 +46,7 @@ export function Topbar({
   };
 
   return (
-    <div className="pointer-events-none absolute inset-x-0 top-0 z-30 px-6 sm:px-8">
+    <div className="pointer-events-none absolute inset-x-0 top-0 z-30 px-3 sm:px-8">
       <ProgressiveBlur direction="top" />
       <div
         aria-hidden
@@ -58,7 +58,7 @@ export function Topbar({
         }}
       />
 
-      <div className="pointer-events-auto relative mx-auto flex w-full items-center gap-4 py-5">
+      <div className="pointer-events-auto relative mx-auto flex w-full items-center gap-2 py-4 sm:gap-4 sm:py-5">
         <div className="min-w-0 flex-1">
           <SearchBar value={query} onChange={onQueryChange} total={total} />
         </div>

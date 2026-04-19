@@ -21,6 +21,7 @@ import {
   ArrowUpDown,
   Check,
   Heart,
+  Home,
   Plus,
   SearchX,
   Send,
@@ -110,7 +111,7 @@ function GalleryInner() {
 
 
   return (
-    <div className="flex h-screen gap-4 bg-background p-4">
+    <div className="flex h-[100dvh] gap-2 bg-background p-2 sm:gap-4 sm:p-4">
       <Sidebar
         categories={categories}
         selected={category}
@@ -124,9 +125,19 @@ function GalleryInner() {
 
       <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl bg-sidebar">
         <div className="scrollbar-custom min-w-0 flex-1 overflow-y-auto">
-          <main className="px-6 pt-20 pb-24 sm:px-8">
+          <main className="px-4 pt-32 pb-28 sm:px-8 sm:pt-20 sm:pb-24 md:pt-20">
+            <MobileCategoryRail
+              categories={categories}
+              selected={category}
+              onSelect={setCategory}
+              counts={counts}
+              favoriteCount={favorites.length}
+              onlyFavorites={onlyFavorites}
+              onToggleFavorites={() => setOnlyFavorites((v) => !v)}
+              totalCount={all.length}
+            />
             {emptyState ?? (
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
                 {filtered.map((icon) => (
                   <IconCard
                     key={icon.name}
@@ -201,11 +212,11 @@ function BottomBar({
             "linear-gradient(to top, var(--sidebar) 0%, transparent 100%)",
         }}
       />
-      <div className="pointer-events-auto relative flex w-full items-center justify-center gap-2 px-6 pb-6 pt-10 sm:px-8">
+      <div className="pointer-events-auto relative flex w-full flex-wrap items-center justify-center gap-1.5 px-3 pb-4 pt-10 sm:gap-2 sm:px-8 sm:pb-6">
         <Button
           ref={requestBtnRef}
           variant="secondary"
-          size="lg"
+          size="md"
           leadingIcon={Send}
           onClick={onOpenRequest}
         >
@@ -214,6 +225,88 @@ function BottomBar({
         <SortDropdown mode={sort} onChange={onChangeSort} />
         <AddAllButton items={items} basePath={basePath} />
       </div>
+    </div>
+  );
+}
+
+function MobileCategoryRail({
+  categories,
+  selected,
+  onSelect,
+  counts,
+  favoriteCount,
+  onlyFavorites,
+  onToggleFavorites,
+  totalCount,
+}: {
+  categories: string[];
+  selected: string;
+  onSelect: (c: string) => void;
+  counts: Record<string, number>;
+  favoriteCount: number;
+  onlyFavorites: boolean;
+  onToggleFavorites: () => void;
+  totalCount: number;
+}) {
+  const homeActive = !onlyFavorites && selected === ALL;
+  const tagCategories = categories.filter((c) => c !== ALL);
+
+  const chipBase =
+    "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full border px-3 text-[12.5px] font-medium transition-colors duration-[180ms]";
+  const chipActive = "border-foreground bg-foreground text-background";
+  const chipInactive =
+    "border-border bg-card text-muted-foreground hover:border-foreground/30 hover:text-foreground";
+
+  return (
+    <div className="no-scrollbar -mx-4 mb-4 flex gap-1.5 overflow-x-auto px-4 md:hidden">
+      <button
+        type="button"
+        onClick={() => {
+          if (onlyFavorites) onToggleFavorites();
+          onSelect(ALL);
+        }}
+        className={cn(chipBase, homeActive ? chipActive : chipInactive)}
+      >
+        <Home size={13} strokeWidth={homeActive ? 2 : 1.5} />
+        <span>home</span>
+        <span className="tabular-nums opacity-70">{totalCount}</span>
+      </button>
+      <button
+        type="button"
+        onClick={onToggleFavorites}
+        className={cn(chipBase, onlyFavorites ? chipActive : chipInactive)}
+      >
+        <Heart
+          size={13}
+          strokeWidth={onlyFavorites ? 2 : 1.5}
+          className={onlyFavorites ? "fill-current" : ""}
+        />
+        <span>favorites</span>
+        <span className="tabular-nums opacity-70">{favoriteCount}</span>
+      </button>
+      {tagCategories.map((cat) => {
+        const active = !onlyFavorites && selected === cat;
+        return (
+          <button
+            key={cat}
+            type="button"
+            onClick={() => {
+              if (onlyFavorites) onToggleFavorites();
+              onSelect(cat);
+            }}
+            className={cn(chipBase, active ? chipActive : chipInactive)}
+          >
+            <span
+              className={cn(
+                "h-1.5 w-1.5 rounded-full",
+                active ? "bg-background" : "bg-muted-foreground/60"
+              )}
+            />
+            <span>{cat.toLowerCase()}</span>
+            <span className="tabular-nums opacity-70">{counts[cat] ?? 0}</span>
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -261,7 +354,7 @@ function SortDropdown({
       <Button
         ref={triggerRef}
         variant="secondary"
-        size="lg"
+        size="md"
         leadingIcon={active.Icon}
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
@@ -407,7 +500,7 @@ function AddAllButton({
     <Button
       ref={ref}
       variant="secondary"
-      size="lg"
+      size="md"
       leadingIcon={allAdded ? Trash2 : Plus}
       onClick={handleClick}
       disabled={items.length === 0}

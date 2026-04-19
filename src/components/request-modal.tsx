@@ -59,37 +59,44 @@ interface RequestModalProps {
   anchorRef: RefObject<HTMLButtonElement | null>;
 }
 
-const PANEL_WIDTH = 440;
+const PANEL_MAX_WIDTH = 440;
 const GAP = 14;
 
 export function RequestModal({ open, onClose, anchorRef }: RequestModalProps) {
   const [subject, setSubject] = useState("icon request");
   const [message, setMessage] = useState(EMAIL_TEMPLATE);
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [pos, setPos] = useState<{ left: number; bottom: number; tailX: number } | null>(null);
+  const [pos, setPos] = useState<{
+    left: number;
+    bottom: number;
+    tailX: number;
+    width: number;
+  } | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) return;
     const compute = () => {
+      const width = Math.min(PANEL_MAX_WIDTH, window.innerWidth - 24);
       const el = anchorRef.current;
       if (!el) {
         setPos({
-          left: (window.innerWidth - PANEL_WIDTH) / 2,
+          left: (window.innerWidth - width) / 2,
           bottom: 80,
-          tailX: PANEL_WIDTH / 2,
+          tailX: width / 2,
+          width,
         });
         return;
       }
       const r = el.getBoundingClientRect();
       const centerX = r.left + r.width / 2;
-      let left = centerX - PANEL_WIDTH / 2;
+      let left = centerX - width / 2;
       const minLeft = 12;
-      const maxLeft = window.innerWidth - PANEL_WIDTH - 12;
+      const maxLeft = window.innerWidth - width - 12;
       left = Math.max(minLeft, Math.min(left, maxLeft));
       const bottom = window.innerHeight - r.top + GAP;
       const tailX = centerX - left;
-      setPos({ left, bottom, tailX });
+      setPos({ left, bottom, tailX, width });
     };
     compute();
     window.addEventListener("resize", compute);
@@ -162,7 +169,7 @@ export function RequestModal({ open, onClose, anchorRef }: RequestModalProps) {
           style={{
             left: pos.left,
             bottom: pos.bottom,
-            width: PANEL_WIDTH,
+            width: pos.width,
             transformOrigin: `${pos.tailX}px calc(100% + ${GAP}px)`,
           }}
           className="fixed z-[61]"

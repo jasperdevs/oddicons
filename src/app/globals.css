@@ -212,3 +212,18 @@ button:disabled,
 @keyframes theme-fade-in {
   from { opacity: 0; }
 }
+
+/* Touch devices: no hover, so keep icon-card actions visible */
+@media (hover: none) {
+  .card-fav {
+    opacity: 1 !important;
+  }
+}
+
+/* Hide scrollbar for horizontal chip rail */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
