@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
-import { motion, useMotionValue, useTransform, animate } from "framer-motion";
+import { useEffect, useMemo, useRef } from "react";
+import { animate } from "framer-motion";
 import { useCart, type FlyEvent } from "@/lib/cart-context";
 
 interface FlyProps {
@@ -11,6 +11,7 @@ interface FlyProps {
 
 function Fly({ event, onDone }: FlyProps) {
   const { from, to, item, id, compact } = event;
+  const ref = useRef<HTMLImageElement>(null);
 
   const geo = useMemo(() => {
     const dx = to.x - from.x;
@@ -22,57 +23,49 @@ function Fly({ event, onDone }: FlyProps) {
     return { cx, cy };
   }, [from.x, from.y, to.x, to.y]);
 
-  const t = useMotionValue(0);
-
-  const x = useTransform(t, (v) => {
-    const u = 1 - v;
-    return u * u * from.x + 2 * u * v * geo.cx + v * v * to.x;
-  });
-
-  const y = useTransform(t, (v) => {
-    const u = 1 - v;
-    return u * u * from.y + 2 * u * v * geo.cy + v * v * to.y;
-  });
-
-  const scale = useTransform(t, [0, 0.9, 1], [1, 0.5, 0]);
-  const opacity = useTransform(t, [0, 0.88, 1], [1, 1, 0]);
+  const size = compact ? 20 : Math.min(from.size, 44);
 
   useEffect(() => {
-    const controls = animate(t, 1, {
+    const el = ref.current;
+    if (!el) return;
+    const controls = animate(0, 1, {
       duration: compact ? 0.7 : 0.9,
       ease: [0.4, 0, 0.2, 1],
+      onUpdate: (v) => {
+        const u = 1 - v;
+        const x = u * u * from.x + 2 * u * v * geo.cx + v * v * to.x;
+        const y = u * u * from.y + 2 * u * v * geo.cy + v * v * to.y;
+        const scale = v < 0.9 ? 1 - (v / 0.9) * 0.5 : 0.5 * (1 - (v - 0.9) / 0.1);
+        const opacity = v < 0.88 ? 1 : 1 - (v - 0.88) / 0.12;
+        el.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%) scale(${scale})`;
+        el.style.opacity = String(opacity);
+      },
       onComplete: () => onDone(id),
     });
     return () => controls.stop();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const size = compact ? 20 : Math.min(from.size, 44);
-
   return (
-    <motion.div
-      className="absolute left-0 top-0"
-      style={{ x, y, scale, opacity }}
-    >
-      <div
-        style={{
-          width: size,
-          height: size,
-          transform: "translate(-50%, -50%)",
-        }}
-      >
-        {compact ? (
-          <div className="h-full w-full rounded-full bg-foreground" />
-        ) : (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={item.url}
-            alt=""
-            className="h-full w-full invert dark:invert-0"
-          />
-        )}
-      </div>
-    </motion.div>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      ref={ref}
+      src={item.url}
+      alt=""
+      width={size}
+      height={size}
+      loading="eager"
+      decoding="async"
+      draggable={false}
+      className="absolute left-0 top-0 invert dark:invert-0"
+      style={{
+        width: size,
+        height: size,
+        willChange: "transform, opacity",
+        transform: `translate3d(${from.x}px, ${from.y}px, 0) translate(-50%, -50%)`,
+        transformOrigin: "center",
+      }}
+    />
   );
 }
 
@@ -82,7 +75,10 @@ export function FlyToCart() {
   if (flies.length === 0) return null;
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-[70]">
+    <div
+      className="pointer-events-none fixed inset-0 z-[70]"
+      style={{ contain: "layout paint" }}
+    >
       {flies.map((f) => (
         <Fly key={f.id} event={f} onDone={consumeFly} />
       ))}

@@ -39,7 +39,7 @@ export function SearchBar({ value, onChange, total }: SearchBarProps) {
   return (
     <div
       className={cn(
-        "flex h-10 w-full items-center gap-2 rounded-xl bg-muted px-3 transition-colors duration-[180ms]",
+        "flex h-11 w-full items-center gap-3 rounded-xl bg-muted pl-5 pr-5 transition-colors duration-[180ms]",
         "focus-within:ring-1 focus-within:ring-border"
       )}
     >

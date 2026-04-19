@@ -72,7 +72,7 @@ export function CartPinboard() {
         <>
           <motion.div
             key="scrim"
-            className="fixed inset-0 z-50 bg-background/40 backdrop-blur-md"
+            className="fixed inset-0 z-50 bg-background/80"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -104,7 +104,7 @@ export function CartPinboard() {
               transition: { duration: 0.18, ease: [0.4, 0, 1, 1] },
             }}
           >
-            <div className="relative flex flex-col overflow-hidden rounded-2xl border border-border bg-background/60 backdrop-blur-2xl">
+            <div className="relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
               <div className="flex items-center justify-between px-4 pb-3 pt-4">
                 <div>
                   <h2 className="text-[16px] font-semibold tracking-tight text-foreground">

@@ -68,18 +68,18 @@ export function Topbar({
         }}
       />
 
-      <div className="relative mx-auto flex w-full items-center gap-3 py-4">
+      <div className="relative mx-auto flex w-full items-center gap-4 py-5">
         <div className="min-w-0 flex-1">
           <SearchBar value={query} onChange={onQueryChange} total={total} />
         </div>
 
-        <div className="flex h-10 items-center rounded-xl bg-muted">
+        <div className="flex h-11 items-center rounded-xl bg-muted">
           <Tooltip content={theme === "dark" ? "light mode" : "dark mode"}>
             <button
               type="button"
               onClick={handleTheme}
               aria-label="toggle theme"
-              className="grid h-10 w-10 place-items-center overflow-hidden rounded-l-xl text-foreground transition-colors duration-[180ms] hover:bg-foreground/5"
+              className="grid h-11 w-11 place-items-center overflow-hidden rounded-l-xl text-foreground transition-colors duration-[180ms] hover:bg-foreground/5"
             >
               <AnimatePresence mode="wait" initial={false}>
                 <motion.span
@@ -96,15 +96,15 @@ export function Topbar({
             </button>
           </Tooltip>
 
-          <Tooltip content={items.length > 0 ? "open cart" : "cart is empty"}>
+          <Tooltip content="open cart">
             <motion.button
               ref={cartRef}
               type="button"
               animate={bumpControls}
               style={{ transformOrigin: "center" }}
-              onClick={() => items.length > 0 && setOpen(true)}
+              onClick={() => setOpen(true)}
               aria-label="open cart"
-              className="flex h-10 items-center gap-2 rounded-r-xl px-3 text-[14px] font-medium text-foreground transition-colors duration-[180ms] hover:bg-foreground/5"
+              className="flex h-11 items-center gap-2 rounded-r-xl px-4 text-[14px] font-medium text-foreground transition-colors duration-[180ms] hover:bg-foreground/5"
             >
               <ShoppingBag size={16} strokeWidth={1.75} />
               <span className="tabular-nums">{items.length}</span>

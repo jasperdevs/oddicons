@@ -1,10 +1,13 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import icons from "@/data/icons.json";
 import { useFavorites } from "@/hooks/use-favorites";
 import { useTheme } from "@/hooks/use-theme";
 import { CartProvider, useCart } from "@/lib/cart-context";
+import { cn } from "@/lib/utils";
 import { Topbar } from "@/components/topbar";
 import { Sidebar } from "@/components/sidebar";
 import { IconCard } from "@/components/icon-card";
@@ -15,9 +18,11 @@ import {
   ArrowDownAZ,
   ArrowUpAZ,
   ArrowUpDown,
+  Check,
   Heart,
   Plus,
   SearchX,
+  Send,
   Trash2,
 } from "lucide-react";
 
@@ -31,11 +36,6 @@ interface IconEntry {
 type SortMode = "default" | "asc" | "desc";
 
 const ALL = "All";
-const SORT_CYCLE: Record<SortMode, SortMode> = {
-  default: "asc",
-  asc: "desc",
-  desc: "default",
-};
 
 export function IconGallery() {
   return (
@@ -105,7 +105,6 @@ function GalleryInner() {
     );
   })();
 
-  const cycleSort = () => setSort((s) => SORT_CYCLE[s]);
 
   return (
     <div className="flex h-screen gap-4 bg-background p-4">
@@ -158,7 +157,7 @@ function GalleryInner() {
             items={filtered}
             basePath={basePath}
             sort={sort}
-            onCycleSort={cycleSort}
+            onChangeSort={setSort}
           />
         )}
       </div>
@@ -173,12 +172,12 @@ function BottomBar({
   items,
   basePath,
   sort,
-  onCycleSort,
+  onChangeSort,
 }: {
   items: IconEntry[];
   basePath: string;
   sort: SortMode;
-  onCycleSort: () => void;
+  onChangeSort: (m: SortMode) => void;
 }) {
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10">
@@ -190,28 +189,124 @@ function BottomBar({
             "linear-gradient(to top, var(--sidebar) 0%, var(--sidebar) 55%, transparent 100%)",
         }}
       />
-      <div className="pointer-events-auto relative flex w-full items-center justify-end gap-3 px-6 pb-4 pt-8 sm:px-8">
-        <SortButton mode={sort} onCycle={onCycleSort} />
+      <div className="pointer-events-auto relative flex w-full items-center justify-center gap-3 px-6 pb-6 pt-10 sm:px-8">
+        <RequestButton />
+        <SortDropdown mode={sort} onChange={onChangeSort} />
         <AddAllButton items={items} basePath={basePath} />
       </div>
     </div>
   );
 }
 
-function SortButton({ mode, onCycle }: { mode: SortMode; onCycle: () => void }) {
-  const label =
-    mode === "asc" ? "sort a-z" : mode === "desc" ? "sort z-a" : "sort default";
-  const Icon = mode === "asc" ? ArrowDownAZ : mode === "desc" ? ArrowUpAZ : ArrowUpDown;
+function RequestButton() {
+  const router = useRouter();
   return (
     <Button
       variant="ghost"
       size="md"
-      leadingIcon={Icon}
-      onClick={onCycle}
-      className="h-10 text-muted-foreground hover:bg-accent hover:text-foreground"
+      leadingIcon={Send}
+      onClick={() => router.push("/request")}
+      className="h-11 px-5 text-muted-foreground hover:bg-accent hover:text-foreground"
     >
-      {label}
+      request
     </Button>
+  );
+}
+
+const SORT_OPTIONS: { mode: SortMode; label: string; Icon: typeof ArrowUpDown }[] = [
+  { mode: "default", label: "default order", Icon: ArrowUpDown },
+  { mode: "asc", label: "a to z", Icon: ArrowDownAZ },
+  { mode: "desc", label: "z to a", Icon: ArrowUpAZ },
+];
+
+function SortDropdown({
+  mode,
+  onChange,
+}: {
+  mode: SortMode;
+  onChange: (m: SortMode) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => {
+      const t = e.target as Node;
+      if (triggerRef.current?.contains(t)) return;
+      if (panelRef.current?.contains(t)) return;
+      setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const active = SORT_OPTIONS.find((o) => o.mode === mode) ?? SORT_OPTIONS[0];
+
+  return (
+    <div className="relative">
+      <Button
+        ref={triggerRef}
+        variant="ghost"
+        size="md"
+        leadingIcon={active.Icon}
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        className="h-11 px-5 text-muted-foreground hover:bg-accent hover:text-foreground"
+      >
+        {active.label}
+      </Button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            ref={panelRef}
+            role="listbox"
+            initial={{ opacity: 0, y: 4, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 4, scale: 0.98 }}
+            transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
+            style={{ transformOrigin: "bottom left" }}
+            className="absolute bottom-full left-0 mb-2 w-48 rounded-xl border border-border bg-card p-1 shadow-lg"
+          >
+            {SORT_OPTIONS.map((opt) => {
+              const selected = mode === opt.mode;
+              const OptIcon = opt.Icon;
+              return (
+                <button
+                  key={opt.mode}
+                  type="button"
+                  role="option"
+                  aria-selected={selected}
+                  onClick={() => {
+                    onChange(opt.mode);
+                    setOpen(false);
+                  }}
+                  className={cn(
+                    "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-[14px] transition-colors duration-[180ms]",
+                    selected
+                      ? "bg-accent text-foreground"
+                      : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                  )}
+                >
+                  <OptIcon size={14} strokeWidth={1.75} className="shrink-0" />
+                  <span className="flex-1">{opt.label}</span>
+                  {selected && <Check size={14} strokeWidth={2} />}
+                </button>
+              );
+            })}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 

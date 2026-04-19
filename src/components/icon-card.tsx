@@ -161,11 +161,11 @@ export function IconCard({
         />
       </div>
 
-      <div className="relative flex h-12 items-center justify-center px-4">
+      <div className="relative flex items-center justify-center px-4 py-5">
         <span className="text-[14px] font-semibold tracking-tight text-foreground transition-opacity duration-[180ms] group-hover:opacity-0">
           {name}
         </span>
-        <span className="absolute inset-0 flex flex-col items-center justify-center gap-0.5 px-4 opacity-0 transition-opacity duration-[180ms] group-hover:opacity-100">
+        <span className="absolute inset-0 flex flex-col items-center justify-center gap-1 px-4 opacity-0 transition-opacity duration-[180ms] group-hover:opacity-100">
           <span className="text-[14px] font-semibold tracking-tight text-foreground">
             {name}
           </span>
