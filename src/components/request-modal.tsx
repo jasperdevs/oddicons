@@ -207,44 +207,61 @@ export function RequestModal({ open, onClose, anchorRef }: RequestModalProps) {
                 </Button>
               </form>
 
-              <div className="mt-4 flex items-center gap-2 border-t border-border pt-3">
-                {CONTACTS.map((c) => {
-                  const copied = copiedId === c.id;
-                  const label = copied ? "copied" : c.label;
-                  const iconNode = copied ? <Check size={14} strokeWidth={2} /> : c.icon;
-                  const cls = cn(
-                    "flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-border bg-sidebar px-2 py-1.5 text-[11px] font-medium text-muted-foreground transition-colors duration-[180ms]",
-                    "hover:border-foreground/30 hover:text-foreground"
-                  );
-                  if (c.href) {
-                    return (
-                      <a
-                        key={c.id}
-                        href={c.href}
-                        target="_blank"
-                        rel="noreferrer"
-                        className={cls}
-                        title={c.id}
-                      >
-                        {iconNode}
-                        <span className="truncate">{label}</span>
-                      </a>
+              <div className="mt-4 flex flex-col gap-2 border-t border-border pt-4">
+                <span className="text-center text-[11px] uppercase tracking-[0.08em] text-muted-foreground/70">
+                  or find me at
+                </span>
+                <div className="grid grid-cols-4 gap-1.5">
+                  {CONTACTS.map((c) => {
+                    const copied = copiedId === c.id;
+                    const cls = cn(
+                      "group/chip relative flex h-14 flex-col items-center justify-center gap-1 rounded-lg border border-border bg-sidebar text-muted-foreground transition-all duration-[180ms]",
+                      "hover:-translate-y-0.5 hover:border-foreground/30 hover:bg-accent hover:text-foreground"
                     );
-                  }
-                  return (
-                    <button
-                      key={c.id}
-                      type="button"
-                      onClick={() => c.copyValue && handleCopy(c.id, c.copyValue)}
-                      className={cls}
-                      title={c.copyValue}
-                    >
-                      {iconNode}
-                      <span className="truncate">{label}</span>
-                      {!copied && <Copy size={11} strokeWidth={1.75} className="opacity-60" />}
-                    </button>
-                  );
-                })}
+                    const content = (
+                      <>
+                        <span className="inline-flex">
+                          {copied ? <Check size={14} strokeWidth={2} /> : c.icon}
+                        </span>
+                        <span className="truncate text-[10px] font-medium">
+                          {copied ? "copied" : c.label}
+                        </span>
+                      </>
+                    );
+                    if (c.href) {
+                      return (
+                        <a
+                          key={c.id}
+                          href={c.href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className={cls}
+                          title={c.id}
+                        >
+                          {content}
+                        </a>
+                      );
+                    }
+                    return (
+                      <button
+                        key={c.id}
+                        type="button"
+                        onClick={() => c.copyValue && handleCopy(c.id, c.copyValue)}
+                        className={cls}
+                        title={c.copyValue}
+                      >
+                        {content}
+                        {!copied && (
+                          <Copy
+                            size={10}
+                            strokeWidth={2}
+                            className="absolute right-1.5 top-1.5 opacity-40 transition-opacity group-hover/chip:opacity-70"
+                          />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
             </div>
           </div>
         </motion.div>

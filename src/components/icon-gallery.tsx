@@ -201,14 +201,14 @@ function BottomBar({
             "linear-gradient(to top, var(--sidebar) 0%, transparent 100%)",
         }}
       />
-      <div className="pointer-events-auto relative flex w-full items-center justify-center gap-3 px-6 pb-6 pt-10 sm:px-8">
+      <div className="pointer-events-auto relative flex w-full items-center justify-center gap-2 px-6 pb-6 pt-10 sm:px-8">
         <Button
           ref={requestBtnRef}
-          variant="ghost"
-          size="md"
+          variant="secondary"
+          size="lg"
           leadingIcon={Send}
           onClick={onOpenRequest}
-          className="h-11 px-5 text-muted-foreground hover:bg-accent hover:text-foreground"
+          className="h-10"
         >
           request
         </Button>
@@ -261,13 +261,13 @@ function SortDropdown({
     <div className="relative">
       <Button
         ref={triggerRef}
-        variant="ghost"
-        size="md"
+        variant="tertiary"
+        size="lg"
         leadingIcon={active.Icon}
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className="h-11 px-5 text-muted-foreground hover:bg-accent hover:text-foreground"
+        className="h-10"
       >
         {active.label}
       </Button>
@@ -316,8 +316,8 @@ function SortDropdown({
   );
 }
 
-const ADD_ALL_DURATION_MS = 2500;
-const FLIGHT_DURATION_MS = 900;
+const ADD_ALL_DURATION_MS = 2200;
+const FLIGHT_DURATION_MS = 500;
 const FIRE_WINDOW_MS = ADD_ALL_DURATION_MS - FLIGHT_DURATION_MS;
 const MAX_FLIES = 22;
 
@@ -408,12 +408,12 @@ function AddAllButton({
   return (
     <Button
       ref={ref}
-      variant="ghost"
-      size="md"
+      variant="tertiary"
+      size="lg"
       leadingIcon={allAdded ? Trash2 : Plus}
       onClick={handleClick}
       disabled={items.length === 0}
-      className="h-10 text-muted-foreground hover:bg-accent hover:text-foreground"
+      className="h-10"
     >
       {allAdded ? `remove all (${items.length})` : `add all (${pending.length})`}
     </Button>

@@ -5,10 +5,10 @@ interface ProgressiveBlurProps {
 }
 
 const LAYERS = [
-  { blur: 1, start: 0, end: 100 },
-  { blur: 2, start: 0, end: 75 },
-  { blur: 4, start: 0, end: 50 },
-  { blur: 8, start: 0, end: 25 },
+  { blur: 0.5, stop: 100 },
+  { blur: 1.5, stop: 80 },
+  { blur: 4, stop: 55 },
+  { blur: 10, stop: 30 },
 ];
 
 export function ProgressiveBlur({ direction }: ProgressiveBlurProps) {
@@ -18,7 +18,8 @@ export function ProgressiveBlur({ direction }: ProgressiveBlurProps) {
   return (
     <>
       {LAYERS.map((layer, i) => {
-        const mask = `linear-gradient(to ${gradDir}, black ${layer.start}%, transparent ${layer.end}%)`;
+        const mid = Math.max(0, layer.stop - 20);
+        const mask = `linear-gradient(to ${gradDir}, black 0%, black ${mid}%, transparent ${layer.stop}%)`;
         return (
           <div
             key={i}
@@ -26,7 +27,7 @@ export function ProgressiveBlur({ direction }: ProgressiveBlurProps) {
             className="pointer-events-none absolute inset-x-0 -z-10"
             style={{
               [anchor]: 0,
-              height: "calc(100% + 1.5rem)",
+              height: "calc(100% + 2rem)",
               backdropFilter: `blur(${layer.blur}px)`,
               WebkitBackdropFilter: `blur(${layer.blur}px)`,
               maskImage: mask,

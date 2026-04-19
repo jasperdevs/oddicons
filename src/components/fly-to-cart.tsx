@@ -24,7 +24,7 @@ function Fly({ event, onDone }: FlyProps) {
   }, [from.x, from.y, to.x, to.y]);
 
   const size = from.size;
-  const duration = compact ? 0.85 : 0.9;
+  const duration = compact ? 0.5 : 0.9;
 
   useEffect(() => {
     const el = ref.current;
