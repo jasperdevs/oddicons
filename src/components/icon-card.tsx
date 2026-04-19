@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { useCart } from "@/lib/cart-context";
 import { getIconColors } from "@/lib/icon-colors";
 import { useSettings } from "@/lib/settings-context";
+import { springs } from "@/lib/springs";
 
 const MAX_TILT = 16;
 
@@ -117,7 +118,7 @@ export function IconCard({
       aria-label={inCart ? `remove ${name} from cart` : `add ${name} to cart`}
       aria-pressed={inCart}
       whileHover={{ y: -2 }}
-      transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
+      transition={springs.moderate}
       className={cn(
         "group relative flex flex-col overflow-hidden rounded-2xl border bg-card text-left transition-[box-shadow,border-color,background-color] duration-[180ms] outline-none",
         borderBackground
@@ -195,7 +196,7 @@ export function IconCard({
                 ? { scale: [0.6, 1.45, 0.92, 1.08, 1], rotate: [0, -8, 6, -2, 0] }
                 : { scale: 1, rotate: 0 }
             }
-            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            transition={{ ...springs.slow, duration: 0.5 }}
           >
             <Heart
               size={16}

@@ -1,10 +1,13 @@
 "use client";
 
-import { Popover, Select, Switch } from "@base-ui/react";
+import { Popover, Select } from "@base-ui/react";
 import { motion } from "framer-motion";
 import { Check, ChevronDown, Settings } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import { Tooltip } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { fontWeights } from "@/lib/font-weight";
+import { springs } from "@/lib/springs";
 import {
   DOWNLOAD_SIZE_ORIGINAL,
   DOWNLOAD_SIZE_STEPS,
@@ -33,7 +36,7 @@ export function SettingsPopover() {
             >
               <motion.span
                 animate={{ rotate: state.open ? 60 : 0 }}
-                transition={{ duration: 0.24, ease: [0.4, 0, 0.2, 1] }}
+                transition={springs.moderate}
                 className="inline-flex"
               >
                 <Settings size={16} strokeWidth={1.75} />
@@ -68,11 +71,11 @@ export function SettingsPopover() {
               settings
             </Popover.Title>
 
-            <SwitchRow
+            <Switch
               label="monochrome icons"
               hint="render every icon in grayscale"
               checked={settings.monochrome}
-              onChange={setMonochrome}
+              onCheckedChange={setMonochrome}
             />
 
             <SizeRow
@@ -86,45 +89,6 @@ export function SettingsPopover() {
   );
 }
 
-function SwitchRow({
-  label,
-  hint,
-  checked,
-  onChange,
-}: {
-  label: string;
-  hint: string;
-  checked: boolean;
-  onChange: (v: boolean) => void;
-}) {
-  return (
-    <label className="flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-accent/60">
-      <div className="flex min-w-0 flex-1 flex-col">
-        <span className="text-[12.5px] font-medium text-foreground">{label}</span>
-        <span className="text-[11px] text-muted-foreground">{hint}</span>
-      </div>
-      <Switch.Root
-        checked={checked}
-        onCheckedChange={onChange}
-        className={cn(
-          "relative inline-flex h-[22px] w-[38px] shrink-0 items-center rounded-full border outline-none transition-colors duration-[180ms]",
-          "focus-visible:ring-2 focus-visible:ring-foreground/20",
-          "data-[checked]:border-foreground data-[checked]:bg-foreground",
-          "data-[unchecked]:border-border data-[unchecked]:bg-sidebar"
-        )}
-      >
-        <Switch.Thumb
-          className={cn(
-            "block h-[14px] w-[14px] rounded-full shadow-sm transition-all duration-[180ms]",
-            "data-[checked]:translate-x-[19px] data-[checked]:bg-background",
-            "data-[unchecked]:translate-x-[3px] data-[unchecked]:bg-muted-foreground"
-          )}
-        />
-      </Switch.Root>
-    </label>
-  );
-}
-
 function SizeRow({
   size,
   onChange,
@@ -135,7 +99,10 @@ function SizeRow({
   return (
     <div className="flex items-center gap-3 rounded-lg px-2 py-2.5">
       <div className="flex min-w-0 flex-1 flex-col">
-        <span className="text-[12.5px] font-medium text-foreground">
+        <span
+          className="text-[12.5px] text-foreground"
+          style={{ fontVariationSettings: fontWeights.medium }}
+        >
           download size
         </span>
         <span className="text-[11px] text-muted-foreground">
@@ -145,10 +112,11 @@ function SizeRow({
       <Select.Root value={size} onValueChange={(v) => onChange(v as number)}>
         <Select.Trigger
           className={cn(
-            "inline-flex h-8 min-w-[88px] items-center justify-between gap-1.5 rounded-md border border-border bg-sidebar px-2.5 text-[12px] font-medium tabular-nums text-foreground transition-colors outline-none",
+            "inline-flex h-8 min-w-[88px] items-center justify-between gap-1.5 rounded-md border border-border bg-sidebar px-2.5 text-[12px] tabular-nums text-foreground transition-colors outline-none",
             "hover:border-foreground/30 focus-visible:ring-2 focus-visible:ring-foreground/20",
             "data-[popup-open]:border-foreground/40"
           )}
+          style={{ fontVariationSettings: fontWeights.medium }}
         >
           <Select.Value>{(val) => formatSize(val as number)}</Select.Value>
           <Select.Icon>
@@ -168,25 +136,45 @@ function SizeRow({
               )}
             >
               {DOWNLOAD_SIZE_STEPS.map((step) => (
-                <Select.Item
-                  key={step}
-                  value={step}
-                  className={cn(
-                    "relative flex cursor-pointer select-none items-center gap-2 rounded-md py-1.5 pl-7 pr-3 text-[12.5px] tabular-nums text-muted-foreground outline-none",
-                    "data-[highlighted]:bg-accent data-[highlighted]:text-foreground",
-                    "data-[selected]:text-foreground"
-                  )}
-                >
-                  <Select.ItemIndicator className="absolute left-2 inline-flex">
-                    <Check size={13} strokeWidth={2} />
-                  </Select.ItemIndicator>
-                  <Select.ItemText>{formatSize(step)}</Select.ItemText>
-                </Select.Item>
+                <FluidSelectItem key={step} value={step} label={formatSize(step)} />
               ))}
             </Select.Popup>
           </Select.Positioner>
         </Select.Portal>
       </Select.Root>
     </div>
+  );
+}
+
+function FluidSelectItem({ value, label }: { value: number; label: string }) {
+  return (
+    <Select.Item
+      value={value}
+      render={(props, state) => (
+        <div
+          {...props}
+          className={cn(
+            "relative flex cursor-pointer select-none items-center gap-2 rounded-md py-1.5 pl-7 pr-3 text-[12.5px] tabular-nums outline-none transition-[color,background-color,font-variation-settings] duration-[140ms]",
+            state.highlighted
+              ? "bg-accent text-foreground"
+              : state.selected
+                ? "text-foreground"
+                : "text-muted-foreground"
+          )}
+          style={{
+            fontVariationSettings: state.selected
+              ? fontWeights.semibold
+              : state.highlighted
+                ? fontWeights.medium
+                : fontWeights.normal,
+          }}
+        >
+          <Select.ItemIndicator className="absolute left-2 inline-flex">
+            <Check size={13} strokeWidth={2} />
+          </Select.ItemIndicator>
+          <Select.ItemText>{label}</Select.ItemText>
+        </div>
+      )}
+    />
   );
 }

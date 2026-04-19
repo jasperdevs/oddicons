@@ -8,6 +8,7 @@ import { SearchBar } from "@/components/search-bar";
 import { ProgressiveBlur } from "@/components/progressive-blur";
 import { SettingsPopover } from "@/components/settings-popover";
 import { useCart } from "@/lib/cart-context";
+import { springs } from "@/lib/springs";
 import { cn } from "@/lib/utils";
 
 interface TopbarProps {
@@ -44,7 +45,7 @@ export function Topbar({
     if (bumpCount === 0) return;
     bumpControls.start({
       scale: [1, 1.14, 0.98, 1],
-      transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] },
+      transition: { ...springs.slow, duration: 0.4 },
     });
   }, [bumpCount, bumpControls]);
 
@@ -105,7 +106,7 @@ export function Topbar({
                   initial={{ rotate: -140, scale: 0.3, opacity: 0 }}
                   animate={{ rotate: 0, scale: 1, opacity: 1 }}
                   exit={{ rotate: 140, scale: 0.3, opacity: 0 }}
-                  transition={{ duration: 0.24, ease: [0.4, 0, 0.2, 1] }}
+                  transition={springs.moderate}
                   className="inline-flex"
                 >
                   {theme === "dark" ? <Sun size={16} strokeWidth={1.75} /> : <Moon size={16} strokeWidth={1.75} />}

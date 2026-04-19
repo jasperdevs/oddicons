@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart-context";
 import { useSettings } from "@/lib/settings-context";
 import { cn } from "@/lib/utils";
+import { springs } from "@/lib/springs";
 import { downloadAsZip, downloadPng, fetchProcessedIconBlob } from "@/lib/png";
 
 function deterministicRotation(seed: string): number {
@@ -143,13 +144,13 @@ export function CartPinboard() {
               opacity: 1,
               scale: 1,
               y: 0,
-              transition: { duration: 0.24, ease: [0.4, 0, 0.2, 1] },
+              transition: springs.moderate,
             }}
             exit={{
               opacity: 0,
               scale: 0.96,
               y: -6,
-              transition: { duration: 0.18, ease: [0.4, 0, 1, 1] },
+              transition: springs.fast,
             }}
           >
             <div

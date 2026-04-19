@@ -21,6 +21,7 @@ import { UsageContent } from "@/components/usage-content";
 import { DonateContent } from "@/components/donate-content";
 import { ProgressiveBlur } from "@/components/progressive-blur";
 import { Button, type ButtonProps } from "@/components/ui/button";
+import { fontWeights } from "@/lib/font-weight";
 import {
   ArrowDownAZ,
   ArrowUpAZ,
@@ -341,18 +342,37 @@ function SortDropdown({
                 <Select.Item
                   key={opt.mode}
                   value={opt.mode}
-                  className={cn(
-                    "relative flex cursor-pointer select-none items-center gap-2 rounded-lg py-2 pl-3 pr-8 text-[14px] text-muted-foreground outline-none",
-                    "data-[highlighted]:bg-accent data-[highlighted]:text-foreground",
-                    "data-[selected]:text-foreground"
+                  render={(props, state) => (
+                    <div
+                      {...props}
+                      className={cn(
+                        "relative flex cursor-pointer select-none items-center gap-2 rounded-lg py-2 pl-3 pr-8 text-[14px] outline-none transition-[color,background-color,font-variation-settings] duration-[140ms]",
+                        state.highlighted
+                          ? "bg-accent text-foreground"
+                          : state.selected
+                            ? "text-foreground"
+                            : "text-muted-foreground"
+                      )}
+                      style={{
+                        fontVariationSettings: state.selected
+                          ? fontWeights.semibold
+                          : state.highlighted
+                            ? fontWeights.medium
+                            : fontWeights.normal,
+                      }}
+                    >
+                      <OptIcon
+                        size={14}
+                        strokeWidth={state.selected || state.highlighted ? 2 : 1.5}
+                        className="shrink-0 transition-[stroke-width] duration-[140ms]"
+                      />
+                      <Select.ItemText className="flex-1">{opt.label}</Select.ItemText>
+                      <Select.ItemIndicator className="absolute right-2 inline-flex">
+                        <Check size={14} strokeWidth={2} />
+                      </Select.ItemIndicator>
+                    </div>
                   )}
-                >
-                  <OptIcon size={14} strokeWidth={1.75} className="shrink-0" />
-                  <Select.ItemText className="flex-1">{opt.label}</Select.ItemText>
-                  <Select.ItemIndicator className="absolute right-2 inline-flex">
-                    <Check size={14} strokeWidth={2} />
-                  </Select.ItemIndicator>
-                </Select.Item>
+                />
               );
             })}
           </Select.Popup>

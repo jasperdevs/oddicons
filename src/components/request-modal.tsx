@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Check, Copy, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { springs } from "@/lib/springs";
 
 const EMAIL = "jasper.mceligott@gmail.com";
 
@@ -166,7 +167,7 @@ export function RequestModal({ open, onClose, anchorRef }: RequestModalProps) {
           initial={{ opacity: 0, y: 6, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 6, scale: 0.96 }}
-          transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+          transition={springs.moderate}
           style={{
             left: pos.left,
             bottom: pos.bottom,
