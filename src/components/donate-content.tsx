@@ -80,7 +80,7 @@ export function DonateContent() {
       </div>
 
       <section className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-6">
-        <span className="text-[11.5px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+        <span className="text-[11.5px] font-semibold tracking-tight text-muted-foreground">
           where it goes
         </span>
         <ul className="grid gap-2.5 sm:grid-cols-3">

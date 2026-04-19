@@ -29,7 +29,7 @@ export function UsageContent() {
             <ScrollText size={16} strokeWidth={1.75} />
           </span>
           <div className="flex flex-col gap-1">
-            <span className="text-[11.5px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+            <span className="text-[11.5px] font-semibold tracking-tight text-muted-foreground">
               license
             </span>
             <h2 className="text-[22px] font-semibold tracking-tight text-foreground">
@@ -62,7 +62,7 @@ export function UsageContent() {
             <Sparkles size={16} strokeWidth={1.75} />
           </span>
           <div className="flex flex-col gap-1">
-            <span className="text-[11.5px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+            <span className="text-[11.5px] font-semibold tracking-tight text-muted-foreground">
               missing an icon?
             </span>
             <h2 className="text-[22px] font-semibold tracking-tight text-foreground">

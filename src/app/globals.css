@@ -226,3 +226,9 @@ button:disabled,
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+/* Prevent native image drag-to-navigate across the app */
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
