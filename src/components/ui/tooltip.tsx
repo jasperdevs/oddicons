@@ -80,7 +80,7 @@ function Tooltip({
   return (
     <TooltipPrimitive.Provider delayDuration={delayDuration}>
       <TooltipPrimitive.Root open={open} onOpenChange={(v) => { setInternalOpen(v); onOpenChangeProp?.(v); }}>
-        <TooltipPrimitive.Trigger>
+        <TooltipPrimitive.Trigger asChild>
           {children}
         </TooltipPrimitive.Trigger>
         {mounted && (

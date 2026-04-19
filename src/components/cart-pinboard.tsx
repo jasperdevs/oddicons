@@ -44,7 +44,7 @@ export function CartPinboard() {
   const { settings } = useSettings();
   const [downloading, setDownloading] = useState(false);
   const [copiedName, setCopiedName] = useState<string | null>(null);
-  const [anchor, setAnchor] = useState<{ top: number; right: number } | null>(null);
+  const [anchor, setAnchor] = useState<{ top: number; right: number; tailRight: number } | null>(null);
 
   const handleCopy = async (name: string, url: string) => {
     const ok = await copyIconToClipboard(url, {
@@ -60,15 +60,26 @@ export function CartPinboard() {
 
   useEffect(() => {
     if (!open) return;
-    const rect = getCartRect();
-    if (rect) {
-      setAnchor({
-        top: rect.bottom + 14,
-        right: Math.max(12, window.innerWidth - rect.right),
-      });
-    } else {
-      setAnchor({ top: 72, right: 24 });
-    }
+    const compute = () => {
+      const rect = getCartRect();
+      if (rect) {
+        const desiredRight = window.innerWidth - rect.right;
+        const panelRight = Math.max(12, desiredRight);
+        const panelRightX = window.innerWidth - panelRight;
+        const cartCenterX = rect.left + rect.width / 2;
+        const tailRight = Math.max(20, panelRightX - cartCenterX - 6);
+        setAnchor({ top: rect.bottom + 14, right: panelRight, tailRight });
+      } else {
+        setAnchor({ top: 72, right: 24, tailRight: 28 });
+      }
+    };
+    compute();
+    window.addEventListener("resize", compute);
+    window.addEventListener("scroll", compute, true);
+    return () => {
+      window.removeEventListener("resize", compute);
+      window.removeEventListener("scroll", compute, true);
+    };
   }, [open, getCartRect]);
 
   useEffect(() => {
@@ -141,6 +152,11 @@ export function CartPinboard() {
               transition: { duration: 0.18, ease: [0.4, 0, 1, 1] },
             }}
           >
+            <div
+              aria-hidden
+              className="absolute h-3 w-3 rotate-45 border-l border-t border-border bg-card"
+              style={{ top: -6, right: anchor.tailRight }}
+            />
             <div className="relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[0_32px_64px_-16px_rgba(0,0,0,0.7),_0_12px_24px_-8px_rgba(0,0,0,0.4)]">
               <div className="flex items-start justify-between gap-3 px-5 pb-3 pt-4">
                 <div className="flex flex-col gap-0.5">

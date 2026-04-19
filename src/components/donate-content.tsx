@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink, Heart, Sparkles } from "lucide-react";
+import { ExternalLink, Heart } from "lucide-react";
 import { KOFI_COLOR, KofiLogo } from "@/components/logos/kofi";
 import { PAYPAL_COLOR, PaypalLogo } from "@/components/logos/paypal";
 
@@ -8,7 +8,7 @@ const OPTIONS = [
   {
     id: "kofi",
     label: "ko-fi",
-    hint: "one-time tip — buy me a coffee",
+    hint: "one-time tip, buy me a coffee",
     href: "https://ko-fi.com/jasperdevs",
     color: KOFI_COLOR,
     Logo: KofiLogo,
@@ -27,17 +27,13 @@ export function DonateContent() {
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-10 pb-10">
       <header className="flex flex-col gap-3">
-        <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
-          <Sparkles size={12} strokeWidth={1.75} />
-          support the pack
-        </span>
         <h1 className="text-[28px] font-semibold tracking-tight text-foreground sm:text-[34px]">
           buy me a coffee
           <Heart className="ml-2 inline-block fill-current text-rose-500" size={26} strokeWidth={1.5} />
         </h1>
         <p className="max-w-xl text-[14px] leading-[1.65] text-muted-foreground">
           oddicons will always be free. if you&apos;d like to chip in, it keeps the
-          pack growing — more icons, more categories, more weird ideas shipped faster.
+          pack growing with more icons and more categories.
         </p>
       </header>
 
@@ -55,10 +51,7 @@ export function DonateContent() {
               className="pointer-events-none absolute -right-10 -top-12 h-40 w-40 rounded-full opacity-[0.08] transition-all duration-[240ms] group-hover:-right-4 group-hover:-top-6 group-hover:opacity-[0.14]"
               style={{ background: opt.color }}
             />
-            <span
-              className="grid h-11 w-11 place-items-center rounded-xl text-white shadow-[0_6px_16px_-6px_rgba(0,0,0,0.35)]"
-              style={{ background: opt.color }}
-            >
+            <span className="grid h-11 w-11 place-items-center rounded-xl bg-white shadow-[0_6px_16px_-6px_rgba(0,0,0,0.35)]">
               <opt.Logo className="h-6 w-6" />
             </span>
             <div className="flex flex-col gap-1">
@@ -80,10 +73,6 @@ export function DonateContent() {
           </a>
         ))}
       </div>
-
-      <p className="text-center text-[12px] text-muted-foreground">
-        opens in a new tab. thanks for even reading this page.
-      </p>
     </div>
   );
 }

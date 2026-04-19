@@ -43,17 +43,27 @@ export function SettingsPopover() {
         />
       </Tooltip>
       <Popover.Portal>
-        <Popover.Positioner side="bottom" align="end" sideOffset={8}>
+        <Popover.Backdrop
+          className={cn(
+            "fixed inset-0 z-40 bg-background/60",
+            "transition-opacity duration-[220ms] ease-out",
+            "data-[starting-style]:opacity-0 data-[ending-style]:opacity-0"
+          )}
+        />
+        <Popover.Positioner side="bottom" align="end" sideOffset={12} className="z-50">
           <Popover.Popup
             className={cn(
-              "z-50 w-[288px] rounded-xl border border-border bg-card p-2 text-foreground",
-              "shadow-[0_24px_48px_-16px_rgba(0,0,0,0.6),_0_8px_16px_-6px_rgba(0,0,0,0.35)]",
+              "relative w-[288px] rounded-2xl border border-border bg-card p-2 text-foreground",
+              "shadow-[0_32px_64px_-16px_rgba(0,0,0,0.7),_0_12px_24px_-8px_rgba(0,0,0,0.4)]",
               "origin-[var(--transform-origin)] outline-none",
               "transition-all duration-[180ms] ease-out",
               "data-[starting-style]:opacity-0 data-[starting-style]:scale-[0.97] data-[starting-style]:-translate-y-1",
               "data-[ending-style]:opacity-0 data-[ending-style]:scale-[0.97] data-[ending-style]:-translate-y-1"
             )}
           >
+            <Popover.Arrow className="h-3 w-3">
+              <div className="absolute inset-0 rotate-45 border-l border-t border-border bg-card" />
+            </Popover.Arrow>
             <Popover.Title className="px-2 pb-1.5 pt-1 text-[13px] font-semibold tracking-tight">
               settings
             </Popover.Title>

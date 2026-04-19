@@ -52,8 +52,8 @@ export function IconCard({
     const c1 = colors[0];
     const c2 = colors[1] ?? colors[0];
     return [
-      `radial-gradient(circle 150px at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.95) 0%, ${c1} 22%, ${c2} 46%, transparent 72%)`,
-      `radial-gradient(circle 60px at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.6) 0%, transparent 70%)`,
+      `radial-gradient(circle 240px at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.95) 0%, ${c1} 24%, ${c2} 50%, transparent 78%)`,
+      `radial-gradient(circle 110px at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.7) 0%, transparent 72%)`,
     ].join(", ");
   }, [colors]);
 
