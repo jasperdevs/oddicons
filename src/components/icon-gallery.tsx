@@ -106,7 +106,6 @@ function GalleryInner() {
             query={query}
             onQueryChange={setQuery}
             total={all.length}
-            visible={filtered.length}
           />
 
           <main className="px-6 pb-12 sm:px-8">

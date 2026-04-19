@@ -17,7 +17,7 @@ export interface CartItem {
   url: string;
 }
 
-interface FlyEvent {
+export interface FlyEvent {
   id: number;
   item: CartItem;
   from: { x: number; y: number; size: number };
@@ -32,8 +32,9 @@ interface CartContextValue {
   clear: () => void;
   setCartAnchor: (el: HTMLElement | null) => void;
   getCartPoint: () => { x: number; y: number } | null;
-  pendingFly: FlyEvent | null;
-  consumeFly: () => void;
+  getCartRect: () => DOMRect | null;
+  flies: FlyEvent[];
+  consumeFly: (id: number) => void;
   open: boolean;
   setOpen: (v: boolean) => void;
   bumpCount: number;
@@ -45,7 +46,7 @@ const STORAGE_KEY = "oddicons:cart";
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
-  const [pendingFly, setPendingFly] = useState<FlyEvent | null>(null);
+  const [flies, setFlies] = useState<FlyEvent[]>([]);
   const [open, setOpen] = useState(false);
   const [bumpCount, setBumpCount] = useState(0);
   const anchorRef = useRef<HTMLElement | null>(null);
@@ -75,7 +76,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const add = useCallback(
     (item: CartItem, from: { x: number; y: number; size: number }) => {
-      // Resolve cart target NOW so a mid-animation cart button can't shift it.
       const el = anchorRef.current;
       const to = el
         ? (() => {
@@ -85,7 +85,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         : { x: window.innerWidth - 40, y: 40 };
       setItems((prev) => (prev.some((i) => i.name === item.name) ? prev : [...prev, item]));
       idRef.current += 1;
-      setPendingFly({ id: idRef.current, item, from, to });
+      const id = idRef.current;
+      setFlies((prev) => [...prev, { id, item, from, to }]);
     },
     []
   );
@@ -107,8 +108,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
   }, []);
 
-  const consumeFly = useCallback(() => {
-    setPendingFly(null);
+  const getCartRect = useCallback(() => anchorRef.current?.getBoundingClientRect() ?? null, []);
+
+  const consumeFly = useCallback((id: number) => {
+    setFlies((prev) => prev.filter((f) => f.id !== id));
     setBumpCount((c) => c + 1);
   }, []);
 
@@ -121,13 +124,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
       clear,
       setCartAnchor,
       getCartPoint,
-      pendingFly,
+      getCartRect,
+      flies,
       consumeFly,
       open,
       setOpen,
       bumpCount,
     }),
-    [items, has, add, remove, clear, setCartAnchor, getCartPoint, pendingFly, consumeFly, open, bumpCount]
+    [items, has, add, remove, clear, setCartAnchor, getCartPoint, getCartRect, flies, consumeFly, open, bumpCount]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

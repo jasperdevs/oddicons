@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { Moon, ShoppingBag, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip } from "@/components/ui/tooltip";
@@ -14,7 +14,6 @@ interface TopbarProps {
   query: string;
   onQueryChange: (q: string) => void;
   total: number;
-  visible: number;
 }
 
 export function Topbar({
@@ -23,30 +22,57 @@ export function Topbar({
   query,
   onQueryChange,
   total,
-  visible,
 }: TopbarProps) {
   const { items, setCartAnchor, setOpen, bumpCount } = useCart();
   const cartRef = useRef<HTMLButtonElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const bumpControls = useAnimation();
 
   useEffect(() => {
     setCartAnchor(cartRef.current);
     return () => setCartAnchor(null);
   }, [setCartAnchor]);
 
+  useEffect(() => {
+    const scroller = wrapperRef.current?.parentElement;
+    if (!scroller) return;
+    const onScroll = () => setScrolled(scroller.scrollTop > 6);
+    onScroll();
+    scroller.addEventListener("scroll", onScroll, { passive: true });
+    return () => scroller.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (bumpCount === 0) return;
+    bumpControls.start({
+      scale: [1, 1.18, 0.96, 1],
+      rotate: [0, -6, 4, 0],
+      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+    });
+  }, [bumpCount, bumpControls]);
+
   const handleTheme = (e: React.MouseEvent<HTMLButtonElement>) => {
     onToggleTheme({ x: e.clientX, y: e.clientY });
   };
 
   return (
-    <div className="sticky top-0 z-30 bg-sidebar/95 px-6 py-3 backdrop-blur-sm sm:px-8">
-      <div className="mx-auto flex w-full max-w-[1400px] items-center gap-2">
+    <div ref={wrapperRef} className="sticky top-0 z-30 px-6 sm:px-8">
+      <motion.div
+        aria-hidden
+        animate={{ opacity: scrolled ? 1 : 0 }}
+        transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+        className="pointer-events-none absolute inset-x-0 top-0"
+        style={{
+          height: "calc(100% + 2.5rem)",
+          background:
+            "linear-gradient(to bottom, var(--sidebar) 0%, var(--sidebar) 62%, transparent 100%)",
+        }}
+      />
+
+      <div className="relative mx-auto flex w-full max-w-[1400px] items-center gap-2 py-3">
         <div className="min-w-0 flex-1">
-          <SearchBar
-            value={query}
-            onChange={onQueryChange}
-            total={total}
-            visible={visible}
-          />
+          <SearchBar value={query} onChange={onQueryChange} total={total} />
         </div>
 
         <Tooltip content={theme === "dark" ? "Light mode" : "Dark mode"}>
@@ -55,22 +81,25 @@ export function Topbar({
             size="icon-lg"
             onClick={handleTheme}
             aria-label="Toggle theme"
-            className="bg-[var(--button)] hover:bg-[var(--button)]/80"
+            className="relative h-11 w-11 overflow-hidden bg-[var(--button)] hover:bg-[var(--button)]/80"
           >
-            {theme === "dark" ? <Sun /> : <Moon />}
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.span
+                key={theme}
+                initial={{ rotate: -140, scale: 0.3, opacity: 0 }}
+                animate={{ rotate: 0, scale: 1, opacity: 1 }}
+                exit={{ rotate: 140, scale: 0.3, opacity: 0 }}
+                transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                className="inline-flex"
+              >
+                {theme === "dark" ? <Sun /> : <Moon />}
+              </motion.span>
+            </AnimatePresence>
           </Button>
         </Tooltip>
 
         <Tooltip content={items.length > 0 ? "Open cart" : "Cart is empty"}>
-          <motion.div
-            key={bumpCount}
-            animate={
-              bumpCount > 0
-                ? { scale: [1, 1.14, 0.98, 1], rotate: [0, -4, 3, 0] }
-                : { scale: 1, rotate: 0 }
-            }
-            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          >
+          <motion.div animate={bumpControls} style={{ transformOrigin: "center" }}>
             <Button
               ref={cartRef}
               variant="primary"

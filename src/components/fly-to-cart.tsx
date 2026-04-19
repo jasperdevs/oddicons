@@ -1,48 +1,77 @@
 "use client";
 
-import { useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useCart } from "@/lib/cart-context";
+import { useEffect, useMemo } from "react";
+import { motion, useMotionValue, useTransform, animate } from "framer-motion";
+import { useCart, type FlyEvent } from "@/lib/cart-context";
 
-const STEPS = 30;
+const APPROACH = 0.68;
+const SPIRAL_TURNS = 1.8;
 
-function buildPath(
-  from: { x: number; y: number },
-  to: { x: number; y: number }
-) {
-  const dx = to.x - from.x;
-  const dy = to.y - from.y;
-  const dist = Math.hypot(dx, dy);
-  // Control point biased toward target, with a capped vertical lift so the
-  // arc never flies above the viewport.
-  const lift = Math.min(Math.max(dist * 0.18, 40), 140);
-  const cx = from.x + dx * 0.55 + (dx > 0 ? 20 : -20);
-  const cy = Math.max(40, Math.min(from.y, to.y) - lift);
-
-  const left: number[] = [];
-  const top: number[] = [];
-  const scale: number[] = [];
-  const rotate: number[] = [];
-  const opacity: number[] = [];
-  const times: number[] = [];
-
-  for (let i = 0; i <= STEPS; i++) {
-    const t = i / STEPS;
-    const u = 1 - t;
-    const x = u * u * from.x + 2 * u * t * cx + t * t * to.x;
-    const y = u * u * from.y + 2 * u * t * cy + t * t * to.y;
-    left.push(x);
-    top.push(y);
-    scale.push(1 - t * 0.7);
-    rotate.push(t * 420);
-    opacity.push(t < 0.9 ? 1 : 1 - (t - 0.9) / 0.1);
-    times.push(t);
-  }
-  return { left, top, scale, rotate, opacity, times };
+interface FlyProps {
+  event: FlyEvent;
+  onDone: (id: number) => void;
 }
 
-export function FlyToCart() {
-  const { pendingFly, consumeFly } = useCart();
+function Fly({ event, onDone }: FlyProps) {
+  const { from, to, item, id } = event;
+
+  const geo = useMemo(() => {
+    const dx = to.x - from.x;
+    const dy = to.y - from.y;
+    const dist = Math.hypot(dx, dy);
+    const lift = Math.min(Math.max(dist * 0.22, 60), 180);
+    const cx = from.x + dx * 0.55 + (dx >= 0 ? 40 : -40);
+    const cy = Math.max(40, Math.min(from.y, to.y) - lift);
+    // Point on bezier at t=APPROACH — the spiral's starting anchor.
+    const u = 1 - APPROACH;
+    const nearX = u * u * from.x + 2 * u * APPROACH * cx + APPROACH * APPROACH * to.x;
+    const nearY = u * u * from.y + 2 * u * APPROACH * cy + APPROACH * APPROACH * to.y;
+    const startRadius = Math.max(36, Math.hypot(nearX - to.x, nearY - to.y));
+    const startAngle = Math.atan2(nearY - to.y, nearX - to.x);
+    return { cx, cy, startRadius, startAngle };
+  }, [from.x, from.y, to.x, to.y]);
+
+  const t = useMotionValue(0);
+
+  const x = useTransform(t, (v) => {
+    if (v <= APPROACH) {
+      const p = v / APPROACH;
+      const u = 1 - p;
+      return u * u * from.x + 2 * u * p * geo.cx + p * p * to.x;
+    }
+    const p = (v - APPROACH) / (1 - APPROACH);
+    const eased = p * p;
+    const radius = geo.startRadius * (1 - eased);
+    const angle = geo.startAngle + p * Math.PI * 2 * SPIRAL_TURNS;
+    return to.x + Math.cos(angle) * radius;
+  });
+
+  const y = useTransform(t, (v) => {
+    if (v <= APPROACH) {
+      const p = v / APPROACH;
+      const u = 1 - p;
+      return u * u * from.y + 2 * u * p * geo.cy + p * p * to.y;
+    }
+    const p = (v - APPROACH) / (1 - APPROACH);
+    const eased = p * p;
+    const radius = geo.startRadius * (1 - eased);
+    const angle = geo.startAngle + p * Math.PI * 2 * SPIRAL_TURNS;
+    return to.y + Math.sin(angle) * radius;
+  });
+
+  const scale = useTransform(t, [0, APPROACH, 1], [1, 0.55, 0]);
+  const rotate = useTransform(t, [0, APPROACH, 1], [0, 160, 900]);
+  const opacity = useTransform(t, [0, 0.85, 1], [1, 1, 0]);
+
+  useEffect(() => {
+    const controls = animate(t, 1, {
+      duration: 0.85,
+      ease: [0.22, 1, 0.36, 1],
+      onComplete: () => onDone(id),
+    });
+    return () => controls.stop();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const sparkles = useMemo(
     () =>
@@ -52,18 +81,14 @@ export function FlyToCart() {
         dy: (Math.random() - 0.5) * 56,
         delay: i * 0.025,
       })),
-    [pendingFly?.id]
+    []
   );
 
-  if (!pendingFly) return null;
-
-  const path = buildPath(pendingFly.from, pendingFly.to);
-
   return (
-    <div className="pointer-events-none fixed inset-0 z-[70]">
+    <>
       <div
-        className="absolute"
-        style={{ left: pendingFly.from.x, top: pendingFly.from.y }}
+        className="pointer-events-none absolute"
+        style={{ left: from.x, top: from.y }}
       >
         {sparkles.map((s) => (
           <motion.span
@@ -81,40 +106,39 @@ export function FlyToCart() {
         ))}
       </div>
 
-      <AnimatePresence onExitComplete={consumeFly}>
-        <motion.div
-          key={pendingFly.id}
-          className="absolute"
-          style={{ width: pendingFly.from.size, height: pendingFly.from.size }}
-          initial={{
-            left: pendingFly.from.x - pendingFly.from.size / 2,
-            top: pendingFly.from.y - pendingFly.from.size / 2,
-            opacity: 1,
-            scale: 1,
-            rotate: 0,
+      <motion.div
+        className="absolute left-0 top-0"
+        style={{ x, y, scale, rotate, opacity }}
+      >
+        <div
+          style={{
+            width: from.size,
+            height: from.size,
+            transform: "translate(-50%, -50%)",
           }}
-          animate={{
-            left: path.left.map((x) => x - pendingFly.from.size / 2),
-            top: path.top.map((y) => y - pendingFly.from.size / 2),
-            scale: path.scale,
-            rotate: path.rotate,
-            opacity: path.opacity,
-          }}
-          transition={{
-            duration: 0.75,
-            times: path.times,
-            ease: [0.4, 0, 0.2, 1],
-          }}
-          onAnimationComplete={consumeFly}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={pendingFly.item.url}
+            src={item.url}
             alt=""
             className="h-full w-full invert dark:invert-0"
           />
-        </motion.div>
-      </AnimatePresence>
+        </div>
+      </motion.div>
+    </>
+  );
+}
+
+export function FlyToCart() {
+  const { flies, consumeFly } = useCart();
+
+  if (flies.length === 0) return null;
+
+  return (
+    <div className="pointer-events-none fixed inset-0 z-[70]">
+      {flies.map((f) => (
+        <Fly key={f.id} event={f} onDone={consumeFly} />
+      ))}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -8,20 +8,25 @@ interface SearchBarProps {
   value: string;
   onChange: (value: string) => void;
   total: number;
-  visible: number;
 }
 
-export function SearchBar({ value, onChange, total, visible }: SearchBarProps) {
+export function SearchBar({ value, onChange, total }: SearchBarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [isMac, setIsMac] = useState(false);
+
+  useEffect(() => {
+    const ua = navigator.userAgent || navigator.platform || "";
+    setIsMac(/Mac|iPhone|iPod|iPad/i.test(ua));
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "/" && !e.metaKey && !e.ctrlKey && !e.altKey) {
-        const tag = (e.target as HTMLElement | null)?.tagName;
-        const editable = (e.target as HTMLElement | null)?.isContentEditable;
-        if (tag === "INPUT" || tag === "TEXTAREA" || editable) return;
+      const mod = isMac ? e.metaKey : e.ctrlKey;
+      if (mod && (e.key === "k" || e.key === "K")) {
         e.preventDefault();
         inputRef.current?.focus();
+        inputRef.current?.select();
+        return;
       }
       if (e.key === "Escape" && document.activeElement === inputRef.current) {
         inputRef.current?.blur();
@@ -29,7 +34,7 @@ export function SearchBar({ value, onChange, total, visible }: SearchBarProps) {
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, []);
+  }, [isMac]);
 
   return (
     <div
@@ -42,14 +47,11 @@ export function SearchBar({ value, onChange, total, visible }: SearchBarProps) {
       <input
         ref={inputRef}
         type="text"
-        placeholder="search icons, categories, tags…"
+        placeholder={`search ${total} icons…`}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="flex-1 bg-transparent text-[14px] text-foreground placeholder:text-muted-foreground/70 outline-none"
       />
-      <span className="shrink-0 text-[11px] tabular-nums text-muted-foreground">
-        <span className="text-foreground">{visible}</span> / {total}
-      </span>
       {value ? (
         <button
           type="button"
@@ -60,12 +62,17 @@ export function SearchBar({ value, onChange, total, visible }: SearchBarProps) {
           <X size={14} />
         </button>
       ) : (
-        <kbd
+        <div
           aria-hidden
-          className="hidden h-6 items-center rounded border border-border/70 px-1.5 font-mono text-[10px] font-medium text-muted-foreground sm:inline-flex"
+          className="hidden shrink-0 items-center gap-1 sm:flex"
         >
-          /
-        </kbd>
+          <kbd className="grid h-6 min-w-6 place-items-center rounded-md border border-border/70 bg-background/60 px-1.5 font-mono text-[11px] font-medium text-muted-foreground">
+            {isMac ? "⌘" : "Ctrl"}
+          </kbd>
+          <kbd className="grid h-6 min-w-6 place-items-center rounded-md border border-border/70 bg-background/60 px-1.5 font-mono text-[11px] font-medium text-muted-foreground">
+            K
+          </kbd>
+        </div>
       )}
     </div>
   );
