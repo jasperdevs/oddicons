@@ -36,7 +36,6 @@ export function IconCard({
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [colors, setColors] = useState<string[] | null>(null);
   const imgRef = useRef<HTMLImageElement>(null);
-  const borderRef = useRef<HTMLSpanElement>(null);
   const { add, has, remove } = useCart();
   const { settings } = useSettings();
   const inCart = has(name);
@@ -56,19 +55,8 @@ export function IconCard({
     const c1 = colors[0];
     const c2 = colors[1] ?? colors[0];
     const c3 = colors[2] ?? c2;
-    return [
-      `radial-gradient(circle 260px at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.92) 0%, ${c1} 16%, ${c2} 38%, ${c3} 60%, transparent 88%)`,
-      `radial-gradient(circle 110px at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.55) 0%, transparent 72%)`,
-    ].join(", ");
+    return `conic-gradient(from 210deg, ${c1}, rgba(255,255,255,0.82) 15%, ${c2} 32%, ${c3} 52%, rgba(255,255,255,0.78) 72%, ${c2} 88%, ${c1})`;
   }, [colors]);
-
-  const handleCardMove = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    const el = borderRef.current;
-    if (!el) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    el.style.setProperty("--mx", `${e.clientX - rect.left}px`);
-    el.style.setProperty("--my", `${e.clientY - rect.top}px`);
-  }, []);
 
   const handleIconMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -118,7 +106,6 @@ export function IconCard({
     <motion.button
       type="button"
       onClick={handleToggleCart}
-      onMouseMove={handleCardMove}
       aria-label={inCart ? `remove ${name} from cart` : `add ${name} to cart`}
       aria-pressed={inCart}
       whileHover={{ y: -2 }}
@@ -132,19 +119,33 @@ export function IconCard({
       )}
     >
       {borderBackground && (
-        <span
-          ref={borderRef}
-          aria-hidden
-          className="pointer-events-none absolute inset-0 z-20 rounded-2xl opacity-80 transition-opacity duration-[180ms] group-hover:opacity-100"
-          style={{
-            padding: 1,
-            background: borderBackground,
-            WebkitMask:
-              "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-            WebkitMaskComposite: "xor",
-            maskComposite: "exclude",
-          }}
-        />
+        <>
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-0 z-20 rounded-2xl opacity-70 transition-opacity duration-[180ms] group-hover:opacity-95"
+            style={{
+              padding: 2.5,
+              background: borderBackground,
+              WebkitMask:
+                "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+              WebkitMaskComposite: "xor",
+              maskComposite: "exclude",
+              filter: "blur(2.5px)",
+            }}
+          />
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-0 z-20 rounded-2xl opacity-60 transition-opacity duration-[180ms] group-hover:opacity-80"
+            style={{
+              padding: 1,
+              background: borderBackground,
+              WebkitMask:
+                "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+              WebkitMaskComposite: "xor",
+              maskComposite: "exclude",
+            }}
+          />
+        </>
       )}
       <span
         onClick={handleFavorite}
@@ -238,7 +239,7 @@ export function IconCard({
           height={192}
           className="h-full w-full object-contain will-change-transform"
           style={{
-            transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+            transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(0.95)`,
             transition: "transform 120ms cubic-bezier(0.2, 0.8, 0.2, 1), filter 180ms cubic-bezier(0.4,0,0.2,1)",
             transformStyle: "preserve-3d",
             filter: settings.monochrome ? "grayscale(100%)" : undefined,
@@ -269,10 +270,10 @@ export function IconCard({
         }}
       />
       <div className="relative z-20 flex flex-col items-center gap-0.5 px-3 pb-3">
-        <span className="max-w-full truncate text-[14px] font-semibold tracking-tight text-foreground">
+        <span className="max-w-full truncate text-[15px] font-semibold tracking-tight text-foreground">
           {name}
         </span>
-        <span className="text-[12px] font-medium leading-[1.4] text-muted-foreground">
+        <span className="text-[13px] font-medium leading-[1.4] text-muted-foreground">
           {category}
         </span>
       </div>
