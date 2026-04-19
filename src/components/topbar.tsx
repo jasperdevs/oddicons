@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
-import { Moon, ShoppingBag, Sun } from "lucide-react";
+import { Moon, Settings, ShoppingBag, Sun } from "lucide-react";
 import { Tooltip } from "@/components/ui/tooltip";
 import { SearchBar } from "@/components/search-bar";
 import { ProgressiveBlur } from "@/components/progressive-blur";
+import { SettingsPopover } from "@/components/settings-popover";
 import { useCart } from "@/lib/cart-context";
 import { cn } from "@/lib/utils";
 
@@ -26,6 +27,8 @@ export function Topbar({
 }: TopbarProps) {
   const { items, setCartAnchor, setOpen, bumpCount } = useCart();
   const cartRef = useRef<HTMLButtonElement>(null);
+  const settingsRef = useRef<HTMLButtonElement>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const bumpControls = useAnimation();
 
   useEffect(() => {
@@ -63,7 +66,7 @@ export function Topbar({
           <SearchBar value={query} onChange={onQueryChange} total={total} />
         </div>
 
-        <div className="flex h-11 items-center rounded-xl bg-muted">
+        <div className="relative flex h-11 items-center rounded-xl bg-muted">
           <Tooltip content={theme === "dark" ? "light mode" : "dark mode"}>
             <button
               type="button"
@@ -83,6 +86,28 @@ export function Topbar({
                   {theme === "dark" ? <Sun size={16} strokeWidth={1.75} /> : <Moon size={16} strokeWidth={1.75} />}
                 </motion.span>
               </AnimatePresence>
+            </button>
+          </Tooltip>
+
+          <Tooltip content="settings">
+            <button
+              ref={settingsRef}
+              type="button"
+              onClick={() => setSettingsOpen((v) => !v)}
+              aria-label="open settings"
+              aria-expanded={settingsOpen}
+              className={cn(
+                "grid h-11 w-11 place-items-center text-foreground transition-colors duration-[180ms] hover:bg-foreground/5",
+                settingsOpen && "bg-foreground/5"
+              )}
+            >
+              <motion.span
+                animate={{ rotate: settingsOpen ? 60 : 0 }}
+                transition={{ duration: 0.24, ease: [0.4, 0, 0.2, 1] }}
+                className="inline-flex"
+              >
+                <Settings size={16} strokeWidth={1.75} />
+              </motion.span>
             </button>
           </Tooltip>
 
@@ -107,6 +132,12 @@ export function Topbar({
               </span>
             </motion.button>
           </Tooltip>
+
+          <SettingsPopover
+            open={settingsOpen}
+            onClose={() => setSettingsOpen(false)}
+            anchorRef={settingsRef}
+          />
         </div>
       </div>
     </div>

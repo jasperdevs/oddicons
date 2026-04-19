@@ -7,6 +7,7 @@ import icons from "@/data/icons.json";
 import { useFavorites } from "@/hooks/use-favorites";
 import { useTheme } from "@/hooks/use-theme";
 import { CartProvider, useCart } from "@/lib/cart-context";
+import { SettingsProvider } from "@/lib/settings-context";
 import { cn } from "@/lib/utils";
 import { slugify } from "@/lib/slug";
 import { Topbar } from "@/components/topbar";
@@ -48,9 +49,11 @@ const ALL = "All";
 
 export function IconGallery({ view = { type: "all" } }: { view?: View }) {
   return (
-    <CartProvider>
-      <GalleryInner view={view} />
-    </CartProvider>
+    <SettingsProvider>
+      <CartProvider>
+        <GalleryInner view={view} />
+      </CartProvider>
+    </SettingsProvider>
   );
 }
 

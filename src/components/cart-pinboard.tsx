@@ -5,8 +5,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Check, Copy, Download, ShoppingBag, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart-context";
+import { useSettings } from "@/lib/settings-context";
 import { cn } from "@/lib/utils";
-import { downloadAsZip, downloadPng, fetchIconBlob } from "@/lib/png";
+import { downloadAsZip, downloadPng, fetchProcessedIconBlob } from "@/lib/png";
 
 function deterministicRotation(seed: string): number {
   let h = 0;
@@ -17,9 +18,12 @@ function deterministicRotation(seed: string): number {
   return Number(n.toFixed(2));
 }
 
-async function copyIconToClipboard(url: string): Promise<boolean> {
+async function copyIconToClipboard(
+  url: string,
+  opts: { size: number; monochrome: boolean }
+): Promise<boolean> {
   try {
-    const blob = await fetchIconBlob(url);
+    const blob = await fetchProcessedIconBlob(url, opts);
     if (blob.type === "image/svg+xml" || url.endsWith(".svg")) {
       const text = await blob.text();
       await navigator.clipboard.writeText(text);
@@ -37,12 +41,16 @@ async function copyIconToClipboard(url: string): Promise<boolean> {
 
 export function CartPinboard() {
   const { open, setOpen, items, remove, clear, getCartRect } = useCart();
+  const { settings } = useSettings();
   const [downloading, setDownloading] = useState(false);
   const [copiedName, setCopiedName] = useState<string | null>(null);
   const [anchor, setAnchor] = useState<{ top: number; right: number } | null>(null);
 
   const handleCopy = async (name: string, url: string) => {
-    const ok = await copyIconToClipboard(url);
+    const ok = await copyIconToClipboard(url, {
+      size: settings.downloadSize,
+      monochrome: settings.monochrome,
+    });
     if (!ok) return;
     setCopiedName(name);
     window.setTimeout(() => {
@@ -81,10 +89,14 @@ export function CartPinboard() {
     if (items.length === 0 || downloading) return;
     setDownloading(true);
     try {
+      const opts = {
+        size: settings.downloadSize,
+        monochrome: settings.monochrome,
+      };
       if (items.length === 1) {
-        await downloadPng(items[0].url, items[0].name.toLowerCase());
+        await downloadPng(items[0].url, items[0].name.toLowerCase(), opts);
       } else {
-        await downloadAsZip(items, `oddicons-${items.length}.zip`);
+        await downloadAsZip(items, `oddicons-${items.length}.zip`, opts);
       }
     } finally {
       setDownloading(false);
@@ -230,6 +242,9 @@ export function CartPinboard() {
                                     "h-full w-full transition-all duration-200 group-hover:scale-105",
                                     copied && "opacity-20"
                                   )}
+                                  style={{
+                                    filter: settings.monochrome ? "grayscale(100%)" : undefined,
+                                  }}
                                 />
                                 <span className="pointer-events-none absolute inset-x-0 bottom-0 truncate bg-gradient-to-t from-sidebar via-sidebar/80 to-transparent px-2 pb-1 pt-4 text-center text-[10px] font-medium text-foreground opacity-0 transition-opacity duration-[180ms] group-hover:opacity-100">
                                   {item.name.toLowerCase()}
