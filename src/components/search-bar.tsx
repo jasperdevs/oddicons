@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { X } from "lucide-react";
 import { OddIcon } from "@/components/ui/odd-icon";
 import { cn } from "@/lib/utils";
 
@@ -59,7 +58,7 @@ export function SearchBar({ value, onChange, total }: SearchBarProps) {
           aria-label="clear search"
           className="grid h-6 w-6 place-items-center rounded-full text-muted-foreground hover:bg-background hover:text-foreground"
         >
-          <X size={14} />
+          <OddIcon name="x" size={16} />
         </button>
       ) : (
         <span

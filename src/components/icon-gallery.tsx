@@ -23,16 +23,12 @@ import { DonateContent } from "@/components/donate-content";
 import { ProgressiveBlur } from "@/components/progressive-blur";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { fontWeights } from "@/lib/font-weight";
-import {
-  ArrowDownAZ,
-  ArrowUpAZ,
-  ArrowUpDown,
-  Check,
-  Send,
-} from "lucide-react";
-
 const PlusIcon = oddIconComponent("plus");
 const TrashIcon = oddIconComponent("trash");
+const SendIcon = oddIconComponent("send");
+const SortIcon = oddIconComponent("sort");
+const SortAzIcon = oddIconComponent("sort-az");
+const SortAzAscendingIcon = oddIconComponent("sort-az-ascending");
 
 interface IconEntry {
   name: string;
@@ -331,7 +327,7 @@ function BottomBar({
           ref={requestBtnRef}
           variant="secondary"
           size="lg"
-          leadingIcon={Send}
+          leadingIcon={SendIcon}
           onClick={onOpenRequest}
           className="h-11 px-5 text-[14px]"
         >
@@ -344,10 +340,10 @@ function BottomBar({
   );
 }
 
-const SORT_OPTIONS: { mode: SortMode; label: string; Icon: typeof ArrowUpDown }[] = [
-  { mode: "default", label: "default order", Icon: ArrowUpDown },
-  { mode: "asc", label: "a to z", Icon: ArrowDownAZ },
-  { mode: "desc", label: "z to a", Icon: ArrowUpAZ },
+const SORT_OPTIONS: { mode: SortMode; label: string; Icon: typeof PlusIcon }[] = [
+  { mode: "default", label: "default order", Icon: SortIcon },
+  { mode: "asc", label: "a to z", Icon: SortAzIcon },
+  { mode: "desc", label: "z to a", Icon: SortAzAscendingIcon },
 ];
 
 function SortDropdown({
@@ -420,7 +416,7 @@ function SortDropdown({
                       />
                       <Select.ItemText className="flex-1">{opt.label}</Select.ItemText>
                       <Select.ItemIndicator className="absolute right-2 inline-flex">
-                        <Check size={14} strokeWidth={2} />
+                        <OddIcon name="check" size={14} />
                       </Select.ItemIndicator>
                     </div>
                   )}

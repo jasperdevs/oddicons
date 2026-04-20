@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Copy, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { OddIcon } from "@/components/ui/odd-icon";
+import { OddIcon, oddIconComponent } from "@/components/ui/odd-icon";
 import { cn } from "@/lib/utils";
+
+const SendIcon = oddIconComponent("send");
 
 const EMAIL = "jasper.mceligott@gmail.com";
 
@@ -122,7 +123,7 @@ export function RequestForm({
           type="submit"
           variant="primary"
           size="lg"
-          leadingIcon={Send}
+          leadingIcon={SendIcon}
           disabled={!canSubmit}
           className="h-11 w-full px-5 text-[14px]"
         >
@@ -171,11 +172,9 @@ export function RequestForm({
             >
               {content}
               {!copied && (
-                <Copy
-                  size={10}
-                  strokeWidth={2}
-                  className="absolute right-1.5 top-1.5 opacity-40 transition-opacity group-hover/chip:opacity-70"
-                />
+                <span className="absolute right-1.5 top-1.5 opacity-40 transition-opacity group-hover/chip:opacity-70">
+                  <OddIcon name="copy" size={12} />
+                </span>
               )}
             </button>
           );

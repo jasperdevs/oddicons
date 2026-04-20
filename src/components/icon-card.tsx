@@ -84,8 +84,9 @@ export function IconCard({
         const dist = Math.hypot(relX, relY);
         const RIM_RADIUS = 260;
         const intensity = Math.max(0, 1 - dist / RIM_RADIUS);
+        const angle = (Math.atan2(relX, -relY) * 180) / Math.PI;
         node.style.setProperty("--rim-a", `${intensity * 0.75}`);
-        node.style.setProperty("--rim-soft", `${intensity * 0.35}`);
+        node.style.setProperty("--rim-angle", `${angle}deg`);
       });
     };
     const onLeave = () => {
@@ -94,7 +95,6 @@ export function IconCard({
       node.style.setProperty("--mx", "-600px");
       node.style.setProperty("--my", "-600px");
       node.style.setProperty("--rim-a", "0");
-      node.style.setProperty("--rim-soft", "0");
     };
     window.addEventListener("pointermove", onMove);
     window.addEventListener("pointerleave", onLeave);
@@ -307,9 +307,13 @@ export function IconCard({
           style={{
             transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(0.95)`,
             transformStyle: "preserve-3d",
-            filter: "brightness(0) invert(1) blur(2.5px)",
+            filter: "brightness(0) invert(1) blur(0.6px)",
             mixBlendMode: "screen",
             opacity: "var(--rim-a, 0)",
+            WebkitMaskImage:
+              "linear-gradient(var(--rim-angle, 90deg), transparent 68%, black 100%)",
+            maskImage:
+              "linear-gradient(var(--rim-angle, 90deg), transparent 68%, black 100%)",
             transition: "opacity 120ms linear",
           }}
           loading="lazy"

@@ -2,11 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Copy, X } from "lucide-react";
 import { OddIcon, oddIconComponent } from "@/components/ui/odd-icon";
 
 const TrashIcon = oddIconComponent("trash");
 const DownloadIcon = oddIconComponent("download");
+const XIcon = oddIconComponent("x");
 import { iconThumbUrl } from "@/lib/icon-url";
 import { Button } from "@/components/ui/button";
 import { PopoverTail } from "@/components/ui/popover-tail";
@@ -182,7 +182,7 @@ export function CartPinboard() {
                   onClick={() => setOpen(false)}
                   aria-label="close"
                 >
-                  <X />
+                  <XIcon size={18} />
                 </Button>
               </div>
 
@@ -288,7 +288,7 @@ export function CartPinboard() {
                                     !copied && "group-hover:opacity-100"
                                   )}
                                 >
-                                  <Copy size={10} strokeWidth={2} />
+                                  <OddIcon name="copy" size={14} />
                                 </span>
                               </button>
                               <button
@@ -301,7 +301,7 @@ export function CartPinboard() {
                                 className="absolute left-1 top-1 z-10 grid h-5 w-5 place-items-center rounded-full bg-card/90 text-muted-foreground opacity-0 shadow transition-all duration-[180ms] hover:bg-foreground hover:text-background group-hover:opacity-100"
                                 style={{ pointerEvents: "auto" }}
                               >
-                                <X size={11} strokeWidth={2} />
+                                <XIcon size={13} />
                               </button>
                             </motion.li>
                           );

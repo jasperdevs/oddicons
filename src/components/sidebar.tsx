@@ -79,11 +79,10 @@ export function SidebarBody(props: SidebarProps) {
       id: `tag-${cat}`,
       label: cat.toLowerCase(),
       icon: (
-        <span
-          className={cn(
-            "h-1.5 w-1.5 rounded-full",
-            active ? "bg-foreground" : "bg-muted-foreground/60"
-          )}
+        <OddIcon
+          name="hashtag"
+          size={16}
+          className={cn("transition-opacity duration-[180ms]", !active && "opacity-70")}
         />
       ),
       count: props.counts[cat] ?? 0,
