@@ -157,20 +157,33 @@ export function IconCard({
         <>
           <span
             aria-hidden
-            className="pointer-events-none absolute -inset-[3px] z-20 rounded-2xl opacity-90"
+            className="pointer-events-none absolute inset-0 z-20 rounded-2xl opacity-95"
             style={{
-              padding: 5,
+              padding: 14,
               background: borderBackground,
               WebkitMask:
                 "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
               WebkitMaskComposite: "xor",
               maskComposite: "exclude",
-              filter: "blur(7px)",
+              filter: "blur(10px)",
             }}
           />
           <span
             aria-hidden
-            className="pointer-events-none absolute inset-0 z-20 rounded-2xl opacity-40"
+            className="pointer-events-none absolute inset-0 z-20 rounded-2xl opacity-55"
+            style={{
+              padding: 4,
+              background: borderBackground,
+              WebkitMask:
+                "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+              WebkitMaskComposite: "xor",
+              maskComposite: "exclude",
+              filter: "blur(2.5px)",
+            }}
+          />
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-0 z-20 rounded-2xl opacity-35"
             style={{
               padding: 1.25,
               background: borderBackground,
