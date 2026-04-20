@@ -1,8 +1,6 @@
 "use client";
 
 import { OddIcon } from "@/components/ui/odd-icon";
-import { KOFI_COLOR } from "@/components/logos/kofi";
-import { PAYPAL_COLOR } from "@/components/logos/paypal";
 
 const OPTIONS = [
   {
@@ -10,7 +8,6 @@ const OPTIONS = [
     label: "ko-fi",
     hint: "one-time tip, buy me a coffee",
     href: "https://ko-fi.com/jasperdevs",
-    color: KOFI_COLOR,
     iconName: "kofi",
   },
   {
@@ -18,7 +15,6 @@ const OPTIONS = [
     label: "paypal",
     hint: "any amount, sent directly",
     href: "https://www.paypal.com/paypalme/9KGFX",
-    color: PAYPAL_COLOR,
     iconName: "paypal",
   },
 ];
@@ -32,29 +28,14 @@ const FUNDS = [
 export function DonateContent() {
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-12 pb-10">
-      <header className="relative flex flex-col gap-3 overflow-hidden rounded-3xl border border-border bg-card px-7 py-10">
-        <span
-          aria-hidden
-          className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-foreground/[0.05] blur-3xl"
-        />
-        <span
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.035]"
-          style={{
-            background:
-              "radial-gradient(circle at 1px 1px, var(--foreground) 1px, transparent 0)",
-            backgroundSize: "18px 18px",
-          }}
-        />
-        <div className="relative flex flex-col gap-3">
-          <h1 className="text-[32px] font-semibold tracking-tight text-foreground sm:text-[40px]">
-            donate
-          </h1>
-          <p className="max-w-xl text-[14px] leading-[1.65] text-muted-foreground">
-            oddicons will always be free. if you&apos;d like to chip in, it keeps the
-            pack growing with more icons and more categories.
-          </p>
-        </div>
+      <header className="flex flex-col gap-3 rounded-3xl border border-border bg-card px-7 py-10">
+        <h1 className="text-[32px] font-semibold tracking-tight text-foreground sm:text-[40px]">
+          donate
+        </h1>
+        <p className="max-w-xl text-[14px] leading-[1.65] text-muted-foreground">
+          oddicons will always be free. if you&apos;d like to chip in, it keeps the
+          pack growing with more icons and more categories.
+        </p>
       </header>
 
       <div className="grid gap-3 sm:grid-cols-2">
@@ -64,24 +45,14 @@ export function DonateContent() {
             href={opt.href}
             target="_blank"
             rel="noreferrer"
-            className="group relative flex min-h-[240px] flex-col gap-5 overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all duration-[220ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] hover:-translate-y-1 hover:border-foreground/30 hover:shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5)]"
+            className="group relative flex min-h-[240px] flex-col gap-5 rounded-2xl border border-border bg-card p-6 transition-all duration-[220ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] hover:-translate-y-1 hover:border-foreground/30 hover:shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5)]"
           >
-            <span
-              aria-hidden
-              className="pointer-events-none absolute left-1/2 top-[58px] h-40 w-40 -translate-x-1/2 rounded-full opacity-[0.22] blur-[40px] transition-all duration-[300ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:opacity-[0.42] group-hover:scale-110"
-              style={{ background: opt.color }}
-            />
-            <div className="relative grid place-items-center pt-1">
-              <span
-                className="inline-flex transition-transform duration-[320ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:-translate-y-1 group-hover:-rotate-[6deg] group-hover:scale-[1.08]"
-                style={{
-                  filter: `drop-shadow(0 10px 20px ${opt.color}55)`,
-                }}
-              >
+            <div className="grid place-items-center pt-1">
+              <span className="inline-flex transition-transform duration-[320ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:-translate-y-1 group-hover:-rotate-[6deg] group-hover:scale-[1.08]">
                 <OddIcon name={opt.iconName} size={96} />
               </span>
             </div>
-            <div className="relative flex flex-col items-center gap-1 text-center">
+            <div className="flex flex-col items-center gap-1 text-center">
               <span className="text-[18px] font-semibold tracking-tight text-foreground">
                 {opt.label}
               </span>
@@ -89,7 +60,7 @@ export function DonateContent() {
                 {opt.hint}
               </span>
             </div>
-            <span className="relative mt-auto inline-flex items-center justify-center gap-1.5 text-[12.5px] font-medium text-foreground">
+            <span className="mt-auto inline-flex items-center justify-center gap-1.5 text-[12.5px] font-medium text-foreground">
               open link
               <span className="inline-flex transition-transform duration-[220ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:translate-x-1 group-hover:-translate-y-1">
                 <OddIcon name="link" size={14} />
