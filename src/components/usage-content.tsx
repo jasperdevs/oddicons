@@ -69,7 +69,7 @@ export function UsageContent() {
               send an issue.
             </h2>
             <p className="text-[13.5px] leading-[1.6] text-muted-foreground">
-              say what icon you want and it will be tracked on GitHub.
+              say what icon you want on GitHub.
             </p>
           </div>
         </div>

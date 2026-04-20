@@ -66,7 +66,7 @@ export function GitHubStars() {
         rel="noreferrer"
         aria-label={stars === null ? "open GitHub repo" : `open GitHub repo, ${stars} stars`}
         className={cn(
-          "flex h-11 items-center gap-1.5 border-l border-border/60 px-1.5 text-[14px] font-medium text-foreground min-[420px]:px-2",
+          "flex h-11 items-center gap-1.5 px-1.5 text-[14px] font-medium text-foreground min-[420px]:px-2",
           "transition-colors duration-[180ms] hover:bg-foreground/5"
         )}
       >
