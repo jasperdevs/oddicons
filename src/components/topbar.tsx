@@ -11,12 +11,19 @@ import { useCart } from "@/lib/cart-context";
 import { springs } from "@/lib/springs";
 import { cn } from "@/lib/utils";
 
+interface IconEntry {
+  name: string;
+  file: string;
+  category: string;
+}
+
 interface TopbarProps {
   theme: "dark" | "light";
   onToggleTheme: (origin?: { x: number; y: number }) => void;
   query: string;
   onQueryChange: (q: string) => void;
   total: number;
+  items: IconEntry[];
   onOpenMenu?: () => void;
   hideSearch?: boolean;
   title?: string;
@@ -28,11 +35,12 @@ export function Topbar({
   query,
   onQueryChange,
   total,
+  items,
   onOpenMenu,
   hideSearch,
   title,
 }: TopbarProps) {
-  const { items, setCartAnchor, setOpen, bumpCount } = useCart();
+  const { items: cartItems, setCartAnchor, setOpen, bumpCount } = useCart();
   const cartRef = useRef<HTMLButtonElement>(null);
   const bumpControls = useAnimation();
 
@@ -88,7 +96,7 @@ export function Topbar({
               </span>
             </div>
           ) : (
-            <SearchBar value={query} onChange={onQueryChange} total={total} />
+            <SearchBar value={query} onChange={onQueryChange} total={total} items={items} />
           )}
         </div>
 
@@ -131,10 +139,10 @@ export function Topbar({
               <span
                 className={cn(
                   "tabular-nums transition-colors duration-[180ms]",
-                  items.length === 0 && "text-muted-foreground"
+                  cartItems.length === 0 && "text-muted-foreground"
                 )}
               >
-                {items.length}
+                {cartItems.length}
               </span>
             </motion.button>
           </Tooltip>

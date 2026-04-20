@@ -7,6 +7,26 @@ import { OddIcon, oddIconComponent } from "@/components/ui/odd-icon";
 const TrashIcon = oddIconComponent("trash");
 const DownloadIcon = oddIconComponent("download");
 const XIcon = oddIconComponent("x");
+
+function CopyBadgeIcon({ size = 14 }: { size?: number }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.75}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <rect x="8" y="8" width="13" height="13" rx="2.5" />
+      <path d="M5 15H4.5A2.5 2.5 0 0 1 2 12.5v-8A2.5 2.5 0 0 1 4.5 2h8A2.5 2.5 0 0 1 15 4.5V5" />
+    </svg>
+  );
+}
 import { iconThumbUrl } from "@/lib/icon-url";
 import { Button } from "@/components/ui/button";
 import { PopoverTail } from "@/components/ui/popover-tail";
@@ -288,7 +308,7 @@ export function CartPinboard() {
                                     !copied && "group-hover:opacity-100"
                                   )}
                                 >
-                                  <OddIcon name="copy" size={14} />
+                                  <CopyBadgeIcon size={14} />
                                 </span>
                               </button>
                               <button

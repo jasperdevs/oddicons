@@ -189,6 +189,7 @@ function GalleryInner({ view }: { view: View }) {
           query={query}
           onQueryChange={setQuery}
           total={all.length}
+          items={all}
           onOpenMenu={() => setMenuOpen(true)}
           hideSearch={isInfoView}
           title={isUsage ? "usage" : isDonate ? "donate" : undefined}
