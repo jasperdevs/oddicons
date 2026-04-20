@@ -84,7 +84,8 @@ export function IconCard({
         const dist = Math.hypot(relX, relY);
         const RIM_RADIUS = 260;
         const intensity = Math.max(0, 1 - dist / RIM_RADIUS);
-        node.style.setProperty("--rim-a", `${intensity * 0.3}`);
+        node.style.setProperty("--rim-a", `${intensity * 0.75}`);
+        node.style.setProperty("--rim-soft", `${intensity * 0.35}`);
       });
     };
     const onLeave = () => {
@@ -93,6 +94,7 @@ export function IconCard({
       node.style.setProperty("--mx", "-600px");
       node.style.setProperty("--my", "-600px");
       node.style.setProperty("--rim-a", "0");
+      node.style.setProperty("--rim-soft", "0");
     };
     window.addEventListener("pointermove", onMove);
     window.addEventListener("pointerleave", onLeave);
@@ -271,12 +273,8 @@ export function IconCard({
       <div
         onMouseMove={handleIconMove}
         onMouseLeave={handleIconLeave}
-        className="grid aspect-square place-items-center p-3"
-        style={{
-          perspective: "600px",
-          filter:
-            "drop-shadow(0 0 1px rgba(255,255,255, var(--rim-a, 0))) drop-shadow(0 0 1px rgba(255,255,255, var(--rim-a, 0)))",
-        }}
+        className="relative grid aspect-square place-items-center p-3"
+        style={{ perspective: "600px" }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -297,6 +295,26 @@ export function IconCard({
           loading="lazy"
           decoding="async"
         />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          aria-hidden
+          src={thumbUrl}
+          alt=""
+          draggable={false}
+          width={192}
+          height={192}
+          className="pointer-events-none absolute inset-3 h-[calc(100%-1.5rem)] w-[calc(100%-1.5rem)] object-contain"
+          style={{
+            transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(0.95)`,
+            transformStyle: "preserve-3d",
+            filter: "brightness(0) invert(1) blur(2.5px)",
+            mixBlendMode: "screen",
+            opacity: "var(--rim-a, 0)",
+            transition: "opacity 120ms linear",
+          }}
+          loading="lazy"
+          decoding="async"
+        />
       </div>
 
       <span
@@ -313,7 +331,7 @@ export function IconCard({
       />
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-x-[2px] bottom-[2px] z-10 h-20 rounded-b-2xl"
+        className="pointer-events-none absolute inset-x-[5px] bottom-[5px] z-10 h-20 rounded-b-[0.95rem]"
         style={{
           background:
             "linear-gradient(to top, var(--card) 0%, var(--card) 30%, transparent 100%)",
