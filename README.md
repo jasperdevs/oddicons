@@ -1,42 +1,29 @@
-# oddicons
+<div align="center">
+  <img src="https://raw.githubusercontent.com/jasperdevs/oddicons/main/public/brand/logo-180.png" alt="oddicons logo" width="112" />
 
-A free, open-source pack of AI-generated icons. Browse, copy, download.
+  <h1>oddicons</h1>
 
-**Live at [jasperdevs.github.io/oddicons](https://jasperdevs.github.io/oddicons/)**
+  <p>A free, open-source pack of AI-generated icons.</p>
 
-## Stack
+  <p>
+    <a href="https://jasperdevs.github.io/oddicons/">
+      <img alt="website" src="https://img.shields.io/badge/website-open-111111?style=flat-square" />
+    </a>
+    <a href="https://github.com/jasperdevs/oddicons/issues/new">
+      <img alt="request an icon" src="https://img.shields.io/badge/request-icon-111111?style=flat-square" />
+    </a>
+    <a href="./LICENSE">
+      <img alt="license" src="https://img.shields.io/badge/license-GPL--3.0-111111?style=flat-square" />
+    </a>
+  </p>
 
-- Next.js 16 (static export, App Router)
-- React 19, TypeScript, Tailwind v4
-- sharp for thumbnail generation
-- Deploys to GitHub Pages
+  <p>
+    Browse, copy, and download at
+    <br />
+    <a href="https://jasperdevs.github.io/oddicons/">jasperdevs.github.io/oddicons</a>
+  </p>
 
-## Local development
-
-```bash
-npm install
-npm run dev
-```
-
-Open http://localhost:3000/oddicons/
-
-## Add an icon
-
-1. Drop the PNG into `public/icons/`
-2. Append an entry to `src/data/icons.json`:
-   ```json
-   { "name": "Foo", "file": "foo.png", "category": "Interface" }
-   ```
-3. Run `npm run thumbs` to generate the `thumbs/` and `mini/` WebP variants
-4. Commit and push
-
-## Scripts
-
-- `npm run dev` — start the dev server
-- `npm run build` — production static export into `out/`
-- `npm run thumbs` — regenerate icon thumbs and minis from `public/icons/*.png`
-- `npm run trim` — scan and trim stray white pixels around icon edges
-
-## License
-
-Icons and source are released under the terms in `LICENSE`.
+  <p>
+    Want a new icon? <a href="https://github.com/jasperdevs/oddicons/issues/new">Open an issue</a> and say what you want.
+  </p>
+</div>

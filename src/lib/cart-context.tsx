@@ -57,6 +57,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [bumpCount, setBumpCount] = useState(0);
   const anchorRef = useRef<HTMLElement | null>(null);
   const idRef = useRef(0);
+  const itemNames = useMemo(() => new Set(items.map((item) => item.name)), [items]);
 
   useEffect(() => {
     try {
@@ -87,7 +88,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [items]);
 
-  const has = useCallback((name: string) => items.some((i) => i.name === name), [items]);
+  const has = useCallback((name: string) => itemNames.has(name), [itemNames]);
 
   const add = useCallback(
     (

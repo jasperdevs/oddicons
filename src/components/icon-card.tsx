@@ -11,6 +11,74 @@ import { useSettings } from "@/lib/settings-context";
 import { springs } from "@/lib/springs";
 
 const MAX_TILT = 16;
+const RIM_RADIUS = 260;
+
+const rimSubscribers = new Set<HTMLButtonElement>();
+let rimPointerX = 0;
+let rimPointerY = 0;
+let rimRaf = 0;
+let rimListening = false;
+
+function updateCardRim(node: HTMLButtonElement, clientX: number, clientY: number) {
+  const rect = node.getBoundingClientRect();
+  const localX = clientX - rect.left;
+  const localY = clientY - rect.top;
+  node.style.setProperty("--mx", `${localX}px`);
+  node.style.setProperty("--my", `${localY}px`);
+  const cx = rect.width / 2;
+  const cy = rect.width / 2 + 12;
+  const relX = localX - cx;
+  const relY = localY - cy;
+  const dist = Math.hypot(relX, relY);
+  const intensity = Math.max(0, 1 - dist / RIM_RADIUS);
+  const angle = (Math.atan2(relX, -relY) * 180) / Math.PI;
+  node.style.setProperty("--rim-a", `${intensity * 0.75}`);
+  node.style.setProperty("--rim-angle", `${angle}deg`);
+}
+
+function resetCardRim(node: HTMLButtonElement) {
+  node.style.setProperty("--mx", "-800px");
+  node.style.setProperty("--my", "-800px");
+  node.style.setProperty("--rim-a", "0");
+}
+
+function flushCardRims() {
+  rimRaf = 0;
+  rimSubscribers.forEach((node) => updateCardRim(node, rimPointerX, rimPointerY));
+}
+
+function onWindowPointerMove(e: PointerEvent) {
+  rimPointerX = e.clientX;
+  rimPointerY = e.clientY;
+  if (rimRaf) return;
+  rimRaf = window.requestAnimationFrame(flushCardRims);
+}
+
+function onWindowPointerLeave() {
+  rimSubscribers.forEach(resetCardRim);
+}
+
+function subscribeCardRim(node: HTMLButtonElement) {
+  rimSubscribers.add(node);
+  if (!rimListening) {
+    window.addEventListener("pointermove", onWindowPointerMove);
+    window.addEventListener("pointerleave", onWindowPointerLeave);
+    rimListening = true;
+  }
+  return () => {
+    rimSubscribers.delete(node);
+    resetCardRim(node);
+    if (rimSubscribers.size === 0 && rimListening) {
+      window.removeEventListener("pointermove", onWindowPointerMove);
+      window.removeEventListener("pointerleave", onWindowPointerLeave);
+      rimListening = false;
+      if (rimRaf) {
+        window.cancelAnimationFrame(rimRaf);
+        rimRaf = 0;
+      }
+    }
+  };
+}
 
 interface IconCardProps {
   name: string;
@@ -62,48 +130,7 @@ export function IconCard({
   useEffect(() => {
     const el = cardRef.current;
     if (!el) return;
-    let raf = 0;
-    let lastX = 0;
-    let lastY = 0;
-    const onMove = (e: PointerEvent) => {
-      lastX = e.clientX;
-      lastY = e.clientY;
-      if (raf) return;
-      raf = window.requestAnimationFrame(() => {
-        raf = 0;
-        const node = cardRef.current;
-        if (!node) return;
-        const rect = node.getBoundingClientRect();
-        const localX = lastX - rect.left;
-        const localY = lastY - rect.top;
-        node.style.setProperty("--mx", `${localX}px`);
-        node.style.setProperty("--my", `${localY}px`);
-        const cx = rect.width / 2;
-        const cy = rect.width / 2 + 12;
-        const relX = localX - cx;
-        const relY = localY - cy;
-        const dist = Math.hypot(relX, relY);
-        const RIM_RADIUS = 260;
-        const intensity = Math.max(0, 1 - dist / RIM_RADIUS);
-        const angle = (Math.atan2(relX, -relY) * 180) / Math.PI;
-        node.style.setProperty("--rim-a", `${intensity * 0.75}`);
-        node.style.setProperty("--rim-angle", `${angle}deg`);
-      });
-    };
-    const onLeave = () => {
-      const node = cardRef.current;
-      if (!node) return;
-      node.style.setProperty("--mx", "-800px");
-      node.style.setProperty("--my", "-800px");
-      node.style.setProperty("--rim-a", "0");
-    };
-    window.addEventListener("pointermove", onMove);
-    window.addEventListener("pointerleave", onLeave);
-    return () => {
-      window.removeEventListener("pointermove", onMove);
-      window.removeEventListener("pointerleave", onLeave);
-      if (raf) window.cancelAnimationFrame(raf);
-    };
+    return subscribeCardRim(el);
   }, []);
 
   const handleIconMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -175,7 +202,7 @@ export function IconCard({
       whileHover={{ y: -2 }}
       transition={springs.moderate}
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-2xl border bg-card text-left transition-[box-shadow,border-color,background-color] duration-[180ms] outline-none",
+        "group relative isolate flex flex-col overflow-hidden rounded-2xl border bg-card text-left transition-[box-shadow,border-color,background-color] duration-[180ms] outline-none",
         borderBackground ? "border-transparent" : "border-border hover:border-foreground/30",
         "hover:shadow-[0_12px_24px_-12px_rgba(0,0,0,0.45),_0_4px_8px_-4px_rgba(0,0,0,0.25)]",
         "focus-visible:border-foreground/40 focus-visible:ring-1 focus-visible:ring-foreground/30",
@@ -186,7 +213,7 @@ export function IconCard({
         <>
           <span
             aria-hidden
-            className="pointer-events-none absolute inset-0 z-[5] rounded-2xl opacity-70"
+            className="pointer-events-none absolute inset-0 z-[1] rounded-2xl opacity-70"
             style={{
               padding: 2.5,
               background: borderBackground,
@@ -199,7 +226,7 @@ export function IconCard({
           />
           <span
             aria-hidden
-            className="pointer-events-none absolute inset-0 z-[5] rounded-2xl opacity-60"
+            className="pointer-events-none absolute inset-0 z-[1] rounded-2xl opacity-60"
             style={{
               padding: 1,
               background: borderBackground,
@@ -224,7 +251,7 @@ export function IconCard({
         aria-label={isFavorite ? "unfavorite" : "favorite"}
         aria-pressed={isFavorite}
         className={cn(
-          "card-fav absolute right-3 top-3 z-[6] grid h-8 w-8 place-items-center rounded-full transition-all",
+          "card-fav absolute right-3 top-3 z-[1] grid h-8 w-8 place-items-center rounded-full transition-all",
           "text-muted-foreground opacity-0 group-hover:opacity-100 hover:bg-accent hover:text-foreground",
           isFavorite && "opacity-100 text-foreground"
         )}
@@ -280,7 +307,7 @@ export function IconCard({
       {inCart && (
         <span
           aria-hidden
-          className="absolute left-2.5 top-2.5 z-[6] grid h-7 w-7 place-items-center text-foreground"
+          className="absolute left-2.5 top-2.5 z-[1] grid h-7 w-7 place-items-center text-foreground"
         >
           <OddIcon name="check" size={26} />
         </span>
@@ -297,7 +324,7 @@ export function IconCard({
             <motion.span
               key={clickBurstId}
               aria-hidden
-              className="pointer-events-none absolute inset-0 z-[7]"
+              className="pointer-events-none absolute inset-0 z-[1]"
               initial={{ opacity: 1 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -383,7 +410,7 @@ export function IconCard({
         />
       </div>
 
-      <div className="relative z-20 flex flex-col items-center gap-0.5 px-3 pb-3">
+      <div className="relative z-[1] flex flex-col items-center gap-0.5 px-3 pb-3">
         <span className="max-w-full truncate text-[15px] font-semibold tracking-tight text-foreground">
           {name}
         </span>

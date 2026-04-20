@@ -13,50 +13,23 @@ const LICENSE_POINTS = [
 export function UsageContent() {
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-12 pb-10">
-      <header className="relative flex flex-col gap-3 overflow-hidden rounded-3xl border border-border bg-card px-7 py-10">
-        <span
-          aria-hidden
-          className="pointer-events-none absolute -right-20 -top-16 h-56 w-56 rounded-full bg-foreground/[0.06] blur-2xl"
-        />
-        <span
-          aria-hidden
-          className="pointer-events-none absolute -bottom-20 -left-16 h-48 w-48 rounded-full bg-foreground/[0.05] blur-2xl"
-        />
-        <span
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.03]"
-          style={{
-            background:
-              "radial-gradient(circle at 1px 1px, var(--foreground) 1px, transparent 0)",
-            backgroundSize: "18px 18px",
-          }}
-        />
-        <div className="relative flex flex-col gap-3">
-          <h1 className="text-[32px] font-semibold tracking-tight text-foreground sm:text-[40px]">
-            license & requests
-          </h1>
-          <p className="max-w-xl text-[14px] leading-[1.65] text-muted-foreground">
-            what you can do with oddicons, and how to ask for one that isn&apos;t in
-            the pack yet.
-          </p>
-        </div>
+      <header className="flex flex-col gap-3 rounded-3xl border border-border bg-card px-7 py-10">
+        <h1 className="text-[32px] font-semibold tracking-tight text-foreground sm:text-[40px]">
+          license & requests
+        </h1>
+        <p className="max-w-xl text-[14px] leading-[1.65] text-muted-foreground">
+          what you can do with oddicons, and how to ask for one that isn&apos;t in
+          the pack yet.
+        </p>
       </header>
 
-      <section className="relative flex flex-col gap-6 overflow-hidden rounded-2xl border border-border bg-card p-7">
-        <span
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-60"
-          style={{
-            background:
-              "linear-gradient(to right, transparent, color-mix(in srgb, var(--foreground) 40%, transparent), transparent)",
-          }}
-        />
+      <section className="flex flex-col gap-6 rounded-2xl border border-border bg-card p-7">
         <div className="flex items-start gap-4">
           <span className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl border border-border bg-sidebar">
             <OddIcon name="license" size={40} />
           </span>
           <div className="flex flex-col gap-1">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+            <span className="text-[12px] font-semibold tracking-tight text-muted-foreground">
               license
             </span>
             <h2 className="text-[22px] font-semibold tracking-tight text-foreground sm:text-[24px]">
@@ -83,21 +56,13 @@ export function UsageContent() {
         </ul>
       </section>
 
-      <section className="relative flex flex-col gap-6 overflow-hidden rounded-2xl border border-border bg-card p-7">
-        <span
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-60"
-          style={{
-            background:
-              "linear-gradient(to right, transparent, color-mix(in srgb, var(--foreground) 40%, transparent), transparent)",
-          }}
-        />
+      <section className="flex flex-col gap-6 rounded-2xl border border-border bg-card p-7">
         <div className="flex items-start gap-4">
           <span className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl border border-border bg-sidebar">
             <OddIcon name="sparkles" size={40} />
           </span>
           <div className="flex flex-col gap-1">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+            <span className="text-[12px] font-semibold tracking-tight text-muted-foreground">
               missing an icon?
             </span>
             <h2 className="text-[22px] font-semibold tracking-tight text-foreground sm:text-[24px]">
