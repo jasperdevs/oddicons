@@ -55,7 +55,7 @@ export function IconCard({
     const c1 = colors[0];
     const c2 = colors[1] ?? colors[0];
     const c3 = colors[2] ?? c2;
-    return `radial-gradient(circle 220px at var(--mx, -600px) var(--my, -600px), rgba(255,255,255,0.95) 0%, ${c1} 22%, rgba(255,255,255,0.7) 44%, ${c2} 66%, ${c3} 82%, transparent 100%)`;
+    return `radial-gradient(circle 360px at var(--mx, -800px) var(--my, -800px), rgba(255,255,255,0.95) 0%, ${c1} 22%, rgba(255,255,255,0.7) 44%, ${c2} 66%, ${c3} 82%, transparent 100%)`;
   }, [colors]);
 
   useEffect(() => {
@@ -92,8 +92,8 @@ export function IconCard({
     const onLeave = () => {
       const node = cardRef.current;
       if (!node) return;
-      node.style.setProperty("--mx", "-600px");
-      node.style.setProperty("--my", "-600px");
+      node.style.setProperty("--mx", "-800px");
+      node.style.setProperty("--my", "-800px");
       node.style.setProperty("--rim-a", "0");
     };
     window.addEventListener("pointermove", onMove);
@@ -321,26 +321,6 @@ export function IconCard({
         />
       </div>
 
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-24"
-        style={{
-          backdropFilter: "blur(6px)",
-          WebkitBackdropFilter: "blur(6px)",
-          maskImage:
-            "linear-gradient(to top, black 0%, black 40%, transparent 100%)",
-          WebkitMaskImage:
-            "linear-gradient(to top, black 0%, black 40%, transparent 100%)",
-        }}
-      />
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-x-[5px] bottom-[5px] z-10 h-20 rounded-b-[0.95rem]"
-        style={{
-          background:
-            "linear-gradient(to top, var(--card) 0%, var(--card) 30%, transparent 100%)",
-        }}
-      />
       <div className="relative z-20 flex flex-col items-center gap-0.5 px-3 pb-3">
         <span className="max-w-full truncate text-[15px] font-semibold tracking-tight text-foreground">
           {name}
