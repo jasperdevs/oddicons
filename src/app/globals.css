@@ -191,8 +191,7 @@ button:disabled,
 }
 
 /* Custom oddicon cursors — desktop only (devices with a fine pointer).
-   URLs resolved at runtime via <CursorStyles /> because basePath differs
-   between dev ("") and prod ("/oddicons"). */
+   URLs resolved at runtime via <CursorStyles /> so custom deployments can set a basePath. */
 @media (pointer: fine) {
   html,
   body {

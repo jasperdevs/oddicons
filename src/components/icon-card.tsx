@@ -156,7 +156,7 @@ export function IconCard({
     setClickBurstId(Date.now());
     add(
       { name, file, url, monochrome: settings.monochrome },
-      { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2, size: rect.width }
+      { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2, size: Math.min(rect.width, 128) }
     );
   }, [add, remove, name, file, url, inCart, settings.monochrome]);
 
@@ -181,13 +181,13 @@ export function IconCard({
 
   const clickSparks = useMemo(() => {
     if (clickBurstId === null) return [];
-    const n = 10;
+    const n = 14;
     return Array.from({ length: n }, (_, i) => {
       const base = (i / n) * Math.PI * 2;
       return {
         id: i,
         angle: base + (Math.random() - 0.5) * 0.45,
-        distance: 44 + Math.random() * 30,
+        distance: 52 + Math.random() * 42,
         delay: Math.random() * 0.05,
       };
     });
@@ -291,7 +291,7 @@ export function IconCard({
                 ? { scale: [0.6, 1.45, 0.92, 1.08, 1], rotate: [0, -8, 6, -2, 0] }
                 : { scale: 1, rotate: 0 }
             }
-            transition={{ ...springs.slow, duration: 0.5 }}
+            transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
           >
             <OddIcon
               name="heart"
@@ -334,9 +334,9 @@ export function IconCard({
               {[0, 1, 2].map((idx) => (
                 <motion.span
                   key={`ring-${idx}`}
-                  className="absolute left-1/2 top-1/2 h-14 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full border border-foreground/45"
+                  className="absolute left-1/2 top-1/2 h-14 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full border border-foreground/45 shadow-[0_0_24px_rgba(255,255,255,0.22)]"
                   initial={{ scale: 0.5, opacity: 0.9 - idx * 0.2 }}
-                  animate={{ scale: 1.9 + idx * 0.55, opacity: 0 }}
+                  animate={{ scale: 2.1 + idx * 0.68, opacity: 0 }}
                   transition={{
                     duration: 0.7 + idx * 0.1,
                     delay: idx * 0.08,
@@ -347,7 +347,7 @@ export function IconCard({
               {clickSparks.map((s) => (
                 <motion.span
                   key={`spark-${s.id}`}
-                  className="absolute left-1/2 top-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground"
+                  className="absolute left-1/2 top-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground shadow-[0_0_12px_currentColor]"
                   initial={{ x: 0, y: 0, opacity: 0, scale: 0.4 }}
                   animate={{
                     x: Math.cos(s.angle) * s.distance,

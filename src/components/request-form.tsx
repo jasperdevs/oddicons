@@ -21,7 +21,7 @@ interface RequestFormProps {
 }
 
 export function RequestForm({
-  heading = "send an issue",
+  heading = "request an icon",
   subheading = "tell us what icon you want on GitHub",
   hideHeader = false,
 }: RequestFormProps) {

@@ -98,7 +98,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
     ) => {
       setItems((prev) => (prev.some((i) => i.name === item.name) ? prev : [...prev, item]));
       if (opts?.silent) {
-        setBumpCount((c) => c + 1);
         return;
       }
       const el = anchorRef.current;
@@ -111,6 +110,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       idRef.current += 1;
       const id = idRef.current;
       setFlies((prev) => [...prev, { id, item, from, to, compact: opts?.compact }]);
+      if (opts?.compact) {
+        setBumpCount((c) => c + 1);
+      }
     },
     []
   );

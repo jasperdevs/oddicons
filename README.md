@@ -6,7 +6,7 @@
   <p>A free, open-source pack of AI-generated icons.</p>
 
   <p>
-    <a href="https://jasperdevs.github.io/oddicons/">
+    <a href="https://oddicons.net/">
       <img alt="website" src="https://img.shields.io/badge/website-open-111111?style=flat-square" />
     </a>
     <a href="https://github.com/jasperdevs/oddicons/issues/new">
@@ -20,7 +20,7 @@
   <p>
     Browse, copy, and download at
     <br />
-    <a href="https://jasperdevs.github.io/oddicons/">jasperdevs.github.io/oddicons</a>
+    <a href="https://oddicons.net/">oddicons.net</a>
   </p>
 
   <p>

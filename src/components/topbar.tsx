@@ -54,7 +54,7 @@ export function Topbar({
     if (bumpCount === 0) return;
     bumpControls.start({
       scale: [1, 1.14, 0.98, 1],
-      transition: { ...springs.slow, duration: 0.4 },
+      transition: { duration: 0.4, ease: [0.2, 0.8, 0.2, 1] },
     });
   }, [bumpCount, bumpControls]);
 

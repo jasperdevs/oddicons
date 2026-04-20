@@ -18,6 +18,7 @@ import { MobileDrawer } from "@/components/mobile-drawer";
 import { IconCard } from "@/components/icon-card";
 import { CartPinboard } from "@/components/cart-pinboard";
 import { FlyToCart } from "@/components/fly-to-cart";
+import { RequestModal } from "@/components/request-modal";
 import { UsageContent } from "@/components/usage-content";
 import { DonateContent } from "@/components/donate-content";
 import { ProgressiveBlur } from "@/components/progressive-blur";
@@ -26,11 +27,10 @@ import { fontWeights } from "@/lib/font-weight";
 import { springs } from "@/lib/springs";
 const PlusIcon = oddIconComponent("plus");
 const TrashIcon = oddIconComponent("trash");
-const GithubIcon = oddIconComponent("github");
+const SendIcon = oddIconComponent("send");
 const SortIcon = oddIconComponent("sort");
 const SortAzIcon = oddIconComponent("sort-az");
 const SortAzAscendingIcon = oddIconComponent("sort-az-ascending");
-const ISSUE_URL = "https://github.com/jasperdevs/oddicons/issues/new";
 
 interface IconEntry {
   name: string;
@@ -65,7 +65,9 @@ function GalleryInner({ view }: { view: View }) {
   const { favorites, isFavorite, toggle: toggleFavorite } = useFavorites();
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortMode>("default");
+  const [requestOpen, setRequestOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const requestBtnRef = useRef<HTMLButtonElement>(null);
 
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
   const all = icons as IconEntry[];
@@ -201,6 +203,8 @@ function GalleryInner({ view }: { view: View }) {
             basePath={basePath}
             sort={sort}
             onChangeSort={setSort}
+            onOpenRequest={() => setRequestOpen((value) => !value)}
+            requestBtnRef={requestBtnRef}
           />
         )}
       </div>
@@ -224,6 +228,11 @@ function GalleryInner({ view }: { view: View }) {
 
       <CartPinboard />
       <FlyToCart />
+      <RequestModal
+        open={requestOpen}
+        onClose={() => setRequestOpen(false)}
+        anchorRef={requestBtnRef}
+      />
     </div>
   );
 }
@@ -294,11 +303,15 @@ function BottomBar({
   basePath,
   sort,
   onChangeSort,
+  onOpenRequest,
+  requestBtnRef,
 }: {
   items: IconEntry[];
   basePath: string;
   sort: SortMode;
   onChangeSort: (m: SortMode) => void;
+  onOpenRequest: () => void;
+  requestBtnRef: React.RefObject<HTMLButtonElement | null>;
 }) {
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10">
@@ -313,15 +326,17 @@ function BottomBar({
         }}
       />
       <div className="pointer-events-auto relative flex w-full flex-wrap items-center justify-center gap-1.5 px-3 pb-4 pt-10 sm:gap-2 sm:px-8 sm:pb-6">
-        <a
-          href={ISSUE_URL}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl bg-accent px-3 text-[13px] font-medium text-foreground outline-none transition-colors duration-[180ms] hover:bg-accent/80 focus-visible:ring-1 focus-visible:ring-[#6B97FF] active:bg-accent sm:h-11 sm:px-5 sm:text-[14px]"
+        <Button
+          ref={requestBtnRef}
+          type="button"
+          variant="secondary"
+          size="lg"
+          leadingIcon={SendIcon}
+          onClick={onOpenRequest}
+          className="h-10 px-3 text-[13px] sm:h-11 sm:px-5 sm:text-[14px]"
         >
-          <GithubIcon size={20} />
-          send an issue
-        </a>
+          request
+        </Button>
         <SortDropdown mode={sort} onChange={onChangeSort} />
         <AddAllButton items={items} basePath={basePath} />
       </div>
@@ -419,10 +434,10 @@ function SortDropdown({
   );
 }
 
-const MAX_FIRE_WINDOW_MS = 1100;
-const PER_ITEM_MS = 18;
-const RINGS = [0, 1, 2];
-const SPARK_COUNT = 10;
+const ADD_ALL_SHOW_MS = 1800;
+const ADD_ALL_VISIBLE_FLIGHTS = 72;
+const RINGS = [0, 1, 2, 3];
+const SPARK_COUNT = 16;
 
 function AddAllButton({
   items,
@@ -446,7 +461,7 @@ function AddAllButton({
     return Array.from({ length: SPARK_COUNT }, (_, i) => {
       const base = (i / SPARK_COUNT) * Math.PI * 2;
       const angle = base + (Math.random() - 0.5) * 0.45;
-      const distance = 36 + Math.random() * 28;
+      const distance = 42 + Math.random() * 46;
       const delay = Math.random() * 0.05;
       return { id: i, angle, distance, delay };
     });
@@ -457,7 +472,7 @@ function AddAllButton({
       items.forEach((icon) => remove(icon.name));
       bumpControls.start({
         scale: [1, 0.9, 1.06, 1],
-        transition: { ...springs.moderate, duration: 0.34 },
+        transition: { duration: 0.34, ease: [0.2, 0.8, 0.2, 1] },
       });
       return;
     }
@@ -476,12 +491,11 @@ function AddAllButton({
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
 
-    const n = shuffled.length;
-    if (n === 0) return;
+    if (shuffled.length === 0) return;
 
     setBurstId(Date.now());
     bumpControls.start({
-      scale: [1, 0.82, 1.16, 0.94, 1.04, 1],
+      scale: [1, 0.8, 1.2, 0.92, 1.07, 1],
       transition: {
         duration: 0.68,
         times: [0, 0.14, 0.36, 0.6, 0.82, 1],
@@ -493,32 +507,38 @@ function AddAllButton({
       transition: { duration: 0.42, ease: [0.16, 1, 0.3, 1] },
     });
 
-    const fireWindow = Math.min(MAX_FIRE_WINDOW_MS, n * PER_ITEM_MS);
-    const rumbleSteps = Math.max(4, Math.floor(fireWindow / 55));
+    const rumbleSteps = 24;
     const rumbleX: number[] = [0];
     const rumbleY: number[] = [0];
     for (let i = 0; i < rumbleSteps; i++) {
-      rumbleX.push((Math.random() - 0.5) * 1.4);
-      rumbleY.push((Math.random() - 0.5) * 1.4);
+      const fade = 1 - i / rumbleSteps;
+      rumbleX.push((Math.random() - 0.5) * 1.2 * fade);
+      rumbleY.push((Math.random() - 0.5) * 1.2 * fade);
     }
     rumbleX.push(0);
     rumbleY.push(0);
     rumbleControls.start({
       x: rumbleX,
       y: rumbleY,
-      transition: { duration: fireWindow / 1000, ease: "linear" },
+      transition: { duration: ADD_ALL_SHOW_MS / 1000, ease: "linear" },
     });
 
+    const visibleNames = new Set(
+      shuffled.slice(0, ADD_ALL_VISIBLE_FLIGHTS).map((icon) => icon.name)
+    );
+
     shuffled.forEach((icon, i) => {
-      const t = n > 1 ? i / (n - 1) : 0;
-      const jitter = (Math.random() - 0.5) * 40;
-      const delay = Math.max(0, t * fireWindow + jitter);
+      const t = shuffled.length > 1 ? i / (shuffled.length - 1) : 0;
+      const baseDelay = t * ADD_ALL_SHOW_MS;
+      const jitter = (Math.random() - 0.5) * 28;
+      const delay = Math.max(0, Math.min(ADD_ALL_SHOW_MS, baseDelay + jitter));
+      const visible = visibleNames.has(icon.name);
       const angle = Math.random() * Math.PI * 2;
       const radius = 4 + Math.random() * 18;
       const from = {
         x: origin.x + Math.cos(angle) * radius,
         y: origin.y + Math.sin(angle) * radius,
-        size: origin.size,
+        size: 48,
       };
       window.setTimeout(() => {
         add(
@@ -529,7 +549,7 @@ function AddAllButton({
             monochrome: settings.monochrome,
           },
           from,
-          { compact: true }
+          { compact: true, silent: !visible }
         );
       }, delay);
     });
@@ -555,9 +575,9 @@ function AddAllButton({
             {RINGS.map((idx) => (
               <motion.span
                 key={`ring-${idx}`}
-                className="absolute left-1/2 top-1/2 h-11 w-11 -translate-x-1/2 -translate-y-1/2 rounded-full border border-foreground/50"
+                className="absolute left-1/2 top-1/2 h-11 w-11 -translate-x-1/2 -translate-y-1/2 rounded-full border border-foreground/50 shadow-[0_0_24px_rgba(255,255,255,0.22)]"
                 initial={{ scale: 0.55, opacity: 0.9 - idx * 0.18 }}
-                animate={{ scale: 2.2 + idx * 0.7, opacity: 0 }}
+                animate={{ scale: 2.25 + idx * 0.62, opacity: 0 }}
                 transition={{
                   duration: 0.72 + idx * 0.12,
                   delay: idx * 0.09,
@@ -565,10 +585,16 @@ function AddAllButton({
                 }}
               />
             ))}
+            <motion.span
+              className="absolute left-1/2 top-1/2 h-14 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full bg-background shadow-[0_0_0_1px_rgba(255,255,255,0.18),_0_0_36px_rgba(255,255,255,0.28)]"
+              initial={{ scale: 0.2, opacity: 0 }}
+              animate={{ scale: [0.2, 1.05, 0.45, 0.9, 0], opacity: [0, 0.9, 0.7, 0.5, 0] }}
+              transition={{ duration: ADD_ALL_SHOW_MS / 1000, ease: [0.16, 1, 0.3, 1] }}
+            />
             {sparks.map((s) => (
               <motion.span
                 key={`spark-${s.id}`}
-                className="absolute left-1/2 top-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground"
+                className="absolute left-1/2 top-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground shadow-[0_0_12px_currentColor]"
                 initial={{ x: 0, y: 0, opacity: 0, scale: 0.4 }}
                 animate={{
                   x: Math.cos(s.angle) * s.distance,
