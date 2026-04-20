@@ -84,11 +84,7 @@ export function IconCard({
         const dist = Math.hypot(relX, relY);
         const RIM_RADIUS = 260;
         const intensity = Math.max(0, 1 - dist / RIM_RADIUS);
-        const norm = dist > 0.5 ? 1 / dist : 0;
-        const offset = 5 * intensity;
-        node.style.setProperty("--rim-dx", `${-relX * norm * offset}`);
-        node.style.setProperty("--rim-dy", `${-relY * norm * offset}`);
-        node.style.setProperty("--rim-a", `${intensity * 0.55}`);
+        node.style.setProperty("--rim-a", `${intensity * 0.3}`);
       });
     };
     const onLeave = () => {
@@ -279,7 +275,7 @@ export function IconCard({
         style={{
           perspective: "600px",
           filter:
-            "drop-shadow(calc(var(--rim-dx, 0) * 1px) calc(var(--rim-dy, 0) * 1px) 4px rgba(255,255,255, var(--rim-a, 0)))",
+            "drop-shadow(0 0 1px rgba(255,255,255, var(--rim-a, 0))) drop-shadow(0 0 1px rgba(255,255,255, var(--rim-a, 0)))",
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
