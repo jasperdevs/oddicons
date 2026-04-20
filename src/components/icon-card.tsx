@@ -120,12 +120,13 @@ export function IconCard({
   }, [thumbUrl]);
 
   const borderBackground = useMemo(() => {
+    if (file === "check.png") return null;
     if (!colors || colors.length === 0) return null;
     const c1 = colors[0];
     const c2 = colors[1] ?? colors[0];
     const c3 = colors[2] ?? c2;
     return `radial-gradient(circle 360px at var(--mx, -800px) var(--my, -800px), rgba(255,255,255,0.95) 0%, ${c1} 22%, rgba(255,255,255,0.7) 44%, ${c2} 66%, ${c3} 82%, transparent 100%)`;
-  }, [colors]);
+  }, [colors, file]);
 
   useEffect(() => {
     const el = cardRef.current;

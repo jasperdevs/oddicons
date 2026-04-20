@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip } from "@/components/ui/tooltip";
 import { OddIcon } from "@/components/ui/odd-icon";
 import { useProximityHover } from "@/hooks/use-proximity-hover";
 import { cn } from "@/lib/utils";
@@ -221,38 +222,39 @@ function ProximityNav({ rows }: { rows: Row[] }) {
         const isActive = row.active;
         const isHovered = activeIndex === i;
         return (
-          <button
-            key={row.id}
-            type="button"
-            ref={(el) => registerItem(i, el)}
-            onClick={row.onSelect}
-            className={cn(
-              "relative z-10 flex h-10 items-center justify-between rounded-xl px-3 text-[14px] font-medium transition-colors duration-[180ms]",
-              isActive
-                ? "bg-foreground text-background"
-                : isHovered
-                  ? "text-foreground"
-                  : "text-muted-foreground"
-            )}
-          >
-            <span className="flex items-center gap-3">
-              <span className="grid h-[18px] w-[18px] place-items-center">{row.icon}</span>
-              <span>{row.label}</span>
-            </span>
-            {row.count !== undefined && (
-              <Badge
-                variant="solid"
-                size="sm"
-                color="gray"
-                className={cn(
-                  "tabular-nums transition-colors",
-                  isActive && "bg-background/15! text-background!"
-                )}
-              >
-                {row.count}
-              </Badge>
-            )}
-          </button>
+          <Tooltip key={row.id} content={row.label} side="right" sideOffset={10}>
+            <button
+              type="button"
+              ref={(el) => registerItem(i, el)}
+              onClick={row.onSelect}
+              className={cn(
+                "relative z-10 flex h-10 items-center justify-between rounded-xl px-3 text-[14px] font-medium transition-colors duration-[180ms]",
+                isActive
+                  ? "bg-foreground text-background"
+                  : isHovered
+                    ? "text-foreground"
+                    : "text-muted-foreground"
+              )}
+            >
+              <span className="flex items-center gap-3">
+                <span className="grid h-[18px] w-[18px] place-items-center">{row.icon}</span>
+                <span>{row.label}</span>
+              </span>
+              {row.count !== undefined && (
+                <Badge
+                  variant="solid"
+                  size="sm"
+                  color="gray"
+                  className={cn(
+                    "tabular-nums transition-colors",
+                    isActive && "bg-background/15! text-background!"
+                  )}
+                >
+                  {row.count}
+                </Badge>
+              )}
+            </button>
+          </Tooltip>
         );
       })}
     </div>

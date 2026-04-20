@@ -66,10 +66,10 @@ export function UsageContent() {
               missing an icon?
             </span>
             <h2 className="text-[22px] font-semibold tracking-tight text-foreground sm:text-[24px]">
-              ask, and it usually gets made.
+              send an issue.
             </h2>
             <p className="text-[13.5px] leading-[1.6] text-muted-foreground">
-              most requests turn into new icons within a week.
+              say what icon you want and it will be tracked on GitHub.
             </p>
           </div>
         </div>

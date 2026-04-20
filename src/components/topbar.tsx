@@ -7,6 +7,7 @@ import { OddIcon } from "@/components/ui/odd-icon";
 import { SearchBar } from "@/components/search-bar";
 import { ProgressiveBlur } from "@/components/progressive-blur";
 import { SettingsPopover } from "@/components/settings-popover";
+import { GitHubStars } from "@/components/github-stars";
 import { useCart } from "@/lib/cart-context";
 import { springs } from "@/lib/springs";
 import { cn } from "@/lib/utils";
@@ -122,6 +123,8 @@ export function Topbar({
               </AnimatePresence>
             </button>
           </Tooltip>
+
+          <GitHubStars />
 
           <SettingsPopover />
 

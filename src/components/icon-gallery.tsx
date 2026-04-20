@@ -334,7 +334,7 @@ function BottomBar({
           onClick={onOpenRequest}
           className="h-11 px-5 text-[14px]"
         >
-          request
+          send issue
         </Button>
         <SortDropdown mode={sort} onChange={onChangeSort} />
         <AddAllButton items={items} basePath={basePath} />
