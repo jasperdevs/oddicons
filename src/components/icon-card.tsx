@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check } from "lucide-react";
 import { OddIcon } from "@/components/ui/odd-icon";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/lib/cart-context";
@@ -56,7 +55,7 @@ export function IconCard({
     const c1 = colors[0];
     const c2 = colors[1] ?? colors[0];
     const c3 = colors[2] ?? c2;
-    return `radial-gradient(circle 160px at var(--mx, -400px) var(--my, -400px), ${c1} 0%, rgba(255,255,255,0.9) 18%, ${c2} 38%, ${c3} 60%, transparent 88%)`;
+    return `radial-gradient(circle 280px at var(--mx, -600px) var(--my, -600px), ${c1} 0%, rgba(255,255,255,0.9) 20%, ${c2} 42%, ${c3} 65%, transparent 92%)`;
   }, [colors]);
 
   useEffect(() => {
@@ -81,8 +80,8 @@ export function IconCard({
     const onLeave = () => {
       const node = cardRef.current;
       if (!node) return;
-      node.style.setProperty("--mx", "-400px");
-      node.style.setProperty("--my", "-400px");
+      node.style.setProperty("--mx", "-600px");
+      node.style.setProperty("--my", "-600px");
     };
     window.addEventListener("pointermove", onMove);
     window.addEventListener("pointerleave", onLeave);
@@ -252,9 +251,9 @@ export function IconCard({
       {inCart && (
         <span
           aria-hidden
-          className="absolute left-3 top-3 z-30 grid h-5 w-5 place-items-center rounded-full bg-foreground text-background"
+          className="absolute left-2.5 top-2.5 z-30 grid h-7 w-7 place-items-center text-foreground"
         >
-          <Check size={11} strokeWidth={2.5} />
+          <OddIcon name="check" size={26} />
         </span>
       )}
 
