@@ -2,8 +2,8 @@
 
 import { ExternalLink } from "lucide-react";
 import { OddIcon } from "@/components/ui/odd-icon";
-import { KOFI_COLOR, KofiLogo } from "@/components/logos/kofi";
-import { PAYPAL_COLOR, PaypalLogo } from "@/components/logos/paypal";
+import { KOFI_COLOR } from "@/components/logos/kofi";
+import { PAYPAL_COLOR } from "@/components/logos/paypal";
 
 const OPTIONS = [
   {
@@ -12,7 +12,7 @@ const OPTIONS = [
     hint: "one-time tip, buy me a coffee",
     href: "https://ko-fi.com/jasperdevs",
     color: KOFI_COLOR,
-    Logo: KofiLogo,
+    iconName: "kofi",
   },
   {
     id: "paypal",
@@ -20,7 +20,7 @@ const OPTIONS = [
     hint: "any amount, sent directly",
     href: "https://www.paypal.com/paypalme/9KGFX",
     color: PAYPAL_COLOR,
-    Logo: PaypalLogo,
+    iconName: "paypal",
   },
 ];
 
@@ -57,8 +57,8 @@ export function DonateContent() {
               className="pointer-events-none absolute -right-10 -top-12 h-40 w-40 rounded-full opacity-[0.08] transition-all duration-[240ms] group-hover:-right-4 group-hover:-top-6 group-hover:opacity-[0.14]"
               style={{ background: opt.color }}
             />
-            <span className="grid h-11 w-11 place-items-center rounded-xl bg-white shadow-[0_6px_16px_-6px_rgba(0,0,0,0.35)]">
-              <opt.Logo className="h-6 w-6" />
+            <span className="grid h-12 w-12 place-items-center rounded-xl bg-sidebar">
+              <OddIcon name={opt.iconName} size={32} />
             </span>
             <div className="flex flex-col gap-1">
               <span className="text-[16px] font-semibold tracking-tight text-foreground">

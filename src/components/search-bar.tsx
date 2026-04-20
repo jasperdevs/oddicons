@@ -18,270 +18,168 @@ interface SearchBarProps {
   items: IconEntry[];
 }
 
-const ALIASES: Record<string, string[]> = {
-  money: ["dollar", "coin", "cash", "wallet", "money-bag", "card"],
-  cash: ["dollar", "coin", "wallet", "money-bag"],
-  coin: ["coin", "dollar", "cash"],
-  pay: ["card", "coin", "dollar", "wallet"],
-  payment: ["card", "wallet", "dollar"],
-  buy: ["cart", "bag", "card", "shop"],
+// Only truly unrelated synonyms — words that share no letters with the icon name.
+// Anything mechanically derivable (typos, prefixes, substrings) is handled by the fuzzy matcher.
+const SEMANTIC_HINTS: Record<string, string[]> = {
+  buy: ["cart", "bag", "shop", "card"],
   shopping: ["cart", "bag", "shop"],
-  store: ["shop", "bag"],
-  clipboard: ["copy"],
-  paste: ["copy"],
-  duplicate: ["copy"],
-  "copy and paste": ["copy"],
-  delete: ["trash", "x", "close"],
-  remove: ["trash", "minus", "x"],
-  add: ["plus"],
-  new: ["plus"],
-  create: ["plus", "edit"],
-  cancel: ["x", "close"],
-  done: ["check"],
-  yes: ["check"],
-  ok: ["check"],
-  tick: ["check"],
-  cross: ["x"],
-  close: ["close", "x"],
+  money: ["dollar", "coin", "cash", "wallet", "money-bag", "card"],
+  pay: ["card", "dollar", "wallet", "paypal"],
+  tip: ["kofi", "paypal", "dollar"],
+  donate: ["kofi", "paypal", "heart"],
+  coffee: ["kofi"],
   home: ["house"],
   person: ["user"],
-  profile: ["user"],
-  account: ["user"],
-  avatar: ["user"],
   people: ["users"],
   team: ["users"],
-  chat: ["message"],
-  talk: ["message"],
-  speech: ["message"],
-  comment: ["message"],
-  email: ["mail", "at"],
+  chat: ["message", "discord"],
+  email: ["mail", "gmail", "at"],
+  inbox: ["mail", "gmail"],
   envelope: ["mail"],
-  inbox: ["mail"],
   alert: ["bell", "exclamation"],
-  warn: ["exclamation"],
-  warning: ["exclamation"],
-  danger: ["bomb", "skull", "exclamation"],
-  error: ["exclamation", "x"],
-  notification: ["bell"],
-  ring: ["bell"],
+  warning: ["exclamation", "bomb"],
+  danger: ["bomb", "skull"],
   info: ["question"],
   help: ["question"],
-  ask: ["question"],
-  faq: ["question"],
   world: ["globe", "planet"],
   earth: ["globe", "planet"],
-  international: ["globe"],
-  space: ["planet", "star"],
   dark: ["moon"],
   night: ["moon"],
-  light: ["sun", "bolt", "lightbulb"],
   day: ["sun"],
-  weather: ["sun", "moon"],
-  fav: ["heart", "star", "bookmark"],
-  favorite: ["heart", "star", "bookmark"],
+  light: ["sun", "bolt"],
+  fav: ["heart", "star"],
   love: ["heart"],
   like: ["heart", "star"],
   rating: ["star"],
-  save: ["bookmark", "download"],
   time: ["clock", "calendar"],
   date: ["calendar"],
-  schedule: ["calendar", "clock"],
-  event: ["calendar"],
-  gallery: ["image"],
   photo: ["image"],
   picture: ["image"],
   camera: ["image"],
   play: ["video"],
   movie: ["video"],
-  film: ["video"],
-  media: ["video", "music", "image"],
-  sound: ["music"],
+  sound: ["music", "spotify"],
   audio: ["music"],
-  song: ["music"],
+  song: ["music", "spotify"],
   lightning: ["bolt"],
   thunder: ["bolt"],
   power: ["bolt"],
   energy: ["bolt"],
   fast: ["bolt"],
-  idea: ["lightbulb", "sparkles"],
   magic: ["sparkles", "bolt"],
-  magnify: ["search"],
-  find: ["search"],
-  look: ["search", "eye"],
-  group: ["users"],
-  party: ["users"],
-  gift: ["gift", "package"],
-  present: ["gift"],
-  birthday: ["gift", "crown"],
+  idea: ["sparkles", "bolt"],
   box: ["package"],
-  shipping: ["truck", "package"],
   delivery: ["truck", "package"],
-  ship: ["truck"],
-  truck: ["truck"],
   price: ["tag", "dollar"],
-  discount: ["percent", "tag"],
   sale: ["percent", "tag"],
-  off: ["percent"],
-  win: ["trophy", "crown", "star"],
-  winner: ["trophy", "crown"],
+  discount: ["percent", "tag"],
+  win: ["trophy", "crown"],
   award: ["trophy", "crown", "star"],
   game: ["dice"],
   luck: ["dice"],
-  random: ["dice"],
-  roll: ["dice"],
-  premium: ["crown", "diamond", "star"],
-  vip: ["crown", "diamond"],
-  king: ["crown"],
-  queen: ["crown"],
-  royalty: ["crown"],
+  premium: ["crown", "diamond"],
   gem: ["diamond"],
   jewel: ["diamond"],
-  death: ["skull"],
-  pirate: ["skull"],
-  explode: ["bomb"],
-  explosion: ["bomb"],
   pet: ["cat"],
   animal: ["cat"],
-  kitty: ["cat"],
-  secure: ["lock", "shield"],
-  security: ["lock", "shield"],
-  private: ["lock"],
-  protect: ["shield", "lock"],
   view: ["eye"],
   see: ["eye"],
   watch: ["eye"],
-  preview: ["eye"],
   data: ["chart"],
   stats: ["chart"],
-  statistics: ["chart"],
-  analytics: ["chart"],
   graph: ["chart"],
-  share: ["share", "link"],
   url: ["link"],
-  hyperlink: ["link"],
-  attach: ["link"],
-  edit: ["edit"],
   pencil: ["edit"],
   pen: ["edit"],
   write: ["edit"],
-  bookmark: ["bookmark", "pin"],
-  marker: ["pin"],
   location: ["pin"],
   map: ["pin", "globe"],
-  place: ["pin"],
-  address: ["pin"],
-  folder: ["folder", "file"],
-  directory: ["folder"],
-  archive: ["folder", "document"],
-  arrow: ["arrow-up", "arrow-down", "arrow-left", "arrow-right"],
-  direction: ["arrow-up", "arrow-down", "arrow-left", "arrow-right"],
+  back: ["arrow-left"],
+  previous: ["arrow-left"],
+  next: ["arrow-right"],
+  forward: ["arrow-right"],
   up: ["arrow-up"],
   down: ["arrow-down"],
-  left: ["arrow-left"],
-  right: ["arrow-right"],
-  next: ["arrow-right"],
-  back: ["arrow-left"],
-  forward: ["arrow-right"],
-  previous: ["arrow-left"],
-  option: ["settings", "filter", "sort"],
-  options: ["settings", "filter", "sort"],
   config: ["settings"],
-  preferences: ["settings"],
   gear: ["settings"],
   cog: ["settings"],
-  menu: ["menu"],
-  hamburger: ["menu"],
-  list: ["menu"],
-  license: ["license", "document"],
-  legal: ["license", "document"],
-  terms: ["license", "document"],
-  contract: ["license", "document"],
-  doc: ["document"],
-  docs: ["document", "file"],
-  note: ["document", "file"],
-  page: ["document", "file"],
-  files: ["file", "folder"],
-  paper: ["document", "file"],
-  import: ["upload"],
-  export: ["download"],
-  trash: ["trash"],
   bin: ["trash"],
   garbage: ["trash"],
-  clear: ["trash", "x"],
-  phone: ["phone"],
   call: ["phone"],
   mobile: ["phone"],
-  house: ["house"],
   building: ["house"],
-  filter: ["filter"],
-  sort: ["sort", "sort-az", "sort-az-ascending"],
-  ascending: ["sort-az"],
-  descending: ["sort-az-ascending"],
-  alphabetical: ["sort-az", "sort-az-ascending"],
-  order: ["sort", "sort-az"],
-  sparkle: ["sparkles"],
-  star: ["star", "sparkles"],
-  twinkle: ["sparkles"],
-  wallet: ["wallet", "card", "cash"],
-  card: ["card", "wallet"],
-  credit: ["card"],
-  debit: ["card"],
-  send: ["send", "arrow-right"],
-  submit: ["send"],
-  message: ["message", "mail"],
   twitter: ["x-twitter"],
   tweet: ["x-twitter"],
   social: ["x-twitter", "instagram", "reddit", "tiktok", "youtube", "discord"],
-  video: ["video", "youtube", "tiktok"],
   ai: ["chatgpt", "claude", "gemini", "sparkles"],
-  chatbot: ["chatgpt", "claude", "gemini"],
   llm: ["chatgpt", "claude", "gemini"],
+  chatbot: ["chatgpt", "claude", "gemini"],
   openai: ["chatgpt"],
   anthropic: ["claude"],
   google: ["gemini", "gmail"],
-  microsoft: [],
-  brand: ["github", "discord", "x-twitter", "instagram", "reddit", "youtube", "tiktok", "spotify", "gmail", "chatgpt", "claude", "gemini"],
-  brands: ["github", "discord", "x-twitter", "instagram", "reddit", "youtube", "tiktok", "spotify", "gmail", "chatgpt", "claude", "gemini"],
-  logo: ["github", "discord", "x-twitter", "instagram", "reddit", "youtube", "tiktok", "spotify"],
+  gpt: ["chatgpt"],
+  brand: ["github", "discord", "x-twitter", "instagram", "reddit", "youtube", "tiktok", "spotify", "gmail", "chatgpt", "claude", "gemini", "paypal", "kofi"],
+  logo: ["github", "discord", "x-twitter", "instagram", "reddit", "youtube", "tiktok", "spotify", "gmail", "chatgpt", "claude", "gemini", "paypal", "kofi"],
+  stream: ["spotify", "youtube"],
   code: ["github"],
   git: ["github"],
-  music: ["music", "spotify"],
-  stream: ["spotify", "youtube"],
-  tube: ["youtube"],
-  "chat-gpt": ["chatgpt"],
-  gpt: ["chatgpt"],
 };
 
+function tokenize(s: string): string[] {
+  return s.toLowerCase().split(/[\s\-_/]+/).filter(Boolean);
+}
+
+function bigrams(s: string): Set<string> {
+  const padded = ` ${s} `;
+  const out = new Set<string>();
+  for (let i = 0; i < padded.length - 1; i++) out.add(padded.slice(i, i + 2));
+  return out;
+}
+
+function dice(a: Set<string>, b: Set<string>): number {
+  if (a.size + b.size === 0) return 0;
+  let inter = 0;
+  for (const x of a) if (b.has(x)) inter++;
+  return (2 * inter) / (a.size + b.size);
+}
+
 function score(icon: IconEntry, q: string): number {
-  const needle = q.toLowerCase();
+  const needle = q.toLowerCase().trim();
+  if (!needle) return 0;
   const name = icon.name.toLowerCase();
-  const cat = icon.category.toLowerCase();
   const slug = icon.file.replace(/\.[^.]+$/, "").toLowerCase();
+  const cat = icon.category.toLowerCase();
+  const words = [...tokenize(name), ...tokenize(slug)];
 
-  if (name === needle) return 1000;
-  if (slug === needle) return 950;
-  if (name.startsWith(needle)) return 900;
-  if (slug.startsWith(needle)) return 860;
-  if (name.split(" ").some((w) => w === needle)) return 820;
-  if (slug.split("-").some((w) => w === needle)) return 800;
-  if (name.includes(needle)) return 700;
-  if (slug.includes(needle)) return 650;
-  if (cat === needle) return 500;
-  if (cat.startsWith(needle)) return 460;
-  if (cat.includes(needle)) return 400;
+  if (name === needle || slug === needle) return 1000;
+  if (words.includes(needle)) return 880;
+  if (name.startsWith(needle) || slug.startsWith(needle)) return 820;
+  if (words.some((w) => w.startsWith(needle))) return 740;
+  if (needle.length >= 2 && (name.includes(needle) || slug.includes(needle))) return 600;
 
-  for (const [alias, targets] of Object.entries(ALIASES)) {
-    const matches =
-      alias === needle ||
-      (needle.length >= 3 && alias.startsWith(needle)) ||
-      (alias.length >= 3 && needle.startsWith(alias));
-    if (!matches) continue;
-    for (const t of targets) {
+  if (cat === needle) return 480;
+  if (cat.startsWith(needle)) return 420;
+  if (cat.includes(needle)) return 360;
+
+  const hinted = SEMANTIC_HINTS[needle];
+  if (hinted) {
+    for (const t of hinted) {
       if (slug === t) return 340;
-      if (slug.includes(t)) return 300;
-      if (name.includes(t)) return 280;
+      if (slug.includes(t) || name.includes(t)) return 300;
     }
   }
+
+  if (needle.length >= 3) {
+    const qb = bigrams(needle);
+    let best = 0;
+    for (const w of words) {
+      if (w.length < 3) continue;
+      const d = dice(qb, bigrams(w));
+      if (d > best) best = d;
+    }
+    if (best >= 0.55) return Math.round(best * 280);
+  }
+
   return 0;
 }
 

@@ -208,7 +208,7 @@ export function IconCard({
         aria-label={isFavorite ? "unfavorite" : "favorite"}
         aria-pressed={isFavorite}
         className={cn(
-          "card-fav absolute right-3 top-3 z-30 grid h-8 w-8 place-items-center rounded-full transition-all",
+          "card-fav absolute right-3 top-3 z-[6] grid h-8 w-8 place-items-center rounded-full transition-all",
           "text-muted-foreground opacity-0 group-hover:opacity-100 hover:bg-accent hover:text-foreground",
           isFavorite && "opacity-100 text-foreground"
         )}
@@ -264,7 +264,7 @@ export function IconCard({
       {inCart && (
         <span
           aria-hidden
-          className="absolute left-2.5 top-2.5 z-30 grid h-7 w-7 place-items-center text-foreground"
+          className="absolute left-2.5 top-2.5 z-[6] grid h-7 w-7 place-items-center text-foreground"
         >
           <OddIcon name="check" size={26} />
         </span>

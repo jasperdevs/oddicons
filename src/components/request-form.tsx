@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { OddIcon, oddIconComponent } from "@/components/ui/odd-icon";
 import { cn } from "@/lib/utils";
 
-const SendIcon = oddIconComponent("send");
+const GmailIcon = oddIconComponent("gmail");
 
 const EMAIL = "jasper.mceligott@gmail.com";
 
@@ -119,7 +119,7 @@ export function RequestForm({
           type="submit"
           variant="primary"
           size="lg"
-          leadingIcon={SendIcon}
+          leadingIcon={GmailIcon}
           disabled={!canSubmit}
           className="h-11 w-full px-5 text-[14px]"
         >

@@ -97,5 +97,7 @@
   { "name": "Gmail", "file": "gmail.png", "category": "Brands" },
   { "name": "Chatgpt", "file": "chatgpt.png", "category": "Brands" },
   { "name": "Claude", "file": "claude.png", "category": "Brands" },
-  { "name": "Gemini", "file": "gemini.png", "category": "Brands" }
+  { "name": "Gemini", "file": "gemini.png", "category": "Brands" },
+  { "name": "Paypal", "file": "paypal.png", "category": "Brands" },
+  { "name": "Kofi", "file": "kofi.png", "category": "Brands" }
 ]

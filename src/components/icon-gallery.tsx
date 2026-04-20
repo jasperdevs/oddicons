@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Select } from "@base-ui/react";
 import icons from "@/data/icons.json";
@@ -23,6 +24,7 @@ import { DonateContent } from "@/components/donate-content";
 import { ProgressiveBlur } from "@/components/progressive-blur";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { fontWeights } from "@/lib/font-weight";
+import { springs } from "@/lib/springs";
 const PlusIcon = oddIconComponent("plus");
 const TrashIcon = oddIconComponent("trash");
 const SendIcon = oddIconComponent("send");
@@ -431,9 +433,8 @@ function SortDropdown({
   );
 }
 
-const ADD_ALL_DURATION_MS = 3000;
-const FLIGHT_DURATION_MS = 500;
-const FIRE_WINDOW_MS = ADD_ALL_DURATION_MS - FLIGHT_DURATION_MS;
+const MAX_FIRE_WINDOW_MS = 1100;
+const PER_ITEM_MS = 18;
 
 function AddAllButton({
   items,
@@ -445,12 +446,18 @@ function AddAllButton({
   const { add, has, remove } = useCart();
   const { settings } = useSettings();
   const ref = useRef<HTMLButtonElement>(null);
+  const bumpControls = useAnimation();
+  const [burstId, setBurstId] = useState<number | null>(null);
   const pending = useMemo(() => items.filter((i) => !has(i.name)), [items, has]);
   const allAdded = items.length > 0 && pending.length === 0;
 
   const handleClick = () => {
     if (allAdded) {
       items.forEach((icon) => remove(icon.name));
+      bumpControls.start({
+        scale: [1, 0.9, 1.06, 1],
+        transition: { ...springs.moderate, duration: 0.34 },
+      });
       return;
     }
     const el = ref.current;
@@ -471,14 +478,23 @@ function AddAllButton({
     const n = shuffled.length;
     if (n === 0) return;
 
+    setBurstId(Date.now());
+    bumpControls.start({
+      scale: [1, 0.88, 1.12, 0.97, 1],
+      transition: { ...springs.slow, duration: 0.52 },
+    });
+
+    const fireWindow = Math.min(MAX_FIRE_WINDOW_MS, n * PER_ITEM_MS);
+
     shuffled.forEach((icon, i) => {
       const t = n > 1 ? i / (n - 1) : 0;
-      const eased = Math.pow(t, 1.35);
-      const jitter = (Math.random() - 0.5) * 80;
-      const delay = Math.max(0, eased * FIRE_WINDOW_MS + jitter);
+      const jitter = (Math.random() - 0.5) * 40;
+      const delay = Math.max(0, t * fireWindow + jitter);
+      const angle = Math.random() * Math.PI * 2;
+      const radius = 4 + Math.random() * 18;
       const from = {
-        x: origin.x + (Math.random() - 0.5) * 18,
-        y: origin.y + (Math.random() - 0.5) * 18,
+        x: origin.x + Math.cos(angle) * radius,
+        y: origin.y + Math.sin(angle) * radius,
         size: origin.size,
       };
       window.setTimeout(() => {
@@ -497,17 +513,37 @@ function AddAllButton({
   };
 
   return (
-    <Button
-      ref={ref}
-      variant="secondary"
-      size="lg"
-      leadingIcon={allAdded ? TrashIcon : PlusIcon}
-      onClick={handleClick}
-      disabled={items.length === 0}
-      className="h-11 px-5 text-[14px]"
+    <motion.div
+      className="relative"
+      animate={bumpControls}
+      style={{ transformOrigin: "center" }}
     >
-      {allAdded ? `remove all (${items.length})` : `add all (${pending.length})`}
-    </Button>
+      <AnimatePresence>
+        {burstId !== null && (
+          <motion.span
+            key={burstId}
+            aria-hidden
+            onAnimationComplete={() => setBurstId((id) => (id === burstId ? null : id))}
+            className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-11 w-11 -translate-x-1/2 -translate-y-1/2 rounded-full border border-foreground/40"
+            initial={{ scale: 0.6, opacity: 0.8 }}
+            animate={{ scale: 2.6, opacity: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          />
+        )}
+      </AnimatePresence>
+      <Button
+        ref={ref}
+        variant="secondary"
+        size="lg"
+        leadingIcon={allAdded ? TrashIcon : PlusIcon}
+        onClick={handleClick}
+        disabled={items.length === 0}
+        className="h-11 px-5 text-[14px]"
+      >
+        {allAdded ? `remove all (${items.length})` : `add all (${pending.length})`}
+      </Button>
+    </motion.div>
   );
 }
 
