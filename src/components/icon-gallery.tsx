@@ -25,6 +25,7 @@ import { ProgressiveBlur } from "@/components/progressive-blur";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { fontWeights } from "@/lib/font-weight";
 import { springs } from "@/lib/springs";
+import { iconMiniUrl } from "@/lib/icon-url";
 const PlusIcon = oddIconComponent("plus");
 const TrashIcon = oddIconComponent("trash");
 const SendIcon = oddIconComponent("send");
@@ -104,6 +105,31 @@ function GalleryInner({ view }: { view: View }) {
       c[i.category] = (c[i.category] ?? 0) + 1;
     });
     return c;
+  }, [all]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    let cancelled = false;
+    const urls = all.map((icon) => iconMiniUrl(icon.file));
+    const preload = () => {
+      let index = 0;
+      const loadNext = () => {
+        if (cancelled || index >= urls.length) return;
+        const img = new Image();
+        img.decoding = "async";
+        img.src = urls[index];
+        index += 1;
+        window.setTimeout(loadNext, 18);
+      };
+      loadNext();
+    };
+    const idle = window.requestIdleCallback?.(preload, { timeout: 1200 });
+    const fallback = idle === undefined ? window.setTimeout(preload, 600) : undefined;
+    return () => {
+      cancelled = true;
+      if (idle !== undefined) window.cancelIdleCallback?.(idle);
+      if (fallback !== undefined) window.clearTimeout(fallback);
+    };
   }, [all]);
 
   const filtered = useMemo(() => {

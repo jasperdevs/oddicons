@@ -1,7 +1,29 @@
 {
   "name": "oddicons",
   "version": "0.1.0",
+  "description": "A free, open-source pack of AI-generated icons.",
   "private": true,
+  "homepage": "https://oddicons.net",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jasperdevs/oddicons.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jasperdevs/oddicons/issues"
+  },
+  "license": "GPL-3.0-only",
+  "keywords": [
+    "icons",
+    "icon-pack",
+    "ai-icons",
+    "ai-generated",
+    "design-assets",
+    "nextjs",
+    "react",
+    "typescript",
+    "tailwindcss",
+    "webp"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,6 +31,7 @@
     "predev": "node scripts/gen-thumbs.mjs",
     "thumbs": "node scripts/gen-thumbs.mjs",
     "trim": "node scripts/trim-white.mjs --apply",
+    "readme": "node scripts/gen-readme.mjs",
     "start": "next start",
     "lint": "eslint"
   },

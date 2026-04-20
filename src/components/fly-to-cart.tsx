@@ -129,7 +129,7 @@ function Fly({ event, onDone }: FlyProps) {
         width={size}
         height={size}
         loading="eager"
-        decoding="async"
+        decoding="sync"
         draggable={false}
         className={compact ? "absolute inset-0 h-full w-full object-contain drop-shadow-[0_6px_14px_rgba(0,0,0,0.42)]" : "absolute inset-0 h-full w-full object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.35)]"}
         style={{

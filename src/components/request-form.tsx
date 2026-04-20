@@ -3,7 +3,17 @@
 import { useState } from "react";
 import { OddIcon } from "@/components/ui/odd-icon";
 
-const ISSUES_URL = "https://github.com/jasperdevs/oddicons/issues/new";
+const ISSUE_TITLE = "Icon request: ";
+const ISSUE_BODY = `### Icon name
+
+
+### What should it look like?
+
+
+### Useful references
+
+`;
+const ISSUES_URL = `https://github.com/jasperdevs/oddicons/issues/new?title=${encodeURIComponent(ISSUE_TITLE)}&body=${encodeURIComponent(ISSUE_BODY)}`;
 type Social =
   | { id: string; label: string; icon: string; href: string; copy?: never }
   | { id: string; label: string; icon: string; copy: string; href?: never };
