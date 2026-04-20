@@ -130,7 +130,7 @@ function SidebarBodyInner({
       <div className="flex items-center justify-center gap-2.5 px-5 pb-8 pt-6">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/sitelogo.png`}
+          src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/brand/logo-64.png`}
           alt=""
           aria-hidden
           draggable={false}

@@ -23,6 +23,8 @@
 # misc
 .DS_Store
 *.pem
+Thumbs.db
+desktop.ini
 
 # debug
 npm-debug.log*
@@ -39,3 +41,24 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# agent / tooling instructions
+AGENTS.md
+CLAUDE.md
+.claude/
+.cursor/
+.aider*
+.windsurfrules
+.continue/
+
+# editor state
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# scratch / work-in-progress assets
+/sitelogo-fit.png
+/sitelogo.png
+/newsitelogo.png
+*.tmp.*

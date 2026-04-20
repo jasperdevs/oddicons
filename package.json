@@ -8,6 +8,7 @@
     "prebuild": "node scripts/gen-thumbs.mjs",
     "predev": "node scripts/gen-thumbs.mjs",
     "thumbs": "node scripts/gen-thumbs.mjs",
+    "trim": "node scripts/trim-white.mjs --apply",
     "start": "next start",
     "lint": "eslint"
   },
