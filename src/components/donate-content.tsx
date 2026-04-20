@@ -35,17 +35,11 @@ export function DonateContent() {
       <header className="relative flex flex-col gap-3 overflow-hidden rounded-3xl border border-border bg-card px-7 py-10">
         <span
           aria-hidden
-          className="pointer-events-none absolute -right-16 -top-16 h-52 w-52 rounded-full opacity-[0.14] blur-2xl"
-          style={{ background: KOFI_COLOR }}
+          className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-foreground/[0.05] blur-3xl"
         />
         <span
           aria-hidden
-          className="pointer-events-none absolute -bottom-20 -left-12 h-48 w-48 rounded-full opacity-[0.12] blur-2xl"
-          style={{ background: PAYPAL_COLOR }}
-        />
-        <span
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.03]"
+          className="pointer-events-none absolute inset-0 opacity-[0.035]"
           style={{
             background:
               "radial-gradient(circle at 1px 1px, var(--foreground) 1px, transparent 0)",
@@ -70,34 +64,32 @@ export function DonateContent() {
             href={opt.href}
             target="_blank"
             rel="noreferrer"
-            className="group relative flex flex-col gap-5 overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all duration-[220ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] hover:-translate-y-1 hover:border-foreground/30 hover:shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5)]"
+            className="group relative flex min-h-[240px] flex-col gap-5 overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all duration-[220ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] hover:-translate-y-1 hover:border-foreground/30 hover:shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5)]"
           >
             <span
               aria-hidden
-              className="pointer-events-none absolute -right-14 -top-20 h-56 w-56 rounded-full opacity-[0.10] blur-2xl transition-all duration-[300ms] group-hover:-right-6 group-hover:-top-10 group-hover:opacity-[0.22]"
+              className="pointer-events-none absolute left-1/2 top-[58px] h-40 w-40 -translate-x-1/2 rounded-full opacity-[0.22] blur-[40px] transition-all duration-[300ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:opacity-[0.42] group-hover:scale-110"
               style={{ background: opt.color }}
             />
-            <span
-              aria-hidden
-              className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-60"
-              style={{
-                background: `linear-gradient(to right, transparent, ${opt.color}66, transparent)`,
-              }}
-            />
-            <span
-              className="relative grid h-14 w-14 place-items-center rounded-2xl border border-border bg-sidebar transition-transform duration-[240ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:-rotate-6 group-hover:scale-[1.06]"
-            >
-              <OddIcon name={opt.iconName} size={38} />
-            </span>
-            <div className="flex flex-col gap-1">
-              <span className="text-[17px] font-semibold tracking-tight text-foreground">
+            <div className="relative grid place-items-center pt-1">
+              <span
+                className="inline-flex transition-transform duration-[320ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:-translate-y-1 group-hover:-rotate-[6deg] group-hover:scale-[1.08]"
+                style={{
+                  filter: `drop-shadow(0 10px 20px ${opt.color}55)`,
+                }}
+              >
+                <OddIcon name={opt.iconName} size={96} />
+              </span>
+            </div>
+            <div className="relative flex flex-col items-center gap-1 text-center">
+              <span className="text-[18px] font-semibold tracking-tight text-foreground">
                 {opt.label}
               </span>
               <span className="text-[12.5px] leading-[1.5] text-muted-foreground">
                 {opt.hint}
               </span>
             </div>
-            <span className="relative mt-auto inline-flex items-center gap-1.5 text-[12.5px] font-medium text-foreground">
+            <span className="relative mt-auto inline-flex items-center justify-center gap-1.5 text-[12.5px] font-medium text-foreground">
               open link
               <span className="inline-flex transition-transform duration-[220ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:translate-x-1 group-hover:-translate-y-1">
                 <OddIcon name="link" size={14} />
@@ -108,7 +100,7 @@ export function DonateContent() {
       </div>
 
       <section className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-7">
-        <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+        <span className="text-[12px] font-semibold tracking-tight text-muted-foreground">
           where it goes
         </span>
         <ul className="grid gap-2.5 sm:grid-cols-3">
