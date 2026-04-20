@@ -84,5 +84,18 @@
   { "name": "Dice", "file": "dice.png", "category": "Objects" },
   { "name": "Bomb", "file": "bomb.png", "category": "Objects" },
   { "name": "Cat", "file": "cat.png", "category": "Objects" },
-  { "name": "Skull", "file": "skull.png", "category": "Objects" }
+  { "name": "Skull", "file": "skull.png", "category": "Objects" },
+
+  { "name": "Github", "file": "github.png", "category": "Brands" },
+  { "name": "Discord", "file": "discord.png", "category": "Brands" },
+  { "name": "X Twitter", "file": "x-twitter.png", "category": "Brands" },
+  { "name": "Instagram", "file": "instagram.png", "category": "Brands" },
+  { "name": "Reddit", "file": "reddit.png", "category": "Brands" },
+  { "name": "Youtube", "file": "youtube.png", "category": "Brands" },
+  { "name": "Tiktok", "file": "tiktok.png", "category": "Brands" },
+  { "name": "Spotify", "file": "spotify.png", "category": "Brands" },
+  { "name": "Gmail", "file": "gmail.png", "category": "Brands" },
+  { "name": "Chatgpt", "file": "chatgpt.png", "category": "Brands" },
+  { "name": "Claude", "file": "claude.png", "category": "Brands" },
+  { "name": "Gemini", "file": "gemini.png", "category": "Brands" }
 ]
