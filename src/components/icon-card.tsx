@@ -36,6 +36,7 @@ export function IconCard({
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [colors, setColors] = useState<string[] | null>(null);
   const imgRef = useRef<HTMLImageElement>(null);
+  const cardRef = useRef<HTMLButtonElement>(null);
   const { add, has, remove } = useCart();
   const { settings } = useSettings();
   const inCart = has(name);
@@ -55,8 +56,42 @@ export function IconCard({
     const c1 = colors[0];
     const c2 = colors[1] ?? colors[0];
     const c3 = colors[2] ?? c2;
-    return `conic-gradient(from 210deg, ${c1}, rgba(255,255,255,0.82) 15%, ${c2} 32%, ${c3} 52%, rgba(255,255,255,0.78) 72%, ${c2} 88%, ${c1})`;
+    return `radial-gradient(circle 160px at var(--mx, -400px) var(--my, -400px), ${c1} 0%, rgba(255,255,255,0.9) 18%, ${c2} 38%, ${c3} 60%, transparent 88%)`;
   }, [colors]);
+
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+    let raf = 0;
+    let lastX = 0;
+    let lastY = 0;
+    const onMove = (e: PointerEvent) => {
+      lastX = e.clientX;
+      lastY = e.clientY;
+      if (raf) return;
+      raf = window.requestAnimationFrame(() => {
+        raf = 0;
+        const node = cardRef.current;
+        if (!node) return;
+        const rect = node.getBoundingClientRect();
+        node.style.setProperty("--mx", `${lastX - rect.left}px`);
+        node.style.setProperty("--my", `${lastY - rect.top}px`);
+      });
+    };
+    const onLeave = () => {
+      const node = cardRef.current;
+      if (!node) return;
+      node.style.setProperty("--mx", "-400px");
+      node.style.setProperty("--my", "-400px");
+    };
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerleave", onLeave);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerleave", onLeave);
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, []);
 
   const handleIconMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -104,6 +139,7 @@ export function IconCard({
 
   return (
     <motion.button
+      ref={cardRef}
       type="button"
       onClick={handleToggleCart}
       aria-label={inCart ? `remove ${name} from cart` : `add ${name} to cart`}
@@ -122,22 +158,22 @@ export function IconCard({
         <>
           <span
             aria-hidden
-            className="pointer-events-none absolute inset-0 z-20 rounded-2xl opacity-70 transition-opacity duration-[180ms] group-hover:opacity-95"
+            className="pointer-events-none absolute -inset-[3px] z-20 rounded-2xl opacity-90"
             style={{
-              padding: 2.5,
+              padding: 5,
               background: borderBackground,
               WebkitMask:
                 "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
               WebkitMaskComposite: "xor",
               maskComposite: "exclude",
-              filter: "blur(2.5px)",
+              filter: "blur(7px)",
             }}
           />
           <span
             aria-hidden
-            className="pointer-events-none absolute inset-0 z-20 rounded-2xl opacity-60 transition-opacity duration-[180ms] group-hover:opacity-80"
+            className="pointer-events-none absolute inset-0 z-20 rounded-2xl opacity-40"
             style={{
-              padding: 1,
+              padding: 1.25,
               background: borderBackground,
               WebkitMask:
                 "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
