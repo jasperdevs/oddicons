@@ -12,27 +12,54 @@ const LICENSE_POINTS = [
 
 export function UsageContent() {
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-10 pb-10">
-      <header className="flex flex-col gap-3">
-        <h1 className="text-[28px] font-semibold tracking-tight text-foreground sm:text-[34px]">
-          license & requests
-        </h1>
-        <p className="max-w-xl text-[14px] leading-[1.65] text-muted-foreground">
-          what you can do with oddicons, and how to ask for one that isn&apos;t in
-          the pack yet.
-        </p>
+    <div className="mx-auto flex max-w-3xl flex-col gap-12 pb-10">
+      <header className="relative flex flex-col gap-3 overflow-hidden rounded-3xl border border-border bg-card px-7 py-10">
+        <span
+          aria-hidden
+          className="pointer-events-none absolute -right-20 -top-16 h-56 w-56 rounded-full bg-foreground/[0.06] blur-2xl"
+        />
+        <span
+          aria-hidden
+          className="pointer-events-none absolute -bottom-20 -left-16 h-48 w-48 rounded-full bg-foreground/[0.05] blur-2xl"
+        />
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-[0.03]"
+          style={{
+            background:
+              "radial-gradient(circle at 1px 1px, var(--foreground) 1px, transparent 0)",
+            backgroundSize: "18px 18px",
+          }}
+        />
+        <div className="relative flex flex-col gap-3">
+          <h1 className="text-[32px] font-semibold tracking-tight text-foreground sm:text-[40px]">
+            license & requests
+          </h1>
+          <p className="max-w-xl text-[14px] leading-[1.65] text-muted-foreground">
+            what you can do with oddicons, and how to ask for one that isn&apos;t in
+            the pack yet.
+          </p>
+        </div>
       </header>
 
-      <section className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-6">
+      <section className="relative flex flex-col gap-6 overflow-hidden rounded-2xl border border-border bg-card p-7">
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-60"
+          style={{
+            background:
+              "linear-gradient(to right, transparent, color-mix(in srgb, var(--foreground) 40%, transparent), transparent)",
+          }}
+        />
         <div className="flex items-start gap-4">
-          <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-sidebar">
-            <OddIcon name="license" size={36} />
+          <span className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl border border-border bg-sidebar">
+            <OddIcon name="license" size={40} />
           </span>
           <div className="flex flex-col gap-1">
-            <span className="text-[11.5px] font-semibold tracking-tight text-muted-foreground">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
               license
             </span>
-            <h2 className="text-[22px] font-semibold tracking-tight text-foreground">
+            <h2 className="text-[22px] font-semibold tracking-tight text-foreground sm:text-[24px]">
               free to use. for anything.
             </h2>
             <p className="text-[13.5px] leading-[1.6] text-muted-foreground">
@@ -41,37 +68,47 @@ export function UsageContent() {
             </p>
           </div>
         </div>
-        <ul className="flex flex-col gap-3 border-t border-border pt-5">
+        <ul className="flex flex-col gap-2 border-t border-border pt-5">
           {LICENSE_POINTS.map((point) => (
             <li
               key={point}
-              className="flex items-start gap-3 text-[13.5px] leading-[1.55] text-foreground"
+              className="group flex items-start gap-3 rounded-xl px-2 py-2 text-[13.5px] leading-[1.55] text-foreground transition-colors duration-[160ms] hover:bg-sidebar/60"
             >
-              <OddIcon name="check" size={22} className="mt-0.5 shrink-0" />
+              <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-sidebar transition-transform duration-[200ms] group-hover:scale-[1.1]">
+                <OddIcon name="check" size={16} />
+              </span>
               <span>{point}</span>
             </li>
           ))}
         </ul>
       </section>
 
-      <section className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-6">
+      <section className="relative flex flex-col gap-6 overflow-hidden rounded-2xl border border-border bg-card p-7">
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-60"
+          style={{
+            background:
+              "linear-gradient(to right, transparent, color-mix(in srgb, var(--foreground) 40%, transparent), transparent)",
+          }}
+        />
         <div className="flex items-start gap-4">
-          <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-sidebar">
-            <OddIcon name="sparkles" size={36} />
+          <span className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl border border-border bg-sidebar">
+            <OddIcon name="sparkles" size={40} />
           </span>
           <div className="flex flex-col gap-1">
-            <span className="text-[11.5px] font-semibold tracking-tight text-muted-foreground">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
               missing an icon?
             </span>
-            <h2 className="text-[22px] font-semibold tracking-tight text-foreground">
+            <h2 className="text-[22px] font-semibold tracking-tight text-foreground sm:text-[24px]">
               ask, and it usually gets made.
             </h2>
+            <p className="text-[13.5px] leading-[1.6] text-muted-foreground">
+              most requests turn into new icons within a week.
+            </p>
           </div>
         </div>
-        <p className="text-[13.5px] leading-[1.6] text-muted-foreground">
-          most requests turn into new icons within a week.
-        </p>
-        <div className="border-t border-border pt-5">
+        <div className="border-t border-border pt-6">
           <RequestForm hideHeader />
         </div>
       </section>
