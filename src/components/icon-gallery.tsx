@@ -435,6 +435,8 @@ function SortDropdown({
 
 const MAX_FIRE_WINDOW_MS = 1100;
 const PER_ITEM_MS = 18;
+const RINGS = [0, 1, 2];
+const SPARK_COUNT = 10;
 
 function AddAllButton({
   items,
@@ -447,9 +449,22 @@ function AddAllButton({
   const { settings } = useSettings();
   const ref = useRef<HTMLButtonElement>(null);
   const bumpControls = useAnimation();
+  const rumbleControls = useAnimation();
+  const flashControls = useAnimation();
   const [burstId, setBurstId] = useState<number | null>(null);
   const pending = useMemo(() => items.filter((i) => !has(i.name)), [items, has]);
   const allAdded = items.length > 0 && pending.length === 0;
+
+  const sparks = useMemo(() => {
+    if (burstId === null) return [];
+    return Array.from({ length: SPARK_COUNT }, (_, i) => {
+      const base = (i / SPARK_COUNT) * Math.PI * 2;
+      const angle = base + (Math.random() - 0.5) * 0.45;
+      const distance = 36 + Math.random() * 28;
+      const delay = Math.random() * 0.05;
+      return { id: i, angle, distance, delay };
+    });
+  }, [burstId]);
 
   const handleClick = () => {
     if (allAdded) {
@@ -480,11 +495,33 @@ function AddAllButton({
 
     setBurstId(Date.now());
     bumpControls.start({
-      scale: [1, 0.88, 1.12, 0.97, 1],
-      transition: { ...springs.slow, duration: 0.52 },
+      scale: [1, 0.82, 1.16, 0.94, 1.04, 1],
+      transition: {
+        duration: 0.68,
+        times: [0, 0.14, 0.36, 0.6, 0.82, 1],
+        ease: [0.2, 0.8, 0.2, 1],
+      },
+    });
+    flashControls.start({
+      opacity: [0, 0.55, 0],
+      transition: { duration: 0.42, ease: [0.16, 1, 0.3, 1] },
     });
 
     const fireWindow = Math.min(MAX_FIRE_WINDOW_MS, n * PER_ITEM_MS);
+    const rumbleSteps = Math.max(4, Math.floor(fireWindow / 55));
+    const rumbleX: number[] = [0];
+    const rumbleY: number[] = [0];
+    for (let i = 0; i < rumbleSteps; i++) {
+      rumbleX.push((Math.random() - 0.5) * 1.4);
+      rumbleY.push((Math.random() - 0.5) * 1.4);
+    }
+    rumbleX.push(0);
+    rumbleY.push(0);
+    rumbleControls.start({
+      x: rumbleX,
+      y: rumbleY,
+      transition: { duration: fireWindow / 1000, ease: "linear" },
+    });
 
     shuffled.forEach((icon, i) => {
       const t = n > 1 ? i / (n - 1) : 0;
@@ -518,31 +555,71 @@ function AddAllButton({
       animate={bumpControls}
       style={{ transformOrigin: "center" }}
     >
-      <AnimatePresence>
+      <AnimatePresence onExitComplete={() => setBurstId(null)}>
         {burstId !== null && (
           <motion.span
             key={burstId}
             aria-hidden
-            onAnimationComplete={() => setBurstId((id) => (id === burstId ? null : id))}
-            className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-11 w-11 -translate-x-1/2 -translate-y-1/2 rounded-full border border-foreground/40"
-            initial={{ scale: 0.6, opacity: 0.8 }}
-            animate={{ scale: 2.6, opacity: 0 }}
+            className="pointer-events-none absolute inset-0 -z-10"
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          />
+            transition={{ duration: 0.2 }}
+          >
+            {RINGS.map((idx) => (
+              <motion.span
+                key={`ring-${idx}`}
+                className="absolute left-1/2 top-1/2 h-11 w-11 -translate-x-1/2 -translate-y-1/2 rounded-full border border-foreground/50"
+                initial={{ scale: 0.55, opacity: 0.9 - idx * 0.18 }}
+                animate={{ scale: 2.2 + idx * 0.7, opacity: 0 }}
+                transition={{
+                  duration: 0.72 + idx * 0.12,
+                  delay: idx * 0.09,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+              />
+            ))}
+            {sparks.map((s) => (
+              <motion.span
+                key={`spark-${s.id}`}
+                className="absolute left-1/2 top-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground"
+                initial={{ x: 0, y: 0, opacity: 0, scale: 0.4 }}
+                animate={{
+                  x: Math.cos(s.angle) * s.distance,
+                  y: Math.sin(s.angle) * s.distance,
+                  opacity: [0, 1, 1, 0],
+                  scale: [0.4, 1, 0.9, 0.2],
+                }}
+                transition={{
+                  duration: 0.58,
+                  delay: s.delay,
+                  times: [0, 0.18, 0.6, 1],
+                  ease: [0.33, 0.98, 0.43, 1],
+                }}
+              />
+            ))}
+          </motion.span>
         )}
       </AnimatePresence>
-      <Button
-        ref={ref}
-        variant="secondary"
-        size="lg"
-        leadingIcon={allAdded ? TrashIcon : PlusIcon}
-        onClick={handleClick}
-        disabled={items.length === 0}
-        className="h-11 px-5 text-[14px]"
-      >
-        {allAdded ? `remove all (${items.length})` : `add all (${pending.length})`}
-      </Button>
+      <motion.span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 rounded-xl bg-foreground mix-blend-overlay"
+        initial={{ opacity: 0 }}
+        animate={flashControls}
+      />
+      <motion.div animate={rumbleControls}>
+        <Button
+          ref={ref}
+          variant="secondary"
+          size="lg"
+          leadingIcon={allAdded ? TrashIcon : PlusIcon}
+          onClick={handleClick}
+          disabled={items.length === 0}
+          className="h-11 px-5 text-[14px]"
+        >
+          {allAdded ? `remove all (${items.length})` : `add all (${pending.length})`}
+        </Button>
+      </motion.div>
     </motion.div>
   );
 }
