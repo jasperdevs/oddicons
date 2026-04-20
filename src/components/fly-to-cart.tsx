@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { animate } from "framer-motion";
 import { useCart, type FlyEvent } from "@/lib/cart-context";
-import { iconThumbUrl } from "@/lib/icon-url";
+import { iconMiniUrl } from "@/lib/icon-url";
 
 interface FlyProps {
   event: FlyEvent;
@@ -57,7 +57,7 @@ function Fly({ event, onDone }: FlyProps) {
     // eslint-disable-next-line @next/next/no-img-element
     <img
       ref={ref}
-      src={iconThumbUrl(item.file)}
+      src={iconMiniUrl(item.file)}
       alt=""
       width={size}
       height={size}

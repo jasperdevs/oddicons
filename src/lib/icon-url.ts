@@ -8,3 +8,8 @@ export function iconThumbUrl(file: string): string {
   const name = file.replace(/\.[^.]+$/, "");
   return `${BASE}/icons/thumbs/${name}.webp`;
 }
+
+export function iconMiniUrl(file: string): string {
+  const name = file.replace(/\.[^.]+$/, "");
+  return `${BASE}/icons/mini/${name}.webp`;
+}

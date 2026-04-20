@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Select } from "@base-ui/react";
 import icons from "@/data/icons.json";
@@ -176,19 +176,12 @@ function GalleryInner({ view }: { view: View }) {
               <DonateContent />
             ) : (
               emptyState ?? (
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-                  {filtered.map((icon) => (
-                    <IconCard
-                      key={icon.name}
-                      name={icon.name}
-                      file={icon.file}
-                      category={icon.category}
-                      basePath={basePath}
-                      isFavorite={isFavorite(icon.name)}
-                      onToggleFavorite={toggleFavorite}
-                    />
-                  ))}
-                </div>
+                <LazyGrid
+                  items={filtered}
+                  basePath={basePath}
+                  isFavorite={isFavorite}
+                  onToggleFavorite={toggleFavorite}
+                />
               )
             )}
           </main>
@@ -242,6 +235,67 @@ function GalleryInner({ view }: { view: View }) {
         anchorRef={requestBtnRef}
       />
     </div>
+  );
+}
+
+const LAZY_INITIAL = 36;
+const LAZY_STEP = 36;
+
+function LazyGrid({
+  items,
+  basePath,
+  isFavorite,
+  onToggleFavorite,
+}: {
+  items: IconEntry[];
+  basePath: string;
+  isFavorite: (name: string) => boolean;
+  onToggleFavorite: (name: string) => void;
+}) {
+  const [limit, setLimit] = useState(LAZY_INITIAL);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setLimit(LAZY_INITIAL);
+  }, [items]);
+
+  useEffect(() => {
+    if (limit >= items.length) return;
+    const el = sentinelRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setLimit((l) => Math.min(l + LAZY_STEP, items.length));
+        }
+      },
+      { rootMargin: "600px 0px" }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [limit, items.length]);
+
+  const visible = items.slice(0, limit);
+
+  return (
+    <>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+        {visible.map((icon) => (
+          <IconCard
+            key={icon.name}
+            name={icon.name}
+            file={icon.file}
+            category={icon.category}
+            basePath={basePath}
+            isFavorite={isFavorite(icon.name)}
+            onToggleFavorite={onToggleFavorite}
+          />
+        ))}
+      </div>
+      {limit < items.length && (
+        <div ref={sentinelRef} aria-hidden className="h-1 w-full" />
+      )}
+    </>
   );
 }
 

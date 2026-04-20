@@ -55,7 +55,7 @@ export function IconCard({
     const c1 = colors[0];
     const c2 = colors[1] ?? colors[0];
     const c3 = colors[2] ?? c2;
-    return `radial-gradient(circle 280px at var(--mx, -600px) var(--my, -600px), ${c1} 0%, rgba(255,255,255,0.9) 20%, ${c2} 42%, ${c3} 65%, transparent 92%)`;
+    return `radial-gradient(circle 220px at var(--mx, -600px) var(--my, -600px), rgba(255,255,255,0.95) 0%, ${c1} 22%, rgba(255,255,255,0.7) 44%, ${c2} 66%, ${c3} 82%, transparent 100%)`;
   }, [colors]);
 
   useEffect(() => {
@@ -313,7 +313,7 @@ export function IconCard({
       />
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-20"
+        className="pointer-events-none absolute inset-x-[2px] bottom-[2px] z-10 h-20 rounded-b-2xl"
         style={{
           background:
             "linear-gradient(to top, var(--card) 0%, var(--card) 30%, transparent 100%)",
