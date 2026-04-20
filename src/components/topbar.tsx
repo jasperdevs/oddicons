@@ -75,7 +75,7 @@ export function Topbar({
         }}
       />
 
-      <div className="pointer-events-auto relative mx-auto flex w-full items-center gap-2 py-4 sm:gap-3 sm:py-5">
+      <div className="pointer-events-auto relative mx-auto flex w-full items-center gap-1.5 py-4 sm:gap-3 sm:py-5">
         {onOpenMenu && (
           <Tooltip content="menu">
             <button
@@ -136,7 +136,7 @@ export function Topbar({
               style={{ transformOrigin: "center" }}
               onClick={() => setOpen(true)}
               aria-label="open cart"
-              className="flex h-11 items-center gap-2 rounded-r-xl px-4 text-[14px] font-medium text-foreground transition-colors duration-[180ms] hover:bg-foreground/5"
+              className="flex h-11 items-center gap-1.5 rounded-r-xl px-3 text-[14px] font-medium text-foreground transition-colors duration-[180ms] hover:bg-foreground/5 sm:gap-2 sm:px-4"
             >
               <OddIcon name="cart" size={20} />
               <span

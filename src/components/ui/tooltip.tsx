@@ -98,13 +98,15 @@ function Tooltip({
                   className
                 )}
                 style={{ fontVariationSettings: fontWeights.medium }}
-                initial={{ opacity: 0, ...slideOffset }}
+                initial={{ opacity: 0, scale: 0.94, filter: "blur(4px)", ...slideOffset }}
                 animate={{
                   opacity: open ? 1 : 0,
+                  scale: open ? 1 : 0.97,
+                  filter: open ? "blur(0px)" : "blur(2px)",
                   x: 0,
                   y: 0,
                 }}
-                transition={open ? springs.fast : { duration: 0.1 }}
+                transition={open ? { type: "spring", duration: 0.12, bounce: 0 } : { duration: 0.08 }}
                 onAnimationComplete={handleExitComplete}
               >
                 {content}

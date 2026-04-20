@@ -58,15 +58,16 @@ export function MobileDrawer({
         <Drawer.Backdrop
           className={cn(
             "fixed inset-0 z-50 bg-background/60",
-            "transition-opacity duration-[220ms] ease-out",
+            "transition-opacity duration-[160ms] ease-out",
             "data-[starting-style]:opacity-0 data-[ending-style]:opacity-0"
           )}
         />
         <Drawer.Popup
           className={cn(
             "fixed inset-y-0 left-0 z-50 flex w-[min(17rem,calc(100vw-3rem))] flex-col overflow-hidden bg-sidebar shadow-[0_24px_64px_-8px_rgba(0,0,0,0.6)] outline-none",
-            "transition-transform duration-[240ms] ease-out",
-            "data-[starting-style]:-translate-x-full data-[ending-style]:-translate-x-full"
+            "origin-left transition-[opacity,transform,filter] duration-[220ms] ease-[cubic-bezier(0.2,0.8,0.2,1)]",
+            "data-[starting-style]:-translate-x-full data-[starting-style]:scale-x-[0.96] data-[starting-style]:opacity-0 data-[starting-style]:blur-[6px]",
+            "data-[ending-style]:-translate-x-full data-[ending-style]:scale-x-[0.98] data-[ending-style]:opacity-0 data-[ending-style]:blur-[3px]"
           )}
         >
           <Drawer.Title className="sr-only">menu</Drawer.Title>

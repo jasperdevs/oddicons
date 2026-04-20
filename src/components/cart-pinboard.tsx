@@ -143,7 +143,7 @@ export function CartPinboard() {
   };
 
   return (
-    <AnimatePresence>
+    <AnimatePresence initial={false}>
       {open && anchor && (
         <>
           <motion.div
@@ -152,7 +152,7 @@ export function CartPinboard() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.22 }}
+            transition={{ duration: 0.16 }}
             onClick={() => setOpen(false)}
           />
 
@@ -166,18 +166,20 @@ export function CartPinboard() {
               right: anchor.right,
               transformOrigin: "top right",
             }}
-            initial={{ opacity: 0, scale: 0.96, y: -6 }}
+            initial={{ opacity: 0, scale: 0.92, y: -10, filter: "blur(6px)" }}
             animate={{
               opacity: 1,
               scale: 1,
               y: 0,
-              transition: springs.moderate,
+              filter: "blur(0px)",
+              transition: { type: "spring", duration: 0.18, bounce: 0 },
             }}
             exit={{
               opacity: 0,
               scale: 0.96,
-              y: -6,
-              transition: springs.fast,
+              y: -5,
+              filter: "blur(3px)",
+              transition: { duration: 0.1 },
             }}
           >
             <PopoverTail

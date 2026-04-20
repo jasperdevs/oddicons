@@ -51,7 +51,7 @@ export function SettingsPopover() {
         <Popover.Backdrop
           className={cn(
             "fixed inset-0 z-40 bg-background/60",
-            "transition-opacity duration-[220ms] ease-out",
+            "transition-opacity duration-[160ms] ease-out",
             "data-[starting-style]:opacity-0 data-[ending-style]:opacity-0"
           )}
         />
@@ -61,9 +61,9 @@ export function SettingsPopover() {
               "relative w-[288px] rounded-2xl border border-border bg-card p-2 text-foreground",
               "shadow-[0_10px_24px_-10px_rgba(0,0,0,0.45),_0_2px_6px_-2px_rgba(0,0,0,0.22)]",
               "origin-[var(--transform-origin)] outline-none",
-              "transition-all duration-[180ms] ease-out",
-              "data-[starting-style]:opacity-0 data-[starting-style]:scale-[0.97] data-[starting-style]:-translate-y-1",
-              "data-[ending-style]:opacity-0 data-[ending-style]:scale-[0.97] data-[ending-style]:-translate-y-1"
+              "transition-[opacity,transform,filter] duration-[160ms] ease-[cubic-bezier(0.2,0.8,0.2,1)]",
+              "data-[starting-style]:opacity-0 data-[starting-style]:scale-[0.92] data-[starting-style]:-translate-y-2 data-[starting-style]:blur-[6px]",
+              "data-[ending-style]:opacity-0 data-[ending-style]:scale-[0.96] data-[ending-style]:-translate-y-1 data-[ending-style]:blur-[3px]"
             )}
           >
             <PopoverTail direction="up" style={{ top: -9, right: 18 }} />
@@ -129,9 +129,9 @@ function SizeRow({
                 "max-h-[240px] min-w-[var(--anchor-width)] overflow-y-auto rounded-lg border border-border bg-card p-1 text-foreground",
                 "shadow-[0_8px_20px_-8px_rgba(0,0,0,0.4),_0_2px_4px_-2px_rgba(0,0,0,0.2)]",
                 "origin-[var(--transform-origin)] outline-none",
-                "transition-all duration-[150ms] ease-out",
-                "data-[starting-style]:opacity-0 data-[starting-style]:scale-[0.97]",
-                "data-[ending-style]:opacity-0 data-[ending-style]:scale-[0.97]"
+                "transition-[opacity,transform,filter] duration-[140ms] ease-[cubic-bezier(0.2,0.8,0.2,1)]",
+                "data-[starting-style]:opacity-0 data-[starting-style]:scale-[0.94] data-[starting-style]:translate-y-1 data-[starting-style]:blur-[5px]",
+                "data-[ending-style]:opacity-0 data-[ending-style]:scale-[0.97] data-[ending-style]:blur-[2px]"
               )}
             >
               {DOWNLOAD_SIZE_STEPS.map((step) => (

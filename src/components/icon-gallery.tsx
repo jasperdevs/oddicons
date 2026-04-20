@@ -18,7 +18,6 @@ import { MobileDrawer } from "@/components/mobile-drawer";
 import { IconCard } from "@/components/icon-card";
 import { CartPinboard } from "@/components/cart-pinboard";
 import { FlyToCart } from "@/components/fly-to-cart";
-import { RequestModal } from "@/components/request-modal";
 import { UsageContent } from "@/components/usage-content";
 import { DonateContent } from "@/components/donate-content";
 import { ProgressiveBlur } from "@/components/progressive-blur";
@@ -27,10 +26,11 @@ import { fontWeights } from "@/lib/font-weight";
 import { springs } from "@/lib/springs";
 const PlusIcon = oddIconComponent("plus");
 const TrashIcon = oddIconComponent("trash");
-const SendIcon = oddIconComponent("send");
+const GithubIcon = oddIconComponent("github");
 const SortIcon = oddIconComponent("sort");
 const SortAzIcon = oddIconComponent("sort-az");
 const SortAzAscendingIcon = oddIconComponent("sort-az-ascending");
+const ISSUE_URL = "https://github.com/jasperdevs/oddicons/issues/new";
 
 interface IconEntry {
   name: string;
@@ -65,9 +65,7 @@ function GalleryInner({ view }: { view: View }) {
   const { favorites, isFavorite, toggle: toggleFavorite } = useFavorites();
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortMode>("default");
-  const [requestOpen, setRequestOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const requestBtnRef = useRef<HTMLButtonElement>(null);
 
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
   const all = icons as IconEntry[];
@@ -165,7 +163,7 @@ function GalleryInner({ view }: { view: View }) {
               "px-4 sm:px-8",
               isInfoView
                 ? "pt-24 pb-10 sm:pt-24 md:pt-24"
-                : "pt-24 pb-28 sm:pt-20 sm:pb-24 md:pt-20"
+                : "pt-24 pb-44 min-[390px]:pb-36 sm:pt-20 sm:pb-24 md:pt-20"
             )}
           >
             {isUsage ? (
@@ -203,8 +201,6 @@ function GalleryInner({ view }: { view: View }) {
             basePath={basePath}
             sort={sort}
             onChangeSort={setSort}
-            onOpenRequest={() => setRequestOpen((v) => !v)}
-            requestBtnRef={requestBtnRef}
           />
         )}
       </div>
@@ -228,11 +224,6 @@ function GalleryInner({ view }: { view: View }) {
 
       <CartPinboard />
       <FlyToCart />
-      <RequestModal
-        open={requestOpen}
-        onClose={() => setRequestOpen(false)}
-        anchorRef={requestBtnRef}
-      />
     </div>
   );
 }
@@ -303,15 +294,11 @@ function BottomBar({
   basePath,
   sort,
   onChangeSort,
-  onOpenRequest,
-  requestBtnRef,
 }: {
   items: IconEntry[];
   basePath: string;
   sort: SortMode;
   onChangeSort: (m: SortMode) => void;
-  onOpenRequest: () => void;
-  requestBtnRef: React.RefObject<HTMLButtonElement | null>;
 }) {
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10">
@@ -326,16 +313,15 @@ function BottomBar({
         }}
       />
       <div className="pointer-events-auto relative flex w-full flex-wrap items-center justify-center gap-1.5 px-3 pb-4 pt-10 sm:gap-2 sm:px-8 sm:pb-6">
-        <Button
-          ref={requestBtnRef}
-          variant="secondary"
-          size="lg"
-          leadingIcon={SendIcon}
-          onClick={onOpenRequest}
-          className="h-11 px-5 text-[14px]"
+        <a
+          href={ISSUE_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl bg-accent px-3 text-[13px] font-medium text-foreground outline-none transition-colors duration-[180ms] hover:bg-accent/80 focus-visible:ring-1 focus-visible:ring-[#6B97FF] active:bg-accent sm:h-11 sm:px-5 sm:text-[14px]"
         >
-          send issue
-        </Button>
+          <GithubIcon size={20} />
+          send an issue
+        </a>
         <SortDropdown mode={sort} onChange={onChangeSort} />
         <AddAllButton items={items} basePath={basePath} />
       </div>
@@ -369,7 +355,7 @@ function SortDropdown({
             variant="secondary"
             size="lg"
             leadingIcon={ActiveIcon}
-            className="h-11 px-5 text-[14px]"
+            className="h-10 px-3 text-[13px] sm:h-11 sm:px-5 sm:text-[14px]"
           >
             {active.label}
           </Button>
@@ -382,9 +368,9 @@ function SortDropdown({
               "min-w-[var(--anchor-width)] rounded-xl border border-border bg-card p-1 text-foreground",
               "shadow-[0_8px_20px_-8px_rgba(0,0,0,0.4),_0_2px_4px_-2px_rgba(0,0,0,0.2)]",
               "origin-[var(--transform-origin)] outline-none",
-              "transition-all duration-[180ms] ease-out",
-              "data-[starting-style]:opacity-0 data-[starting-style]:scale-[0.97] data-[starting-style]:translate-y-1",
-              "data-[ending-style]:opacity-0 data-[ending-style]:scale-[0.97] data-[ending-style]:translate-y-1"
+              "transition-[opacity,transform,filter] duration-[150ms] ease-[cubic-bezier(0.2,0.8,0.2,1)]",
+              "data-[starting-style]:opacity-0 data-[starting-style]:scale-[0.94] data-[starting-style]:translate-y-2 data-[starting-style]:blur-[6px]",
+              "data-[ending-style]:opacity-0 data-[ending-style]:scale-[0.97] data-[ending-style]:translate-y-1 data-[ending-style]:blur-[3px]"
             )}
           >
             {SORT_OPTIONS.map((opt) => {
@@ -615,7 +601,7 @@ function AddAllButton({
           leadingIcon={allAdded ? TrashIcon : PlusIcon}
           onClick={handleClick}
           disabled={items.length === 0}
-          className="h-11 px-5 text-[14px]"
+          className="h-10 px-3 text-[13px] sm:h-11 sm:px-5 sm:text-[14px]"
         >
           {allAdded ? `remove all (${items.length})` : `add all (${pending.length})`}
         </Button>

@@ -254,7 +254,7 @@ export function SearchBar({ value, onChange, total, items }: SearchBarProps) {
     <div ref={containerRef} className="relative w-full">
       <div
         className={cn(
-          "flex h-11 w-full items-center gap-3 rounded-xl bg-muted pl-5 pr-5 transition-[background-color,border-radius] duration-[180ms]",
+          "flex h-11 w-full items-center gap-2 rounded-xl bg-muted pl-3 pr-3 transition-[background-color,border-radius] duration-[180ms] sm:gap-3 sm:pl-5 sm:pr-5",
           "focus-within:ring-1 focus-within:ring-border"
         )}
       >
@@ -289,7 +289,7 @@ export function SearchBar({ value, onChange, total, items }: SearchBarProps) {
           aria-expanded={showDropdown}
           aria-controls="search-suggestions"
           aria-autocomplete="list"
-          className="flex-1 bg-transparent text-[14px] text-foreground placeholder:text-muted-foreground/70 outline-none"
+          className="min-w-0 flex-1 bg-transparent text-[14px] text-foreground placeholder:text-muted-foreground/70 outline-none"
         />
         {value ? (
           <button
@@ -315,10 +315,10 @@ export function SearchBar({ value, onChange, total, items }: SearchBarProps) {
           <motion.div
             id="search-suggestions"
             role="listbox"
-            initial={{ opacity: 0, y: -4, scale: 0.985 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -4, scale: 0.985 }}
-            transition={{ duration: 0.14, ease: [0.2, 0.8, 0.2, 1] }}
+            initial={{ opacity: 0, y: -8, scale: 0.96, filter: "blur(6px)" }}
+            animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+            exit={{ opacity: 0, y: -4, scale: 0.98, filter: "blur(3px)" }}
+            transition={{ type: "spring", duration: 0.16, bounce: 0 }}
             className="absolute inset-x-0 top-full z-50 mt-1.5 origin-top overflow-hidden rounded-xl border border-border bg-card p-1 shadow-[0_12px_24px_-12px_rgba(0,0,0,0.45),_0_4px_8px_-4px_rgba(0,0,0,0.25)]"
           >
             {suggestions.map((icon, i) => {

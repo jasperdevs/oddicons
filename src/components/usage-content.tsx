@@ -12,8 +12,8 @@ const LICENSE_POINTS = [
 
 export function UsageContent() {
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-12 pb-10">
-      <header className="flex flex-col gap-3 rounded-3xl border border-border bg-card px-7 py-10">
+    <div className="mx-auto flex max-w-3xl flex-col gap-8 pb-10 sm:gap-12">
+      <header className="flex flex-col gap-3 rounded-3xl border border-border bg-card px-5 py-8 sm:px-7 sm:py-10">
         <h1 className="text-[32px] font-semibold tracking-tight text-foreground sm:text-[40px]">
           license & requests
         </h1>
@@ -23,9 +23,9 @@ export function UsageContent() {
         </p>
       </header>
 
-      <section className="flex flex-col gap-6 rounded-2xl border border-border bg-card p-7">
+      <section className="flex flex-col gap-6 rounded-2xl border border-border bg-card p-5 sm:p-7">
         <div className="flex items-start gap-4">
-          <span className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl border border-border bg-sidebar">
+          <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-border bg-sidebar sm:h-16 sm:w-16">
             <OddIcon name="license" size={40} />
           </span>
           <div className="flex flex-col gap-1">
@@ -56,9 +56,9 @@ export function UsageContent() {
         </ul>
       </section>
 
-      <section className="flex flex-col gap-6 rounded-2xl border border-border bg-card p-7">
+      <section className="flex flex-col gap-6 rounded-2xl border border-border bg-card p-5 sm:p-7">
         <div className="flex items-start gap-4">
-          <span className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl border border-border bg-sidebar">
+          <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-border bg-sidebar sm:h-16 sm:w-16">
             <OddIcon name="sparkles" size={40} />
           </span>
           <div className="flex flex-col gap-1">

@@ -66,12 +66,12 @@ export function GitHubStars() {
         rel="noreferrer"
         aria-label={stars === null ? "open GitHub repo" : `open GitHub repo, ${stars} stars`}
         className={cn(
-          "flex h-11 items-center gap-2 border-l border-border/60 px-3 text-[14px] font-medium text-foreground",
+          "flex h-11 items-center gap-1.5 border-l border-border/60 px-1.5 text-[14px] font-medium text-foreground min-[420px]:px-2",
           "transition-colors duration-[180ms] hover:bg-foreground/5"
         )}
       >
         <OddIcon name="github" size={20} />
-        <span className="hidden min-w-[2.2rem] text-left tabular-nums min-[420px]:inline">
+        <span className="hidden text-left tabular-nums min-[420px]:inline">
           {stars === null ? "..." : formatStars(stars)}
         </span>
       </a>

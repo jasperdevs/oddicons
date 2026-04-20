@@ -27,8 +27,8 @@ const FUNDS = [
 
 export function DonateContent() {
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-12 pb-10">
-      <header className="flex flex-col gap-3 rounded-3xl border border-border bg-card px-7 py-10">
+    <div className="mx-auto flex max-w-3xl flex-col gap-8 pb-10 sm:gap-12">
+      <header className="flex flex-col gap-3 rounded-3xl border border-border bg-card px-5 py-8 sm:px-7 sm:py-10">
         <h1 className="text-[32px] font-semibold tracking-tight text-foreground sm:text-[40px]">
           donate
         </h1>
@@ -45,7 +45,7 @@ export function DonateContent() {
             href={opt.href}
             target="_blank"
             rel="noreferrer"
-            className="group relative flex min-h-[240px] flex-col gap-5 rounded-2xl border border-border bg-card p-6 transition-all duration-[220ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] hover:-translate-y-1 hover:border-foreground/30 hover:shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5)]"
+            className="group relative flex min-h-[210px] flex-col gap-5 rounded-2xl border border-border bg-card p-5 transition-all duration-[220ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] hover:-translate-y-1 hover:border-foreground/30 hover:shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5)] sm:min-h-[240px] sm:p-6"
           >
             <div className="grid place-items-center pt-1">
               <span className="inline-flex transition-transform duration-[320ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:-translate-y-1 group-hover:-rotate-[6deg] group-hover:scale-[1.08]">
@@ -70,7 +70,7 @@ export function DonateContent() {
         ))}
       </div>
 
-      <section className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-7">
+      <section className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-5 sm:p-7">
         <span className="text-[12px] font-semibold tracking-tight text-muted-foreground">
           where it goes
         </span>
