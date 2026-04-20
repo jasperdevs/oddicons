@@ -73,8 +73,22 @@ export function IconCard({
         const node = cardRef.current;
         if (!node) return;
         const rect = node.getBoundingClientRect();
-        node.style.setProperty("--mx", `${lastX - rect.left}px`);
-        node.style.setProperty("--my", `${lastY - rect.top}px`);
+        const localX = lastX - rect.left;
+        const localY = lastY - rect.top;
+        node.style.setProperty("--mx", `${localX}px`);
+        node.style.setProperty("--my", `${localY}px`);
+        const cx = rect.width / 2;
+        const cy = rect.width / 2 + 12;
+        const relX = localX - cx;
+        const relY = localY - cy;
+        const dist = Math.hypot(relX, relY);
+        const RIM_RADIUS = 260;
+        const intensity = Math.max(0, 1 - dist / RIM_RADIUS);
+        const norm = dist > 0.5 ? 1 / dist : 0;
+        const offset = 5 * intensity;
+        node.style.setProperty("--rim-dx", `${-relX * norm * offset}`);
+        node.style.setProperty("--rim-dy", `${-relY * norm * offset}`);
+        node.style.setProperty("--rim-a", `${intensity * 0.55}`);
       });
     };
     const onLeave = () => {
@@ -82,6 +96,7 @@ export function IconCard({
       if (!node) return;
       node.style.setProperty("--mx", "-600px");
       node.style.setProperty("--my", "-600px");
+      node.style.setProperty("--rim-a", "0");
     };
     window.addEventListener("pointermove", onMove);
     window.addEventListener("pointerleave", onLeave);
@@ -157,22 +172,9 @@ export function IconCard({
         <>
           <span
             aria-hidden
-            className="pointer-events-none absolute inset-0 z-20 rounded-2xl opacity-95"
+            className="pointer-events-none absolute inset-0 z-[5] rounded-2xl opacity-70"
             style={{
-              padding: 14,
-              background: borderBackground,
-              WebkitMask:
-                "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-              WebkitMaskComposite: "xor",
-              maskComposite: "exclude",
-              filter: "blur(10px)",
-            }}
-          />
-          <span
-            aria-hidden
-            className="pointer-events-none absolute inset-0 z-20 rounded-2xl opacity-55"
-            style={{
-              padding: 4,
+              padding: 2.5,
               background: borderBackground,
               WebkitMask:
                 "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
@@ -183,9 +185,9 @@ export function IconCard({
           />
           <span
             aria-hidden
-            className="pointer-events-none absolute inset-0 z-20 rounded-2xl opacity-35"
+            className="pointer-events-none absolute inset-0 z-[5] rounded-2xl opacity-60"
             style={{
-              padding: 1.25,
+              padding: 1,
               background: borderBackground,
               WebkitMask:
                 "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
@@ -274,7 +276,11 @@ export function IconCard({
         onMouseMove={handleIconMove}
         onMouseLeave={handleIconLeave}
         className="grid aspect-square place-items-center p-3"
-        style={{ perspective: "600px" }}
+        style={{
+          perspective: "600px",
+          filter:
+            "drop-shadow(calc(var(--rim-dx, 0) * 1px) calc(var(--rim-dy, 0) * 1px) 4px rgba(255,255,255, var(--rim-a, 0)))",
+        }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
