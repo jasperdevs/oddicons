@@ -1,6 +1,5 @@
 "use client";
 
-import { ExternalLink } from "lucide-react";
 import { OddIcon } from "@/components/ui/odd-icon";
 import { KOFI_COLOR } from "@/components/logos/kofi";
 import { PAYPAL_COLOR } from "@/components/logos/paypal";
@@ -100,11 +99,9 @@ export function DonateContent() {
             </div>
             <span className="relative mt-auto inline-flex items-center gap-1.5 text-[12.5px] font-medium text-foreground">
               open link
-              <ExternalLink
-                size={12}
-                strokeWidth={2}
-                className="transition-transform duration-[220ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:translate-x-1 group-hover:-translate-y-1"
-              />
+              <span className="inline-flex transition-transform duration-[220ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:translate-x-1 group-hover:-translate-y-1">
+                <OddIcon name="link" size={14} />
+              </span>
             </span>
           </a>
         ))}
