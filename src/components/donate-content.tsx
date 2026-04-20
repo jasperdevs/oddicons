@@ -25,7 +25,7 @@ const OPTIONS = [
 
 const FUNDS = [
   { icon: "sparkles", label: "more icons", hint: "new weekly drops" },
-  { icon: "bolt", label: "more hours", hint: "actual espresso-powered" },
+  { icon: "bolt", label: "more hours", hint: "time spent on the pack" },
   { icon: "heart", label: "keeps it free", hint: "no paywall, ever" },
 ];
 
