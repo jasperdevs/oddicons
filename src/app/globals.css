@@ -190,6 +190,40 @@ button:disabled,
   cursor: not-allowed;
 }
 
+/* Custom oddicon cursors — desktop only (devices with a fine pointer).
+   URLs resolved at runtime via <CursorStyles /> because basePath differs
+   between dev ("") and prod ("/oddicons"). */
+@media (pointer: fine) {
+  html,
+  body {
+    cursor: var(--cursor-default, auto);
+  }
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  a[href],
+  label[for],
+  summary,
+  [tabindex]:not([tabindex="-1"]),
+  select {
+    cursor: var(--cursor-pointer, pointer);
+  }
+  input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  textarea,
+  [contenteditable="true"] {
+    cursor: var(--cursor-text, text);
+  }
+  [data-cursor="move"] {
+    cursor: var(--cursor-move, move);
+  }
+  [data-cursor="grab"] {
+    cursor: var(--cursor-grab, grab);
+  }
+  [data-cursor="grabbing"],
+  [data-cursor="grab"]:active {
+    cursor: var(--cursor-grabbing, grabbing);
+  }
+}
+
 /* View Transitions — soft crossfade for theme toggle */
 ::view-transition-old(root),
 ::view-transition-new(root) {

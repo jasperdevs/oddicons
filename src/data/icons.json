@@ -27,6 +27,12 @@
   { "name": "Pin", "file": "pin.png", "category": "Interface" },
   { "name": "Send", "file": "send.png", "category": "Interface" },
 
+  { "name": "Cursor", "file": "cursor.png", "category": "Cursors" },
+  { "name": "Text Cursor", "file": "text-cursor.png", "category": "Cursors" },
+  { "name": "Hand Pointer", "file": "hand-pointer.png", "category": "Cursors" },
+  { "name": "Move", "file": "move.png", "category": "Cursors" },
+  { "name": "Grab", "file": "grab.png", "category": "Cursors" },
+
   { "name": "Bag", "file": "bag.png", "category": "Commerce" },
   { "name": "Cart", "file": "cart.png", "category": "Commerce" },
   { "name": "Shop", "file": "shop.png", "category": "Commerce" },
@@ -99,5 +105,6 @@
   { "name": "Claude", "file": "claude.png", "category": "Brands" },
   { "name": "Gemini", "file": "gemini.png", "category": "Brands" },
   { "name": "Paypal", "file": "paypal.png", "category": "Brands" },
-  { "name": "Kofi", "file": "kofi.png", "category": "Brands" }
+  { "name": "Kofi", "file": "kofi.png", "category": "Brands" },
+  { "name": "Codex", "file": "codex.png", "category": "Brands" }
 ]
